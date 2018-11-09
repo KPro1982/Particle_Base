@@ -3,8 +3,8 @@ class World {
   boolean showAxes = true;
 
   float screenWidth, screenHeight, worldWidth, worldHeight;
-  ArrayList<Particle> particles;
-  Particle selected;
+  ArrayList<Entity> entities;
+  Entity selected;
 
 
   World(float _screenWidth, float _screenHeight, float _worldWidth, float _worldHeight) {
@@ -12,31 +12,31 @@ class World {
     screenHeight = _screenHeight;
     worldWidth = _worldWidth;
     worldHeight = _worldHeight;
-    particles = new ArrayList<Particle>();
+    entities = new ArrayList<Entity>();
   }
 
-  void addParticle(Particle _p) {
+  void addParticle(Entity _p) {
 
-    particles.add(_p);
+    entities.add(_p);
   }
 
-  void createParticle() {
-    Particle p = new LadyBug(this);
-    p.loadSkin();
-    particles.add(p);
-    
-  }
+  //void createParticle() {
+  //  Particle p = new LadyBug(this);
+  //  p.loadSkin();
+  //  entities.add(p);
+
+  //}
 
   void createParticle(float _ex, float _ey, float _rot) {
-    particles.add(new LadyBug(this, _ex, _ey, _rot));
+    entities.add(new Entity(this, _ex, _ey, _rot));
   }
 
   void setup() {
 
-    for (Particle p : particles) {
+    for (Entity p : entities) {
       p.loadSkin();
     }
-    selected = particles.get(0);
+    selected = entities.get(0);
   }
 
 
@@ -50,7 +50,7 @@ class World {
     }
     popStyle();
 
-    for (Particle p : particles) {
+    for (Entity p : entities) {
 
       p.draw();
     }
@@ -58,33 +58,46 @@ class World {
 
   void run() {
 
- 
 
-    for (Particle p : particles) {
-      p.run();
-    }
+
+    //for (Entity p : entities) {
+    //  //p.particle.run();
+    //}
   }
 
-  Particle isMouseOver() {
+  Entity isMouseOver() {
 
-    for (Particle p : particles) {
+    for (Entity p : entities) {
       if (p.mouseOver()) {  // assumes that mouse is over only one object at  a time
         return p;
       } else {
-
       }
     }
     return null;
   }
-  void setSelected(Particle _p) {
-
-    if (selected != null) {  // reset old selected
-      selected.isSelected = false;
-    }
-    
-    if (_p != null) {  // set new particle as slected
-      selected = _p;
-      selected.isSelected = true;
+  void mouseDragged() {
+    Entity p = isMouseOver();
+    if (p != null) {
+      p.mouseDragged();
     }
   }
+   void mouseClicked() {
+    Entity p = isMouseOver();
+    if (p != null) {
+      p.mouseClicked();
+    }
+  }
+}
+
+
+void setSelected(Entity _p) {
+
+  //  if (selected != null) {  // reset old selected
+  //    selected.isSelected = false;
+  //  }
+
+  //  if (_p != null) {  // set new particle as slected
+  //    selected = _p;
+  //    selected.isSelected = true;
+  //  }
 }

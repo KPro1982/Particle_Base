@@ -8,21 +8,21 @@ class Sensor { //<>//
   boolean canSee = false;
 
 
-  ArrayList<Particle> canSeeParticles;
+  ArrayList<ISensable> sensed;
 
-  Sensor(Particle _p, float _range, float _field) {
+  Sensor(ISensable _e, float _range, float _field) {
     range = _range;
     field = _field;
 
-    body = _p;
-    world = _p.sandbox;
-    canSeeParticles = new ArrayList<Particle>();
+    body = _e;
+    world = _e.world;
+    sensed = new ArrayList<ISensable>();
   }
 
-  ArrayList sense() {
-    canSeeParticles.clear();
+  ArrayList<ISensable> sense() {
+    sensed.clear();
 
-    for (Particle p : world.particles) {
+    for (ISensable p : world.entities) {
       if (p != body) {
         float bTo =  body.bearingTo(body,p); //<>//
         println("P1:");
