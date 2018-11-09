@@ -39,7 +39,16 @@ class World {
     selected = entities.get(0);
   }
 
+  void sortByDistance(Entity p) {
 
+    Collections.sort(entities, new DistanceComparator(p));
+  }
+
+  void print() {
+    for (Entity p : entities) {
+      println(p);
+    }
+  }
   void draw() {
     background(200);
     pushStyle();
@@ -81,7 +90,7 @@ class World {
       p.mouseDragged();
     }
   }
-   void mouseClicked() {
+  void mouseClicked() {
     Entity p = isMouseOver();
     if (p != null) {
       p.mouseClicked();

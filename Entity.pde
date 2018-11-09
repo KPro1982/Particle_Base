@@ -1,4 +1,4 @@
-class Entity implements IHaveParticle, ISensable, IClickable {
+class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   String name = "Enity";
   Particle particle;
   PImage skin;
@@ -8,10 +8,13 @@ class Entity implements IHaveParticle, ISensable, IClickable {
   color col = 255;
   float pSize = 50;
   boolean showSightLine = true;
+  ArrayList<ISenseStrategy> senses;
 
   Entity(World _world, float _ex, float _ey, float _rot) {
     particle = new Particle(_world, _ex, _ey, _rot);
+    senses = new ArrayList<ISenseStrategy>();
   }
+
   Particle getParticle() {
     return particle;
   }
@@ -36,11 +39,11 @@ class Entity implements IHaveParticle, ISensable, IClickable {
   void ey(float _ey) {
     getParticle().ey(_ey);
   }
-  
+
   World getWorld() {
     return getParticle().world;
   }
-  
+
   void loadSkin() {
     if (hasSkin) {
       skin = loadImage(skinFn);
@@ -57,6 +60,12 @@ class Entity implements IHaveParticle, ISensable, IClickable {
   void setRotation(float _rot) {
     getParticle().setRotation(_rot);
   }
+  
+  void setSense(ISenseStrategy _senseStrategy) {
+   senses.add(_senseStrategy);
+  }
+  
+
 
   void draw() {
 

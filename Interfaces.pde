@@ -23,3 +23,6 @@ interface IHaveParticle {
 interface ISensable {
   
 }
+interface ISenseStrategy {
+  ArrayList<ISensable> sense();
+}
