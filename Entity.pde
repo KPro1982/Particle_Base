@@ -66,7 +66,12 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   void setRotation(float _rot) {
     getParticle().setRotation(_rot);
   }
-
+  float getBearing() {
+    return getParticle().getBearing();
+  }
+  void setBearing(float _bearing) {
+    getParticle().setBearing(_bearing);
+  }
 
   void addSense(ISenseStrategy _senseStrategy) {
     senses.add(_senseStrategy);
@@ -86,6 +91,11 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   void rotateTo(IHaveParticle _p) {
     getParticle().rotateTo(_p.getParticle());
   }
+  
+  void moveOnBearing(float _dist) {
+   getParticle().moveOnBearing(_dist); 
+  }
+  
 
   void sense() {
     for (ISenseStrategy iss : senses) {

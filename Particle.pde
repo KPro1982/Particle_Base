@@ -1,4 +1,4 @@
-class Particle { //<>// //<>//
+class Particle { //<>// //<>// //<>//
 
   // -------------------------------------------------------------------------
   // DECLARATIONS
@@ -13,7 +13,7 @@ class Particle { //<>// //<>//
   // PHYSICS
 
   float px, py, ex, ey;
-  float rot;  // change to bearing
+  float rot, bearing = 0;
 
 
 
@@ -53,6 +53,13 @@ class Particle { //<>// //<>//
   void setRotation(float _rot) {
     rot = _rot;
   }
+   float getBearing() {
+    return bearing;
+  }
+  void setBearing(float _bearing) {
+    bearing = _bearing;
+  }
+  
   float px() {
     px = map(ex, -world.worldWidth/2, +world.worldWidth/2, 0, world.screenWidth);
     return px;
@@ -144,8 +151,10 @@ class Particle { //<>// //<>//
     return vDiff.heading();
   }
   
-  //PVector distanceOnBearing(float dist) {
-  //}
+  void moveOnBearing(float dist) {
+    ex += dist*cos(bearing);
+    ey -= dist*sin(bearing);
+  }
 
   boolean outOfBounds() {
     if (abs(ex) > world.worldWidth/2-50) {

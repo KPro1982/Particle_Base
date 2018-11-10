@@ -25,22 +25,27 @@ class Animal extends Entity implements ICanMove, ICanMate {
   }
   boolean hasMate() {
     return mate != null;
-  
   }
   void tick() {
     stomach -= .1;
     ticksSinceLastChild++;
   }
-  
+
   void execute() {
-    turnTo(10);
-    
+
+    move(1);
   }
-  
+
   void turnTo(float bTo) {
     rotateTo(world.entities.get(0));
   }
-  
+
   void move(float dist) {
+
+    if (outOfBounds()) {
+      setRotation(getRotation()+PI);
+    }
+    setBearing(getRotation());
+    moveOnBearing(3);
   }
 }
