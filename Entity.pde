@@ -8,6 +8,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   color col = 255;
   float pSize = 50;
   boolean showSightLine = true;
+  boolean showSenseCone = true;
   boolean sensed;
   ArrayList<ISenseStrategy> senses;
   ArrayList<ICanSense> sensedBy;
@@ -101,6 +102,9 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
       // remove all instances of s in list
     }
   }
+  
+
+    
 
   void draw() {
 
@@ -118,6 +122,13 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
       ellipse(0, 0, pSize, pSize);
     }
     if (showSightLine) line(0, 0, pSize/2, 0);
+    if (showSenseCone) {
+       for (ISenseStrategy iss : senses) {
+         iss.drawSenseCone();
+       }
+       
+      
+    }
     popMatrix();
     popStyle();
   }

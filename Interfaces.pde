@@ -1,5 +1,6 @@
 interface ICanSense extends IHaveParticle {
   World getWorld();
+  
 }
 
 interface IClickable {
@@ -29,4 +30,5 @@ interface ISensable extends IHaveParticle {
 }
 interface ISenseStrategy {
   ArrayList<ISensable> sense();
+  void drawSenseCone();
 }
