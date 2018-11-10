@@ -13,8 +13,7 @@ class Particle { //<>// //<>//
   // PHYSICS
 
   float px, py, ex, ey;
-  float bearing;  
-  float rot;
+  float rot;  // change to bearing
 
 
 
@@ -32,7 +31,7 @@ class Particle { //<>// //<>//
     ey = random(-world.worldHeight/4, +world.worldHeight/4);
     px = px();
     py = py();
-    bearing = random(-PI, PI);
+    rot = random(-PI, PI);
   }
 
   Particle(World _world, float _ex, float  _ey, float _rot) {
@@ -48,19 +47,12 @@ class Particle { //<>// //<>//
   //  -------------------------------------------------------------------------
   //    Getters and Setters 
   //  -------------------------------------------------------------------------
-  float getBearing() {
-    return bearing;
-  }
-  void setBearing(float _bearing) {
-    bearing = _bearing;
-  }
-    float getRotation() {
+  float getRotation() {
     return rot;
   }
   void setRotation(float _rot) {
     rot = _rot;
   }
-  
   float px() {
     px = map(ex, -world.worldWidth/2, +world.worldWidth/2, 0, world.screenWidth);
     return px;
@@ -132,7 +124,7 @@ class Particle { //<>// //<>//
     float angle2 = 0;
     PVector vDiff = PVector.sub(v2, v1);
     vDiff.normalize();
-    PVector oVect = PVector.fromAngle(-bearing);
+    PVector oVect = PVector.fromAngle(-rot);
     float h1 = oVect.heading();
     float h2 = vDiff.heading();
     println(degrees(h1) + ", " + degrees(h2));
@@ -140,13 +132,13 @@ class Particle { //<>// //<>//
     return angle2;
   }
 
-  float rotateTo(Particle p1, Particle p2) {
+  float bearingTo(Particle p1, Particle p2) {
     PVector px1 = new PVector(p1.px(), p1.py());
     PVector px2 = new PVector(p2.px(), p2.py());
-    return rotateTo(px1, px2);
+    return bearingTo(px1, px2);
   }
 
-  float rotateTo(PVector v1, PVector v2) {
+  float bearingTo(PVector v1, PVector v2) {
     PVector vDiff = PVector.sub(v2, v1);
     vDiff.normalize();
     return vDiff.heading();

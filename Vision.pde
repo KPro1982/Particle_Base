@@ -49,7 +49,7 @@ class Vision implements ISenseStrategy {
       if (self != sensedBody) {
         float dist = self.distanceTo(sensedBody);
         if (dist < range) {
-          float bTo = self.rotateTo(self, sensedBody);
+          float bTo = self.bearingTo(self, sensedBody);
           if (abs(self.getRotation()  - bTo) <= field) {
             println("Vision: " + self + " Dist: " + dist);
             
