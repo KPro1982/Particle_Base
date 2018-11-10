@@ -1,5 +1,5 @@
-class Vision implements SenseStrategy { //<>//
-  float range = 1000;
+class Vision implements ISenseStrategy {
+  float range =  200;
   float field = PI/4;
   ICanSense body;
   World world;
@@ -10,53 +10,36 @@ class Vision implements SenseStrategy { //<>//
 
   ArrayList<ISensable> sensed;
 
-  Vision(ICanSense _e, float _range, float _field) {
-    range = _range;
-    field = _field;
-
-    body = _e;
-    world = _e.getWorld();
+  Vision(ICanSense _body) {
+    body = _body;
+    world = body.getWorld();
     sensed = new ArrayList<ISensable>();
   }
 
-//  ArrayList<ISensable> sense() {
-//    sensed.clear();
+  ArrayList<ISensable> sense() {
+    for (ISensable pp : sensed) {  
+      pp.removeSensedBy(body);  // clear sensedBy flags in other objects
+    }
+    sensed.clear();
+    
+    for (ISensable ss : world.entities) {
+      if (body != ss) {
+        float dist = body.distanceTo(ss);
+        //ss.setSensed(false);
+        if (dist < range) {
+          float bTo = body.bearingTo(body, ss);
+          if (abs(body.getRotation()  - bTo) <= field) {
+            sensed.add(ss);
+            ss.addSensedBy(body);
+          }
+        }
+      }
+    }
 
-//    for (IHaveParticle p : world.entities) {
-//      if (p != body) {
-//        float bTo =  body.getParticle().bearingTo(body,p); //<>//
-//        println("P1:");
-//        body.printPhysics();
-//        println("P2:");
-//        p.printPhysics();
-//        println("Bearingto: " + degrees(bTo) + " rot: " + degrees(body.rot));
+    return sensed;
+  }
+}
 
-//        if (abs(body.rot - bTo) <= field) {
-//          if (body.distanceTo(p) <= range) { 
-//            canSeeParticles.add(p);
-//          }
-//        }
-//      }
-//    }
-//    if (canSeeParticles.size() == 0) {
-//      canSee = false;
-//    } else {
-//      canSee = true;
-//    }
-//    return canSeeParticles;
-//  }
-//  //void draw() {
-
-
-//  //  pushStyle();
-//  //  pushMatrix();
-//  //  translate(body.px(), body.py());
-//  //  rotate(body.rot);
-//  //  noStroke();
-//  //  drawSightCone();
-//  //  popMatrix();
-//  //  popStyle();
-//  //}
 
 
 ////  void drawSightCone() {

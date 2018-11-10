@@ -28,7 +28,8 @@ class World {
   //}
 
   void createParticle(float _ex, float _ey, float _rot) {
-    entities.add(new Entity(this, _ex, _ey, _rot));
+    entities.add(new Animal(this, _ex, _ey, _rot));
+  
   }
 
   void setup() {
@@ -65,13 +66,11 @@ class World {
     }
   }
 
-  void run() {
+  void step() {
 
-
-
-    //for (Entity p : entities) {
-    //  //p.particle.run();
-    //}
+    for (Entity p : entities) {
+      ((Animal) p).step();
+    }
   }
 
   Entity isMouseOver() {
@@ -88,7 +87,9 @@ class World {
     Entity p = isMouseOver();
     if (p != null) {
       p.mouseDragged();
+      //step();
     }
+    
   }
   void mouseClicked() {
     Entity p = isMouseOver();

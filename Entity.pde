@@ -8,11 +8,16 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   color col = 255;
   float pSize = 50;
   boolean showSightLine = true;
+  boolean sensed;
   ArrayList<ISenseStrategy> senses;
+  ArrayList<ICanSense> sensedBy;
+  World world;
 
   Entity(World _world, float _ex, float _ey, float _rot) {
-    particle = new Particle(_world, _ex, _ey, _rot);
+    world = _world;
+    particle = new Particle(world, _ex, _ey, _rot);
     senses = new ArrayList<ISenseStrategy>();
+    sensedBy = new ArrayList<ICanSense>();
   }
 
   Particle getParticle() {
@@ -60,12 +65,42 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   void setRotation(float _rot) {
     getParticle().setRotation(_rot);
   }
-  
-  void setSense(ISenseStrategy _senseStrategy) {
-   senses.add(_senseStrategy);
+
+  void addSense(ISenseStrategy _senseStrategy) {
+    senses.add(_senseStrategy);
+  }
+
+  float bearingTo(IHaveParticle p1, IHaveParticle p2) {
+    return getParticle().bearingTo(p1.getParticle(), p2.getParticle());
+  }
+  float distanceTo(IHaveParticle _p) {
+    return getParticle().distanceTo(_p.getParticle()) ;
   }
   
+  boolean outOfBounds()  {
+   return getParticle().outOfBounds(); 
+  }
 
+  void sense() {
+    for (ISenseStrategy iss : senses) {
+      iss.sense();
+      //println("Objects sensed = " + iss.sense().size());
+    }
+  }
+
+  void addSensedBy(ICanSense p) { 
+    sensed = true;
+    col = color(0, 255, 0);
+    sensedBy.add(p);
+  }
+  
+  void removeSensedBy(ICanSense s)  {
+    sensed = false;
+    col = color(255);
+    while (sensedBy.remove(s)) {  
+      // remove all instances of s in list
+    }
+  }
 
   void draw() {
 
@@ -117,11 +152,11 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   }
 
   void mouseClicked() {
-    if (col == color(255, 0, 0)) {
-      col = 255;
-    } else {
-      col = color(255, 0, 0);
-    }
+    //if (col == color(255, 0, 0)) {
+    //  col = 255;
+    //} else {
+    //  col = color(255, 0, 0);
+    //}
   }
   // ********************** END MOUSE CONTROL HANDLERS ************************************
 }

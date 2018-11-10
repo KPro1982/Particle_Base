@@ -16,7 +16,7 @@ class Particle { //<>// //<>//
   float rot;  // change to bearing
 
 
-  
+
 
 
   // ***************** END DECLARATIONS **************************************
@@ -42,9 +42,8 @@ class Particle { //<>// //<>//
     rot = _rot;
     px = px();
     py = py();
-
   }
-  
+
   //  -------------------------------------------------------------------------
   //    Getters and Setters 
   //  -------------------------------------------------------------------------
@@ -63,7 +62,7 @@ class Particle { //<>// //<>//
     py = map(ey, +world.worldHeight/2, -world.worldHeight/2, 0, world.screenHeight);
     return py;
   }
- float ex() {
+  float ex() {
     return ex;
   }
   float ey() {
@@ -73,29 +72,31 @@ class Particle { //<>// //<>//
     ex = _ex;
   }
   void ey(float _ey) {
-   ey = _ey;
+    ey = _ey;
   }
-    
-  
+
+
   PVector getPVector() {
     return new PVector(ex, ey);
   }
 
- // ------------------------------------------------------------------------------------
-  // END GETTERS AND SETTERS 
-  //  ------------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------------
+  // HELPER FUNCTIONS 
+  // ------------------------------------------------------------------------------------
 
- 
+
   void printPhysics() {
     println("environ: (" + ex + "," + ey + ")");
     println("pixel: (" + px + "," + ey + ")");
     println("rotation: radians (" + rot + ") degrees (" + degrees(rot) + ")");
   }
+
   float distanceTo(Particle _p) {
     float dx = ex - _p.ex;
     float dy = ey - _p.ey;
     return sqrt(dx*dx+dy*dy);
   }
+
   void rotateToMouse() {
     PVector targetVect = new PVector(mouseX, mouseY);
     PVector pVect = new PVector(px(), py());
@@ -103,8 +104,6 @@ class Particle { //<>// //<>//
     rot += angleTo(pVect, targetVect);
     //println("heading:" + pVect.heading2D());
   }
-
-
 
   void rotateTo(Particle _p) {
 
@@ -120,6 +119,7 @@ class Particle { //<>// //<>//
 
     return angleTo(targetVect, pVect);
   }
+  
   float angleTo(PVector v1, PVector v2) {
     float angle2 = 0;
     PVector vDiff = PVector.sub(v2, v1);
@@ -131,18 +131,17 @@ class Particle { //<>// //<>//
     angle2 = h1 + h2;
     return angle2;
   }
-  
+
   float bearingTo(Particle p1, Particle p2) {
-    PVector px1 = new PVector(p1.px(),p1.py());
-    PVector px2 = new PVector(p2.px(),p2.py());
-    return bearingTo(px1,px2);
+    PVector px1 = new PVector(p1.px(), p1.py());
+    PVector px2 = new PVector(p2.px(), p2.py());
+    return bearingTo(px1, px2);
   }
-  
+
   float bearingTo(PVector v1, PVector v2) {
     PVector vDiff = PVector.sub(v2, v1);
     vDiff.normalize();
     return vDiff.heading();
-    
   }
 
   boolean outOfBounds() {
@@ -156,6 +155,4 @@ class Particle { //<>// //<>//
   }
 
   // ********************** END HELPER FUNCTIONS ******************************************
-
-  
 }
