@@ -92,8 +92,8 @@ class Particle { //<>// //<>//
   }
 
   float distanceTo(Particle _p) {
-    float dx = ex - _p.ex;
-    float dy = ey - _p.ey;
+    float dx = ex() - _p.ex();
+    float dy = ey() - _p.ey();
     return sqrt(dx*dx+dy*dy);
   }
 
