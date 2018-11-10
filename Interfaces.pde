@@ -19,7 +19,7 @@ interface IHaveParticle {
   void ey(float _ey);
   float getRotation();
   void setRotation(float _rot);
-  float bearingTo(IHaveParticle p1, IHaveParticle p2);
+  float rotateTo(IHaveParticle p1, IHaveParticle p2);
   void rotateTo(IHaveParticle _p);
   float distanceTo(IHaveParticle _p);
   boolean outOfBounds();

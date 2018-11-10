@@ -72,8 +72,8 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     senses.add(_senseStrategy);
   }
 
-  float bearingTo(IHaveParticle p1, IHaveParticle p2) {
-    return getParticle().bearingTo(p1.getParticle(), p2.getParticle());
+  float rotateTo(IHaveParticle p1, IHaveParticle p2) {
+    return getParticle().rotateTo(p1.getParticle(), p2.getParticle());
   }
   float distanceTo(IHaveParticle _p) {
     return getParticle().distanceTo(_p.getParticle()) ;
