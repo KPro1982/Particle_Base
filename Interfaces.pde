@@ -20,6 +20,7 @@ interface IHaveParticle {
   float getRotation();
   void setRotation(float _rot);
   float bearingTo(IHaveParticle p1, IHaveParticle p2);
+  void rotateTo(IHaveParticle _p);
   float distanceTo(IHaveParticle _p);
   boolean outOfBounds();
 }
@@ -31,4 +32,13 @@ interface ISensable extends IHaveParticle {
 interface ISenseStrategy {
   ArrayList<ISensable> sense();
   void drawSenseCone();
+}
+
+interface ICanMove {
+   
+}
+
+interface ICanMate {
+  
+  
 }

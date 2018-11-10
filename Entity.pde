@@ -67,6 +67,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     getParticle().setRotation(_rot);
   }
 
+
   void addSense(ISenseStrategy _senseStrategy) {
     senses.add(_senseStrategy);
   }
@@ -77,9 +78,13 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   float distanceTo(IHaveParticle _p) {
     return getParticle().distanceTo(_p.getParticle()) ;
   }
-  
-  boolean outOfBounds()  {
-   return getParticle().outOfBounds(); 
+
+  boolean outOfBounds() {
+    return getParticle().outOfBounds();
+  }
+
+  void rotateTo(IHaveParticle _p) {
+    getParticle().rotateTo(_p.getParticle());
   }
 
   void sense() {
@@ -94,17 +99,17 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     col = color(0, 255, 0);
     sensedBy.add(p);
   }
-  
-  void removeSensedBy(ICanSense s)  {
+
+  void removeSensedBy(ICanSense s) {
     sensed = false;
     col = color(255);
     while (sensedBy.remove(s)) {  
       // remove all instances of s in list
     }
   }
-  
 
-    
+
+
 
   void draw() {
 
@@ -123,11 +128,9 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     }
     if (showSightLine) line(0, 0, pSize/2, 0);
     if (showSenseCone) {
-       for (ISenseStrategy iss : senses) {
-         iss.drawSenseCone();
-       }
-       
-      
+      for (ISenseStrategy iss : senses) {
+        iss.drawSenseCone();
+      }
     }
     popMatrix();
     popStyle();

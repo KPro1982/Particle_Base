@@ -143,6 +143,9 @@ class Particle { //<>// //<>//
     vDiff.normalize();
     return vDiff.heading();
   }
+  
+  //PVector distanceOnBearing(float dist) {
+  //}
 
   boolean outOfBounds() {
     if (abs(ex) > world.worldWidth/2-50) {
