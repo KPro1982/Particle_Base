@@ -42,3 +42,20 @@ interface ICanMove {
 
 interface ICanMate {
 }
+
+interface ICarnivore extends ICanEat{
+  
+}
+
+interface IHerbavore extends ICanEat {
+}
+interface ICanEat {
+  void feed(float _food);
+  float getStomach();
+  float getStomachFull();
+  void burnFood(float _food);
+}
+
+interface IBehavior {
+  boolean execute();
+}

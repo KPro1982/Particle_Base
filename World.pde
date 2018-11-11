@@ -21,16 +21,20 @@ class World {
     entities.add(_p);
   }
 
-  //void createParticle() {
-  //  Particle p = new LadyBug(this);
-  //  p.loadSkin();
-  //  entities.add(p);
-
-  //}
+  void createParticle() {
+    if (random(0, 2) > 1.2) {
+      entities.add(new Wolf(nextId++, this, random(-worldWidth/2,+worldWidth/2), random(-worldHeight/2,+worldHeight/2), random(0,2*PI)));
+    } else {
+      entities.add(new Cow(nextId++, this, random(-worldWidth/2,+worldWidth/2), random(-worldHeight/2,+worldHeight/2), random(0,2*PI)));
+    }
+  }
 
   void createParticle(float _ex, float _ey, float _rot) {
-    entities.add(new Animal(nextId++,this, _ex, _ey, _rot));
-  
+    if (random(0, 2) > 2) {
+      entities.add(new Wolf(nextId++, this, _ex, _ey, _rot));
+    } else {
+      entities.add(new Cow(nextId++, this, _ex, _ey, _rot));
+    }
   }
 
   void setup() {
@@ -73,8 +77,8 @@ class World {
       ((Animal) p).step();
     }
   }
-  
-    void sense() {
+
+  void sense() {
 
     for (Entity p : entities) {
       ((Animal) p).sense();
@@ -97,7 +101,6 @@ class World {
       p.mouseDragged();
       sense();
     }
-    
   }
   void mouseClicked() {
     Entity p = isMouseOver();

@@ -4,6 +4,7 @@ class PredatorVision extends Vision {
     super(_self);
     range = 300;
     field = PI/4;
+    coneCol = color(255,0,0,100);
   }
   
   
@@ -15,6 +16,7 @@ class PreyVision extends Vision {
     super(_self);
     range = 150;
     field = radians(300);
+    coneCol = color(0,255,0,100);
   }
   
   
@@ -28,6 +30,7 @@ class Vision implements ISenseStrategy {
   World world;
   String name = "Sensor";
   boolean showSightCone = true;
+  color coneCol;
 
 
 
@@ -76,7 +79,7 @@ class Vision implements ISenseStrategy {
     stroke(210);
     if (showSightCone) {
       if (sensed.size() > 0) {
-        fill(0, 255, 0, 100);  // green cone if can see
+        fill(coneCol);  // green cone if can see
       } else {
         fill(210, 100);  // otherwise gray
       }
