@@ -25,6 +25,7 @@ interface IHaveParticle {
   float distanceTo(IHaveParticle _p);
   boolean outOfBounds();
   void moveOnBearing(float dist);
+  int getId();
 }
 
 interface ISensable extends IHaveParticle {

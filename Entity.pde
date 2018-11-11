@@ -24,7 +24,12 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   Particle getParticle() {
     return particle;
   }
-
+  int getId() {
+    return getParticle().getId();
+  }
+  void setId(int _id) {
+    getParticle().setId(_id);
+  }
   float px() {
     return getParticle().px();
   }
@@ -91,11 +96,11 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   void rotateTo(IHaveParticle _p) {
     getParticle().rotateTo(_p.getParticle());
   }
-  
+
   void moveOnBearing(float _dist) {
-   getParticle().moveOnBearing(_dist); 
+    getParticle().moveOnBearing(_dist);
   }
-  
+
 
   void sense() {
     for (ISenseStrategy iss : senses) {
@@ -129,13 +134,22 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     pushMatrix();
     pushStyle();
     translate(px(), py());
+    ellipse(0, 0, pSize, pSize);
+    fill(255,0,0);
+    textAlign(CENTER,CENTER);
+    textSize(30);
+    text(getId(), 0, 0);
+    pushStyle();
     rotate(getRotation());
     fill(col);
     if (hasSkin) {
       image(skin, 0, 0);
-    } else {
-      ellipse(0, 0, pSize, pSize);
-    }
+    } 
+
+    //line(-10, 0, 10, 0);  // center X
+    //line(0, -10, 0, 10);
+
+
     if (showSightLine) line(0, 0, pSize/2, 0);
     if (showSenseCone) {
       for (ISenseStrategy iss : senses) {
@@ -144,10 +158,11 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     }
     popMatrix();
     popStyle();
+    popStyle();
   }
 
   String toString() {
-    return name + ": e(" + ex() + "," + ey()+ "); p(" + px() +"," + py() + "); Rot: " + getRotation();
+    return name + " " + getParticle().getId() + ": e(" + ex() + "," + ey()+ "); p(" + px() +"," + py() + "); Rot: " + getRotation();
   }
 
 

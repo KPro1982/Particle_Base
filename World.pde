@@ -5,6 +5,7 @@ class World {
   float screenWidth, screenHeight, worldWidth, worldHeight;
   ArrayList<Entity> entities;
   Entity selected;
+  int nextId = 0;
 
 
   World(float _screenWidth, float _screenHeight, float _worldWidth, float _worldHeight) {
@@ -28,7 +29,7 @@ class World {
   //}
 
   void createParticle(float _ex, float _ey, float _rot) {
-    entities.add(new Animal(this, _ex, _ey, _rot));
+    entities.add(new Animal(nextId++,this, _ex, _ey, _rot));
   
   }
 
@@ -72,6 +73,13 @@ class World {
       ((Animal) p).step();
     }
   }
+  
+    void sense() {
+
+    for (Entity p : entities) {
+      ((Animal) p).sense();
+    }
+  }
 
   Entity isMouseOver() {
 
@@ -87,7 +95,7 @@ class World {
     Entity p = isMouseOver();
     if (p != null) {
       p.mouseDragged();
-      //step();
+      sense();
     }
     
   }
@@ -95,6 +103,7 @@ class World {
     Entity p = isMouseOver();
     if (p != null) {
       p.mouseClicked();
+      println(p);
     }
   }
 }

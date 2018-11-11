@@ -6,7 +6,7 @@ class Particle { //<>// //<>// //<>//
 
 
   // IDENTITY
-
+  int id;
   World world;
 
 
@@ -47,19 +47,25 @@ class Particle { //<>// //<>// //<>//
   //  -------------------------------------------------------------------------
   //    Getters and Setters 
   //  -------------------------------------------------------------------------
+  void setId(int _id) {
+    id = _id;
+  }
+  int getId() {
+    return id;
+  }
   float getRotation() {
     return rot;
   }
   void setRotation(float _rot) {
     rot = _rot;
   }
-   float getBearing() {
+  float getBearing() {
     return bearing;
   }
   void setBearing(float _bearing) {
     bearing = _bearing;
   }
-  
+
   float px() {
     px = map(ex, -world.worldWidth/2, +world.worldWidth/2, 0, world.screenWidth);
     return px;
@@ -126,7 +132,7 @@ class Particle { //<>// //<>// //<>//
 
     return angleTo(targetVect, pVect);
   }
-  
+
   float angleTo(PVector v1, PVector v2) {
     float angle2 = 0;
     PVector vDiff = PVector.sub(v2, v1);
@@ -150,7 +156,7 @@ class Particle { //<>// //<>// //<>//
     vDiff.normalize();
     return vDiff.heading();
   }
-  
+
   void moveOnBearing(float dist) {
     ex += dist*cos(bearing);
     ey -= dist*sin(bearing);

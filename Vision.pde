@@ -47,11 +47,14 @@ class Vision implements ISenseStrategy {
 
     for (ISensable sensedBody : world.entities) {
       if (self != sensedBody) {
-        float dist = self.distanceTo(sensedBody);
+        float dist = self.distanceTo(sensedBody);  // within vision range
         if (dist < range) {
-          float bTo = self.bearingTo(self, sensedBody);
-          if (abs(self.getRotation()  - bTo) <= field) {
-            println("Vision: " + self + " Dist: " + dist);
+          float bTo = self.getRotation()  - self.bearingTo(self, sensedBody);
+          if (bTo <= +field/2 && bTo >= -field/2) {  // within angle of vision
+            if (bprint) {
+              bprint = !bprint;
+            println("("+ self.getId() + ") BearingTo (" + sensedBody.getId() + "): " + degrees(bTo) + ", " + dist);
+            }
             
             sensed.add(sensedBody);
             sensedBody.addSensedBy(self);

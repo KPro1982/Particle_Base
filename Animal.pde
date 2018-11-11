@@ -6,9 +6,10 @@ class Animal extends Entity implements ICanMove, ICanMate {
   int ticksSinceLastChild = 0;
 
 
-  Animal(World _world, float _ex, float _ey, float _rot) {
+  Animal(int _id, World _world, float _ex, float _ey, float _rot) {
     super(_world, _ex, _ey, _rot);
-    if (random(0, 2) > .5) {
+    getParticle().setId(_id);
+    if (random(0, 2) > 1) {
       addSense(new PreyVision(this));
     } else {
       addSense(new PredatorVision(this));

@@ -1,14 +1,14 @@
-public void Mouse(int theValue) {
-  //rotateMouse = !rotateMouse;
+public void Pause (int theValue) {
+  pause = !pause;
 }
-public void Sel(int theValue) {
+public void Print(int theValue) {
 
-  //rotateSelected = !rotateSelected;
+  bprint = !bprint;
 }
 
-public void Drag(int theValue) {
+public void Select(int theValue) {
 
-  //rotateDrag = !rotateDrag;
+  selected = !selected;
 }
 public void Add(int theValue) {
   //swamp.createParticle();
