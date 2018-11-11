@@ -53,7 +53,7 @@ class Vision implements ISenseStrategy {
           if (bTo <= +field/2 && bTo >= -field/2) {  // within angle of vision
             if (bprint) {
               bprint = !bprint;
-            println("("+ self.getId() + ") BearingTo (" + sensedBody.getId() + "): " + degrees(bTo) + ", " + dist);
+            println("("+ self.getId() + ") BearingTo (" + sensedBody.getId() + "): " + degrees(bTo) + " deg, " + dist);
             }
             
             sensed.add(sensedBody);

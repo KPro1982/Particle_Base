@@ -39,7 +39,7 @@ class Particle { //<>// //<>// //<>//
 
     ex = _ex;
     ey = _ey;
-    rot = _rot;
+    setRotation(_rot);
     px = px();
     py = py();
   }
@@ -54,9 +54,12 @@ class Particle { //<>// //<>// //<>//
     return id;
   }
   float getRotation() {
+    rot = rot % (2*PI); // make sure that rot does not exceed 2PI
     return rot;
   }
   void setRotation(float _rot) {
+    
+    rot = rot % (2*PI);  // make sure that rot does not exceed 2PI
     rot = _rot;
   }
   float getBearing() {
@@ -114,16 +117,15 @@ class Particle { //<>// //<>// //<>//
     PVector targetVect = new PVector(mouseX, mouseY);
     PVector pVect = new PVector(px(), py());
 
-    rot += angleTo(pVect, targetVect);
-    //println("heading:" + pVect.heading2D());
+    setRotation(getRotation() + angleTo(pVect, targetVect));
+    
   }
 
   void rotateTo(Particle _p) {
 
     PVector targetVect = new PVector(_p.px(), _p.py());  // this should be based of of ex, ey but doesn't work for some reason
     PVector pVect = new PVector(px(), py());             // this may break if the environment > screen
-
-    rot += angleTo(pVect, targetVect);
+    setRotation(getRotation() + angleTo(pVect, targetVect));
   }
 
   float angleTo(Particle _p) {
@@ -137,7 +139,7 @@ class Particle { //<>// //<>// //<>//
     float angle2 = 0;
     PVector vDiff = PVector.sub(v2, v1);
     vDiff.normalize();
-    PVector oVect = PVector.fromAngle(-rot);
+    PVector oVect = PVector.fromAngle(-getRotation());
     float h1 = oVect.heading();
     float h2 = vDiff.heading();
     println(degrees(h1) + ", " + degrees(h2));
