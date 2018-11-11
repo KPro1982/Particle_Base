@@ -3,9 +3,10 @@ class World {
   boolean showAxes = true;
 
   float screenWidth, screenHeight, worldWidth, worldHeight;
-  ArrayList<Entity> entities;
+  ArrayList<Animal> entities;
   Entity selected;
   int nextId = 0;
+  int tickCounter = 0;
 
 
   World(float _screenWidth, float _screenHeight, float _worldWidth, float _worldHeight) {
@@ -13,10 +14,10 @@ class World {
     screenHeight = _screenHeight;
     worldWidth = _worldWidth;
     worldHeight = _worldHeight;
-    entities = new ArrayList<Entity>();
+    entities = new ArrayList<Animal>();
   }
 
-  void addParticle(Entity _p) {
+  void addParticle(Animal _p) {
 
     entities.add(_p);
   }
@@ -71,23 +72,23 @@ class World {
     }
   }
 
-  void step() {
-
-    for (Entity p : entities) {
-      ((Animal) p).step();
+  void tick() {
+    tickCounter++;
+    for (Animal p : entities) {
+      p.tick(tickCounter);
     }
   }
 
   void sense() {
 
-    for (Entity p : entities) {
-      ((Animal) p).sense();
+    for (Animal p : entities) {
+      p.sense();
     }
   }
 
   Entity isMouseOver() {
 
-    for (Entity p : entities) {
+    for (Animal p : entities) {
       if (p.mouseOver()) {  // assumes that mouse is over only one object at  a time
         return p;
       } else {

@@ -6,6 +6,7 @@ class Particle { //<>// //<>// //<>//
 
 
   // IDENTITY
+
   int id;
   World world;
 
@@ -14,15 +15,11 @@ class Particle { //<>// //<>// //<>//
 
   float px, py, ex, ey;
   float rot, bearing = 0;
+  int tickCounter = 0;
 
-
-
-
-
-  // ***************** END DECLARATIONS **************************************
 
   // -------------------------------------------------------------------------
-  // CONTRUCTORS
+  // CONTRUCTORS AND INITIALIZERS
   // -------------------------------------------------------------------------
   Particle(World _world) {
     world = _world;
@@ -58,7 +55,7 @@ class Particle { //<>// //<>// //<>//
     return rot;
   }
   void setRotation(float _rot) {
-    
+
     rot = rot % (2*PI);  // make sure that rot does not exceed 2PI
     rot = _rot;
   }
@@ -90,7 +87,12 @@ class Particle { //<>// //<>// //<>//
   void ey(float _ey) {
     ey = _ey;
   }
-
+  int getTick() {
+    return tickCounter;
+  }
+  void addTick() {
+    tickCounter++;
+  }
 
   PVector getPVector() {
     return new PVector(ex, ey);
@@ -118,7 +120,6 @@ class Particle { //<>// //<>// //<>//
     PVector pVect = new PVector(px(), py());
 
     setRotation(getRotation() + angleTo(pVect, targetVect));
-    
   }
 
   void rotateTo(Particle _p) {

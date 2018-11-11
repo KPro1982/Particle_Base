@@ -1,6 +1,5 @@
 class Graze implements IBehavior {
   IHerbavore self;
-  int tickCount = 0;
   boolean grazing = false; 
 
   Graze(IHerbavore _self) {

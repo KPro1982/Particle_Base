@@ -11,15 +11,41 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   boolean showSenseCone = true;
   boolean sensed;
   ArrayList<ISenseStrategy> senses;
-  ArrayList<ICanSense> sensedBy;
+  ArrayList<ICanSense> iSensedBy;
+  ArrayList<ISensable> iSensed;
   World world;
+
+  // -----------------------------------------------------------------------------
+  // Constructors and Initializers
+  // -----------------------------------------------------------------------------
 
   Entity(World _world, float _ex, float _ey, float _rot) {
     world = _world;
     particle = new Particle(world, _ex, _ey, _rot);
     senses = new ArrayList<ISenseStrategy>();
-    sensedBy = new ArrayList<ICanSense>();
+    iSensedBy = new ArrayList<ICanSense>();
+    iSensed = new ArrayList<ISensable>();
   }
+
+
+  void addSense(ISenseStrategy _senseStrategy) {
+    senses.add(_senseStrategy);
+  }
+
+  void loadSkin() {
+    if (hasSkin) {
+      skin = loadImage(skinFn);
+      skin.resize(skinSize, skinSize);  // assume square image
+    }
+  }
+  void setSkin(String _fn) {
+    skinFn = _fn;
+    hasSkin = true;
+  }
+
+  // -----------------------------------------------------------------------------
+  // IHaveParticle Interface Prereqs
+  // -----------------------------------------------------------------------------
 
   Particle getParticle() {
     return particle;
@@ -55,16 +81,6 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     return getParticle().world;
   }
 
-  void loadSkin() {
-    if (hasSkin) {
-      skin = loadImage(skinFn);
-      skin.resize(skinSize, skinSize);  // assume square image
-    }
-  }
-  void setSkin(String _fn) {
-    skinFn = _fn;
-    hasSkin = true;
-  }
   float getRotation() {
     return getParticle().getRotation();
   }
@@ -76,10 +92,6 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   }
   void setBearing(float _bearing) {
     getParticle().setBearing(_bearing);
-  }
-
-  void addSense(ISenseStrategy _senseStrategy) {
-    senses.add(_senseStrategy);
   }
 
   float bearingTo(IHaveParticle p1, IHaveParticle p2) {
@@ -100,31 +112,41 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   void moveOnBearing(float _dist) {
     getParticle().moveOnBearing(_dist);
   }
+  
+  int getTick() {
+    return getParticle().getTick(); 
+  }
+  
+  void addTick() {
+    getParticle().addTick();
+  }
+  
 
+  // -----------------------------------------------------------------------------
+  // Main Methods
+  // -----------------------------------------------------------------------------
 
-  void sense() {
+  ArrayList<ISensable> sense() {
+    iSensed.clear();
     for (ISenseStrategy iss : senses) {
-      iss.sense();
-      //println("Objects sensed = " + iss.sense().size());
+      iSensed.addAll(iss.sense());
     }
+    return iSensed;
   }
 
   void addSensedBy(ICanSense p) { 
     sensed = true;
     col = color(0, 255, 0);
-    sensedBy.add(p);
+    iSensedBy.add(p);
   }
 
   void removeSensedBy(ICanSense s) {
     sensed = false;
     col = color(255);
-    while (sensedBy.remove(s)) {  
+    while (iSensedBy.remove(s)) {  
       // remove all instances of s in list
     }
   }
-
-
-
 
   void draw() {
 
@@ -135,8 +157,8 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     pushStyle();
     translate(px(), py());
     ellipse(0, 0, pSize, pSize);
-    fill(255,0,0);
-    textAlign(CENTER,CENTER);
+    fill(255, 0, 0);
+    textAlign(CENTER, CENTER);
     textSize(30);
     text(getId(), 0, 0);
     pushStyle();
@@ -162,7 +184,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   }
 
   String toString() {
-    return name + " " + getParticle().getId() + ": e(" + ex() + "," + ey()+ "); p(" + px() +"," + py() + "); Rot: " + getRotation();
+    return name + " " + getParticle().getId() + ": sensed: " + iSensed.size() + " e(" + ex() + "," + ey()+ "); p(" + px() +"," + py() + "); Rot: " + getRotation();
   }
 
 
@@ -197,5 +219,4 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     //  col = color(255, 0, 0);
     //}
   }
-  // ********************** END MOUSE CONTROL HANDLERS ************************************
 }

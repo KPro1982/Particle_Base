@@ -14,7 +14,7 @@ class PreyVision extends Vision {
   
   PreyVision(ICanSense _self)  {
     super(_self);
-    range = 150;
+    range = 500;
     field = radians(300);
     coneCol = color(0,255,0,100);
   }

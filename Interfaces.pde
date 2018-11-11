@@ -1,6 +1,3 @@
-interface ICanSense extends IHaveParticle {
-  World getWorld();
-}
 
 interface IClickable {
   boolean mouseOver();
@@ -26,16 +23,25 @@ interface IHaveParticle {
   boolean outOfBounds();
   void moveOnBearing(float dist);
   int getId();
+  int getTick();
+  void addTick();
+}
+
+interface ISenseStrategy {
+  ArrayList<ISensable> sense();
+  void drawSenseCone();
+}
+
+interface ICanSense extends IHaveParticle {
+  World getWorld();
+  ArrayList<ISensable> sense();
 }
 
 interface ISensable extends IHaveParticle {
   void addSensedBy(ICanSense s);
   void removeSensedBy(ICanSense s);
 }
-interface ISenseStrategy {
-  ArrayList<ISensable> sense();
-  void drawSenseCone();
-}
+
 
 interface ICanMove {
 }
@@ -43,8 +49,7 @@ interface ICanMove {
 interface ICanMate {
 }
 
-interface ICarnivore extends ICanEat{
-  
+interface ICarnivore extends ICanEat {
 }
 
 interface IHerbavore extends ICanEat {

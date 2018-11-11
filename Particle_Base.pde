@@ -26,6 +26,6 @@ void setup() {
   //swamp.print();
 }
 void draw() {
-  if (!pause) swamp.step();
+  if (!pause) swamp.tick();
   swamp.draw();
 }
