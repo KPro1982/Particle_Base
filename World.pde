@@ -30,7 +30,7 @@ class World {
   }
 
   void createParticle(float _ex, float _ey, float _rot) {
-    if (random(0, 2) > 2) {
+    if (random(0, 2) > 1.5) {
       entities.add(new Wolf(nextId++, this, _ex, _ey, _rot));
     } else {
       entities.add(new Cow(nextId++, this, _ex, _ey, _rot));

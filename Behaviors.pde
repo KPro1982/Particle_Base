@@ -15,9 +15,11 @@ class Graze implements IBehavior {
         return true;
       }
     } else if (self.getStomach() < self.getStomachFull()) {
-      self.feed(.1);
+      self.feed(2);
+      
       return true;
     }
+    grazing = false;
     return false;
   }
   
@@ -36,7 +38,7 @@ class Wander implements IBehavior {
   boolean execute() {
     tickCounter++;
     if (tickCounter % int(random(75, 125)) == 0) {
-      self.setBearing(random(0, 2*PI));
+      self.setRotation(random(0, 2*PI));
     }
     self.move(wanderStep);
     self.burnFood(foodBurned);

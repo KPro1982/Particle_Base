@@ -12,9 +12,9 @@ void setup() {
   swamp = new World(width, height, width, height);
 
   swamp.createParticle();
-  //swamp.createParticle();
-  //swamp.createParticle();
-  //swamp.createParticle();
+  swamp.createParticle();
+  swamp.createParticle();
+  swamp.createParticle();
 
   myPanel = new CPanel(this);
   myPanel.setButtonSize(100, 75);
