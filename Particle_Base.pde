@@ -11,12 +11,12 @@ void setup() {
   size(3000, 2000);
   swamp = new World(width, height, width, height);
 
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 50; i++) {
     swamp.createParticle();
   }
   myPanel = new CPanel(this);
   myPanel.setButtonSize(100, 75);
-  String[] toggles = {"Pause", "Print", "Select", "Add"};
+  String[] toggles = {"Pause", "Print","Willtron","Narwhal"};
   myPanel.addToggle(toggles);
 
 

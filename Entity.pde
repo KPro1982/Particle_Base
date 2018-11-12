@@ -145,6 +145,9 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
 
   void kill() {
     dead = true;
+    if (dead == true) {
+     world.dinner((Animal) this);
+    }
     println(name + " [" + getId() + "] is dead.");
   }
   boolean isDead() {

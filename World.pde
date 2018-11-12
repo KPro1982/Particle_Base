@@ -24,11 +24,10 @@ class World {
 
   void createParticle() {
     if (random(0, 2) > 1.5) {
-      entities.add(new Wolf(nextId++, this, random(-worldWidth/2,+worldWidth/2), random(-worldHeight/2,+worldHeight/2), random(0,2*PI)));
+      entities.add(new Wolf(nextId++, this, random(-worldWidth/2, +worldWidth/2), random(-worldHeight/2, +worldHeight/2), random(0, 2*PI)));
     } else {
-      entities.add(new Cow(nextId++, this, random(-worldWidth/2,+worldWidth/2), random(-worldHeight/2,+worldHeight/2), random(0,2*PI)));
+      entities.add(new Cow(nextId++, this, random(-worldWidth/2, +worldWidth/2), random(-worldHeight/2, +worldHeight/2), random(0, 2*PI)));
     }
-    
   }
 
   void createParticle(float _ex, float _ey, float _rot) {
@@ -78,15 +77,14 @@ class World {
     tickCounter++;
     for (int i = entities.size() - 1; i >=0; i--) {
       Animal p = entities.get(i);
-      
-      if (p.isDead()) {
-        entities.remove(i);  // remove dead bodies
-        println("DEAD BODY REMOVED");
-      } else {
-        p.tick(tickCounter);
-      }
-        
+      p.tick(tickCounter);
     }
+  }
+
+  void dinner(Animal p) {
+    entities.remove(p);  // remove dead bodies
+    println("Carcass Eaten");
+ 
   }
 
   void sense() {

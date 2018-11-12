@@ -6,17 +6,17 @@ class Graze implements IBehavior {
     self = _self;
   }
   boolean execute() {
-    println(this);
+    //println(this);
     if (!grazing) {
       if (self.getStomach() < 1) {
         self.feed(.1);
         grazing = true;
-        println(this);
+        //println(this);
         return true;
       }
     } else if (self.getStomach() < self.getStomachFull()) {
       self.feed(2);
-      println(this);
+      //println(this);
       return true;
     }
     grazing = false;
@@ -46,7 +46,7 @@ class Wander implements IBehavior {
     }
     self.move(wanderStep);
     self.burnFood(foodBurned);
-    println(this);
+    //println(this);
     return true;
   }
   String toString() {
@@ -66,7 +66,7 @@ class Avoid extends Track {
     self.setRotation(self.getRotation()+PI);
   }
   String toString() {
-    String s = self.getName() + " [" + self.getId() + "] Avioding ..." + targetType.getName(); 
+    String s = self.getName() + " [" + self.getId() + "] Avoiding ..." + targetType.getName(); 
     return s;
   }
 }
@@ -118,50 +118,73 @@ class Track implements IBehavior {
   }
 
   boolean acquire() {
+    ArrayList<Observation> prey = new ArrayList<Observation>();
+    Observation closestPrey = null;
 
-    if (target == null) {  // attempt to find a target 
-      if (self.getObserved().size() > 0) {  // there is a target available
-        //self.getObserved().sort(new DistanceComparator(self));
-        for (Observation obs : self.getObserved()) {
-          if (obs.parent.getName() == targetType.getName()) {
-            target = self.getObserved().get(0).parent;  // follow closest of correct type; CHANGE TO OBSERVATION
-            break;
+    if (self.getObserved().size() > 0) {  // I see something
+
+      for (Observation obs : self.getObserved()) {   // add all cows to list of prey
+        if (obs.parent.getName() == targetType.getName()) {
+          prey.add(obs);
+        }
+      }
+
+      // compare distance to each prey and hunt closest
+      if (prey.size() == 1) {
+        if (!prey.get(0).parent.isDead() ) {
+          target = prey.get(0).parent;
+          return true;
+        } else {
+          target = null;
+          return false;
+        }
+        
+      } else if (prey.size() > 1) {  // there more than 1 in the list so choose closest
+
+        for (Observation obs : prey) {
+          if (closestPrey == null) {
+            closestPrey = obs;
+          } else {
+            float distanceObs = self.distanceTo(obs);
+            float distancePrey = self.distanceTo(closestPrey);
+            if (distanceObs < distancePrey) {
+              closestPrey = obs;
+            } else {
+              // do nothing because closest is still closests
+            }
           }
         }
-        return false;  // none of the correct type
-      } else { // no target available
-        return false;
+        target = closestPrey.parent;
+      } else if (prey.size() == 0) {  
+        return false; // only wolves  in sight
       }
-    } else if (target != null) {  // there is a target
-      return true;
-    } else {  // still no target
-      return false;
     }
+    return false;  // I don't see anything at all
   }
+ 
 
+void turn() {
+  self.rotateTo(target);
+}
 
-  void turn() {
-    self.rotateTo(target);
+float distanceToTarget() {
+  return self.distanceTo(target);
+}
+
+boolean forget() {
+  if (tickCounter++ > maxTickTracked) {
+    tickCounter = 0;
+    target = null;
+    return true;
+  } else {
+    return false;
   }
+}
 
-  float distanceToTarget() {
-    return self.distanceTo(target);
-  }
 
-  boolean forget() {
-    if (tickCounter++ > maxTickTracked) {
-      tickCounter = 0;
-      target = null;
-      return true;
-    } else {
-      return false;
-    }
-  }
 
-  
-
-  String toString() {
-    String s = self.getName() + " [" + self.getId() + "] Tracking ..." + targetType.getName(); 
-    return s;
-  }
+String toString() {
+  String s = self.getName() + " [" + self.getId() + "] Tracking ..." + targetType.getName(); 
+  return s;
+}
 }

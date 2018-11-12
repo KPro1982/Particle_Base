@@ -13,3 +13,8 @@ public void Select(int theValue) {
 public void Add(int theValue) {
   //swamp.createParticle();
 }
+
+public void Narwhal(int theValue) {
+  println ("Moo!");
+  
+}
