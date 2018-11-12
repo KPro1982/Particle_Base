@@ -5,6 +5,7 @@ class Wolf extends Animal implements ICarnivore {
     name = "wolf";
     addSense(new PredatorVision(this));
     addBehavior(new Wander(this));
+    setVisibility(100);
   }
   void hunt() {
   }
@@ -17,6 +18,7 @@ class Cow extends Animal implements IHerbavore {
     addSense(new PreyVision(this));
     addBehavior(new Graze(this));
     addBehavior(new Wander(this));
+    setVisibility(100);
   }
 }
 
@@ -26,11 +28,12 @@ class Animal extends Entity implements ICanMove, ICanMate {
   float stomach = 5;
   float hungerThresh = 0;
   float stomachFull = 150;
+  float memory = 100;
   int children = 0;
   ICanMate mate;
   int ticksSinceLastChild = 0;
   ArrayList<IBehavior> behaviors;
-  ArrayList<ISensable> sensed;
+
 
   // ----------------------------------------------------------------------------------
   // Constructors and Initializers
@@ -85,6 +88,10 @@ class Animal extends Entity implements ICanMove, ICanMate {
     execute();
     println(this);
   }
+  
+  
+
+
 
   void feed(float _food) {
     stomach += _food;
@@ -109,15 +116,35 @@ class Animal extends Entity implements ICanMove, ICanMate {
     }
     moveOnBearing(dist);
   }
-  ArrayList<ISensable> sense() {
-    sensed = super.sense();
-    return sensed;
+  ArrayList<Observation> sense() {
+    iObserved.addAll(super.sense());
+    removeDuplicates();
+    deleteAgedObservations();
+    return iObserved;
+  }
+
+  void deleteAgedObservations() {
+    for (int i = iObserved.size() - 1; i >= 0; i--) {
+      if (iObserved.get(i).getAge() > memory) {
+        iObserved.remove(i);
+      }
+    }
   }
   
+  void removeDuplicates() {
+    for (int i = 0; i < iObserved.size(); i++)  {
+      for (int ii = iObserved.size() - 1; ii > i; ii--)  {
+        if (iObserved.get(i).parent == iObserved.get(ii).parent ) {
+          iObserved.remove(ii);
+        } 
+          
+      }
+    }
+  }
 
   String toString() {
 
-    String s = "[" + getId() + "] " + name + " -- sensed: " + sensed.size() + " children: " + children;
+    String s = "[" + getId() + "] " + name + " -- observed: " + iObserved.size() + " children: " + children;
     return s;
   }
 }

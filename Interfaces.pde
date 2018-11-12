@@ -28,18 +28,20 @@ interface IHaveParticle {
 }
 
 interface ISenseStrategy {
-  ArrayList<ISensable> sense();
+  ArrayList<Observation> sense();
   void drawSenseCone();
 }
 
 interface ICanSense extends IHaveParticle {
   World getWorld();
-  ArrayList<ISensable> sense();
+  ArrayList<Observation> sense();
 }
 
 interface ISensable extends IHaveParticle {
   void addSensedBy(ICanSense s);
   void removeSensedBy(ICanSense s);
+  float getVisibility();
+  Observation getObservation();
 }
 
 

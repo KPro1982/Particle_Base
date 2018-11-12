@@ -40,6 +40,13 @@ class Particle { //<>// //<>// //<>//
     px = px();
     py = py();
   }
+  
+  Particle clone() {
+    Particle p = new Particle(world, ex(),ey(),getRotation());
+    p.setTick(getTick());
+    p.setBearing(getBearing());
+    return p;
+  }
 
   //  -------------------------------------------------------------------------
   //    Getters and Setters 
@@ -92,6 +99,9 @@ class Particle { //<>// //<>// //<>//
   }
   void addTick() {
     tickCounter++;
+  }
+  void setTick(int _tick) {
+    tickCounter = _tick;
   }
 
   PVector getPVector() {

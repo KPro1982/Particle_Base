@@ -5,6 +5,8 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   String skinFn;
   private boolean hasSkin = false;
   private int skinSize;
+  private float visibility = 100;
+
   color col = 255;
   float pSize = 50;
   boolean showSightLine = true;
@@ -12,7 +14,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   boolean sensed;
   ArrayList<ISenseStrategy> senses;
   ArrayList<ICanSense> iSensedBy;
-  ArrayList<ISensable> iSensed;
+  ArrayList<Observation> iObserved;
   World world;
 
   // -----------------------------------------------------------------------------
@@ -24,7 +26,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     particle = new Particle(world, _ex, _ey, _rot);
     senses = new ArrayList<ISenseStrategy>();
     iSensedBy = new ArrayList<ICanSense>();
-    iSensed = new ArrayList<ISensable>();
+    iObserved = new ArrayList<Observation>();
   }
 
 
@@ -42,6 +44,19 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     skinFn = _fn;
     hasSkin = true;
   }
+  // -----------------------------------------------------------------------------
+  // Getters and Setters
+  // -----------------------------------------------------------------------------
+  float getVisibility() {
+    return visibility;
+  }
+  void setVisibility(float _v) {
+    visibility = _v;
+  }
+  Observation getObservation() {
+    return new Observation(this);
+  }
+
 
   // -----------------------------------------------------------------------------
   // IHaveParticle Interface Prereqs
@@ -112,26 +127,28 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   void moveOnBearing(float _dist) {
     getParticle().moveOnBearing(_dist);
   }
-  
+
   int getTick() {
-    return getParticle().getTick(); 
+    return getParticle().getTick();
   }
-  
+
   void addTick() {
     getParticle().addTick();
   }
-  
+
 
   // -----------------------------------------------------------------------------
   // Main Methods
   // -----------------------------------------------------------------------------
 
-  ArrayList<ISensable> sense() {
-    iSensed.clear();
+  ArrayList<Observation> sense() {
+    iObserved.clear();
     for (ISenseStrategy iss : senses) {
-      iSensed.addAll(iss.sense());
+      iObserved.addAll(iss.sense());
     }
-    return iSensed;
+    
+      
+    return iObserved;
   }
 
   void addSensedBy(ICanSense p) { 
@@ -184,7 +201,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   }
 
   String toString() {
-    return name + " " + getParticle().getId() + ": sensed: " + iSensed.size() + " e(" + ex() + "," + ey()+ "); p(" + px() +"," + py() + "); Rot: " + getRotation();
+    return name + " " + getParticle().getId() + ": sensed: " + iObserved.size() + " e(" + ex() + "," + ey()+ "); p(" + px() +"," + py() + "); Rot: " + getRotation();
   }
 
 

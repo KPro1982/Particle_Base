@@ -1,29 +1,28 @@
 class PredatorVision extends Vision {
-  
-  PredatorVision(ICanSense _self)  {
+
+  PredatorVision(ICanSense _self) {
     super(_self);
+    acuity = 100;
     range = 300;
     field = PI/4;
-    coneCol = color(255,0,0,100);
+    coneCol = color(255, 0, 0, 100);
   }
-  
-  
 }
 
 class PreyVision extends Vision {
-  
-  PreyVision(ICanSense _self)  {
+
+  PreyVision(ICanSense _self) {
     super(_self);
-    range = 500;
+    acuity = 50;
+    range = 100;
     field = radians(300);
-    coneCol = color(0,255,0,100);
+    coneCol = color(0, 255, 0, 100);
   }
-  
-  
 }
 
 
 class Vision implements ISenseStrategy {
+  float acuity = 50;
   float range =  0;
   float field = 0;
   ICanSense self;
@@ -35,14 +34,16 @@ class Vision implements ISenseStrategy {
 
 
   ArrayList<ISensable> sensed;
+  ArrayList<Observation> observations;
 
   Vision(ICanSense _self) {
     self = _self;
     world = self.getWorld();
     sensed = new ArrayList<ISensable>();
+    observations = new ArrayList<Observation>();
   }
 
-  ArrayList<ISensable> sense() {
+  ArrayList<Observation> sense() {
     for (ISensable pp : sensed) {  
       pp.removeSensedBy(self);  // clear sensedBy flags in other objects
     }
@@ -56,24 +57,28 @@ class Vision implements ISenseStrategy {
           if (bTo <= +field/2 && bTo >= -field/2) {  // within angle of vision
             if (bprint) {
               bprint = !bprint;
-            println("("+ self.getId() + ") BearingTo (" + sensedBody.getId() + "): " + degrees(bTo) + " deg, " + dist);
+              println("("+ self.getId() + ") BearingTo (" + sensedBody.getId() + "): " + degrees(bTo) + " deg, " + dist);
             }
-            
-            sensed.add(sensedBody);
-            sensedBody.addSensedBy(self);
+            sensed.add(sensedBody);  // it is sensed but not necessarily observed;
+            if (isVisible(sensedBody)) {       // can sense it
+              addObservation(sensedBody.getObservation());
+              sensedBody.addSensedBy(self);
+            }
           }
         }
       }
     }
 
-    return sensed;
+    return observations;
   }
 
-
-
+  boolean isVisible(ISensable b) {
+    float chance = b.getVisibility() * acuity;
+    return random(0, 100) <= chance;
+  }
 
   void drawSenseCone() {
- 
+
 
     pushStyle();
     stroke(210);
@@ -86,5 +91,15 @@ class Vision implements ISenseStrategy {
       arc(0, 0, range*2, range*2, -field/2, field/2);  // assumes translated to 0,0 BRITTLE
     }
     popStyle();
+  }
+  void addObservation(Observation _obs) {
+    // is it already in observations
+    for (int i = 0; i < observations.size(); i++) {
+      Observation o = observations.get(i);
+      if (_obs.parent == o.parent) {
+        observations.remove(i);  // remove old duplicates
+      }
+    }
+    observations.add(_obs);  // add now that all duplicates have been removed
   }
 }
