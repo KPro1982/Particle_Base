@@ -57,6 +57,10 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     return new Observation(this);
   }
 
+  ArrayList<Observation> getObserved() {
+     return iObserved; 
+    
+  }
 
   // -----------------------------------------------------------------------------
   // IHaveParticle Interface Prereqs
@@ -70,6 +74,9 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   }
   void setId(int _id) {
     getParticle().setId(_id);
+  }
+  String getName() {
+     return name; 
   }
   float px() {
     return getParticle().px();

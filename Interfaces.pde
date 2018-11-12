@@ -42,6 +42,7 @@ interface ISensable extends IHaveParticle {
   void removeSensedBy(ICanSense s);
   float getVisibility();
   Observation getObservation();
+  String getName();
 }
 
 
@@ -52,17 +53,24 @@ interface ICanMate {
 }
 
 interface ICarnivore extends ICanEat {
+  boolean isCarnivore();
+
 }
 
 interface IHerbavore extends ICanEat {
+  boolean isHerbavore();
 }
 interface ICanEat {
   void feed(float _food);
   float getStomach();
   float getStomachFull();
   void burnFood(float _food);
+  String getName();
+  int getId();
 }
-
+interface ICanTrack {
+  ArrayList<Observation> getObserved();
+}
 interface IBehavior {
   boolean execute();
 }

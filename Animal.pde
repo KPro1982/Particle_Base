@@ -2,33 +2,48 @@ class Wolf extends Animal implements ICarnivore {
 
   Wolf(int _id, World _world, float _ex, float _ey, float _rot) {
     super(_id, _world, _ex, _ey, _rot);
-    name = "wolf";
+    name = "Wolf";
     addSense(new PredatorVision(this));
+    //addBehavior(new Track(this, new Cow()));
     addBehavior(new Wander(this));
     setVisibility(100);
   }
-  void hunt() {
+  Wolf(World _world) {
+    super(_world);
+    name = "Wolf";
+  }
+  boolean isCarnivore() {
+    return true;
   }
 }
 
 class Cow extends Animal implements IHerbavore {
+
   Cow(int _id, World _world, float _ex, float _ey, float _rot) {
     super(_id, _world, _ex, _ey, _rot);
-    name = "cow";
+    name = "Cow";
     addSense(new PreyVision(this));
-    addBehavior(new Graze(this));
+    //addBehavior(new Graze(this));
+    addBehavior(new Track(this, new Cow(world)));
     addBehavior(new Wander(this));
     setVisibility(100);
+  }
+  Cow(World _world) {
+    super(_world);
+    name = "Cow";
+  }
+  boolean isHerbavore() {
+    return true;
   }
 }
 
 
-class Animal extends Entity implements ICanMove, ICanMate {
-
+class Animal extends Entity implements ICanMove, ICanMate, ICanTrack {
+  String name = "Animal";
   float stomach = 5;
   float hungerThresh = 0;
   float stomachFull = 150;
-  float memory = 100;
+  float memory = 500;
   int children = 0;
   ICanMate mate;
   int ticksSinceLastChild = 0;
@@ -46,6 +61,10 @@ class Animal extends Entity implements ICanMove, ICanMate {
     behaviors = new ArrayList<IBehavior>();
   }
 
+  Animal(World _world) {
+    super(_world, 0, 0, 0);
+  }
+
   void addBehavior(IBehavior newB) {
     behaviors.add(newB);
   }
@@ -59,6 +78,10 @@ class Animal extends Entity implements ICanMove, ICanMate {
 
   float getStomachFull() {
     return stomachFull;
+  }
+
+  String getName() {
+    return name;
   }
 
 
@@ -76,6 +99,7 @@ class Animal extends Entity implements ICanMove, ICanMate {
     return mate != null;
   }
 
+
   // ----------------------------------------------------------------------------------
   // main methods
   // ---------------------------------------------------------------------------------- 
@@ -86,10 +110,10 @@ class Animal extends Entity implements ICanMove, ICanMate {
     addTick();
     sense();
     execute();
-    println(this);
+    //println(this);
   }
-  
-  
+
+
 
 
 
@@ -130,14 +154,13 @@ class Animal extends Entity implements ICanMove, ICanMate {
       }
     }
   }
-  
+
   void removeDuplicates() {
-    for (int i = 0; i < iObserved.size(); i++)  {
-      for (int ii = iObserved.size() - 1; ii > i; ii--)  {
+    for (int i = 0; i < iObserved.size(); i++) {
+      for (int ii = iObserved.size() - 1; ii > i; ii--) {
         if (iObserved.get(i).parent == iObserved.get(ii).parent ) {
           iObserved.remove(ii);
-        } 
-          
+        }
       }
     }
   }

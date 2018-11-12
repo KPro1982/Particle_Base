@@ -23,19 +23,21 @@ class World {
   }
 
   void createParticle() {
-    if (random(0, 2) > 1.2) {
+    if (random(0, 2) > 1.5) {
       entities.add(new Wolf(nextId++, this, random(-worldWidth/2,+worldWidth/2), random(-worldHeight/2,+worldHeight/2), random(0,2*PI)));
     } else {
       entities.add(new Cow(nextId++, this, random(-worldWidth/2,+worldWidth/2), random(-worldHeight/2,+worldHeight/2), random(0,2*PI)));
     }
+    
   }
 
   void createParticle(float _ex, float _ey, float _rot) {
-    if (random(0, 2) > 1.5) {
-      entities.add(new Wolf(nextId++, this, _ex, _ey, _rot));
-    } else {
-      entities.add(new Cow(nextId++, this, _ex, _ey, _rot));
-    }
+    //if (random(0, 2) > .5) {
+    //  entities.add(new Wolf(nextId++, this, _ex, _ey, _rot));
+    //} else {
+    //  entities.add(new Cow(nextId++, this, _ex, _ey, _rot));
+    //}
+    entities.add(new Cow(nextId++, this, _ex, _ey, _rot));
   }
 
   void setup() {
@@ -46,10 +48,10 @@ class World {
     selected = entities.get(0);
   }
 
-  void sortByDistance(Entity p) {
+  //void sortByDistance(Entity p) {
 
-    Collections.sort(entities, new DistanceComparator(p));
-  }
+  //  Collections.sort(entities, new DistanceComparator(p));
+  //}  
 
   void print() {
     for (Entity p : entities) {

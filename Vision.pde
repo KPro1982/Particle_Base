@@ -3,8 +3,8 @@ class PredatorVision extends Vision {
   PredatorVision(ICanSense _self) {
     super(_self);
     acuity = 100;
-    range = 300;
-    field = PI/4;
+    range = 600;
+    field = PI/2;
     coneCol = color(255, 0, 0, 100);
   }
 }
