@@ -26,6 +26,10 @@ interface IHaveParticle {
   int getTick();
   void addTick();
 }
+interface ICanDie {
+  void kill();
+  boolean isDead();
+}
 
 interface ISenseStrategy {
   ArrayList<Observation> sense();
@@ -43,6 +47,8 @@ interface ISensable extends IHaveParticle {
   float getVisibility();
   Observation getObservation();
   String getName();
+  void kill();
+  boolean isDead();
 }
 
 
@@ -54,7 +60,6 @@ interface ICanMate {
 
 interface ICarnivore extends ICanEat {
   boolean isCarnivore();
-
 }
 
 interface IHerbavore extends ICanEat {

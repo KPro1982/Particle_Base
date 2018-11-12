@@ -3,8 +3,8 @@ class PredatorVision extends Vision {
   PredatorVision(ICanSense _self) {
     super(_self);
     acuity = 100;
-    range = 600;
-    field = PI/2;
+    range = 450;
+    field = PI/6;
     coneCol = color(255, 0, 0, 100);
   }
 }
@@ -14,7 +14,7 @@ class PreyVision extends Vision {
   PreyVision(ICanSense _self) {
     super(_self);
     acuity = 50;
-    range = 100;
+    range = 200;
     field = radians(300);
     coneCol = color(0, 255, 0, 100);
   }
@@ -73,33 +73,37 @@ class Vision implements ISenseStrategy {
   }
 
   boolean isVisible(ISensable b) {
-    float chance = b.getVisibility() * acuity;
-    return random(0, 100) <= chance;
-  }
-
-  void drawSenseCone() {
-
-
-    pushStyle();
-    stroke(210);
-    if (showSightCone) {
-      if (sensed.size() > 0) {
-        fill(coneCol);  // green cone if can see
-      } else {
-        fill(210, 100);  // otherwise gray
-      }
-      arc(0, 0, range*2, range*2, -field/2, field/2);  // assumes translated to 0,0 BRITTLE
+    if (!b.isDead()) {
+      float chance = b.getVisibility() * acuity;
+      return random(0, 100) <= chance;
+    } else {
+      return false;
     }
-    popStyle();
   }
-  void addObservation(Observation _obs) {
-    // is it already in observations
-    for (int i = 0; i < observations.size(); i++) {
-      Observation o = observations.get(i);
-      if (_obs.parent == o.parent) {
-        observations.remove(i);  // remove old duplicates
+
+    void drawSenseCone() {
+
+
+      pushStyle();
+      stroke(210);
+      if (showSightCone) {
+        if (sensed.size() > 0) {
+          fill(coneCol);  // green cone if can see
+        } else {
+          fill(210, 100);  // otherwise gray
+        }
+        arc(0, 0, range*2, range*2, -field/2, field/2);  // assumes translated to 0,0 BRITTLE
       }
+      popStyle();
     }
-    observations.add(_obs);  // add now that all duplicates have been removed
+    void addObservation(Observation _obs) {
+      // is it already in observations
+      for (int i = 0; i < observations.size(); i++) {
+        Observation o = observations.get(i);
+        if (_obs.parent == o.parent) {
+          observations.remove(i);  // remove old duplicates
+        }
+      }
+      observations.add(_obs);  // add now that all duplicates have been removed
+    }
   }
-}

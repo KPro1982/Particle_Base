@@ -55,11 +55,51 @@ class Wander implements IBehavior {
   }
 }
 
+class Avoid extends Track {
+
+  Avoid(Animal _self, ISensable _targetType) {
+    super(_self, _targetType);
+    trackStep = 2;
+  }
+  void turn() {
+    super.turn();
+    self.setRotation(self.getRotation()+PI);
+  }
+  String toString() {
+    String s = self.getName() + " [" + self.getId() + "] Avioding ..." + targetType.getName(); 
+    return s;
+  }
+}
+
+class Hunt extends Track {
+
+  Hunt(Animal _self, ISensable _targetType) {
+    super(_self, _targetType);
+    trackStep = 2;
+  }
+  boolean execute() {
+    if (!super.execute()) {  // super couldnt find a target
+      return false;
+    }
+    if (distanceToTarget() < 50) {  // close enough to eat
+      target.kill();
+      self.getObserved().clear();
+      target = null;
+    }
+    return true;
+  }
+  String toString() {
+    String s = self.getName() + " [" + self.getId() + "] hunting ..." + targetType.getName(); 
+    return s;
+  }
+}
+
 class Track implements IBehavior {
   Animal self;
   ISensable target, targetType;
 
   int tickCounter = 0;
+  int maxTickTracked = 50;
   float trackStep = .5;
 
   Track(Animal _self, ISensable _targetType) {
@@ -68,15 +108,23 @@ class Track implements IBehavior {
   }
 
   boolean execute() {
-    //println(this);
-    tickCounter++;
+    if (forget() || !acquire()) {
+      return false; // lost scent
+    } 
+    turn();
+    self.move(trackStep);
+    println(this);
+    return true;
+  }
+
+  boolean acquire() {
 
     if (target == null) {  // attempt to find a target 
       if (self.getObserved().size() > 0) {  // there is a target available
         //self.getObserved().sort(new DistanceComparator(self));
         for (Observation obs : self.getObserved()) {
           if (obs.parent.getName() == targetType.getName()) {
-            target = self.getObserved().get(0).parent;  // follow closest of correct type
+            target = self.getObserved().get(0).parent;  // follow closest of correct type; CHANGE TO OBSERVATION
             break;
           }
         }
@@ -85,16 +133,35 @@ class Track implements IBehavior {
         return false;
       }
     } else if (target != null) {  // there is a target
-      self.rotateTo(target);
-      self.move(trackStep);
-      println(this);
       return true;
     } else {  // still no target
       return false;
     }
   }
+
+
+  void turn() {
+    self.rotateTo(target);
+  }
+
+  float distanceToTarget() {
+    return self.distanceTo(target);
+  }
+
+  boolean forget() {
+    if (tickCounter++ > maxTickTracked) {
+      tickCounter = 0;
+      target = null;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  
+
   String toString() {
-    String s = self.getName() + " [" + self.getId() + "] Tracking --> " + targetType.getName(); 
+    String s = self.getName() + " [" + self.getId() + "] Tracking ..." + targetType.getName(); 
     return s;
   }
 }

@@ -4,7 +4,7 @@ class Wolf extends Animal implements ICarnivore {
     super(_id, _world, _ex, _ey, _rot);
     name = "Wolf";
     addSense(new PredatorVision(this));
-    //addBehavior(new Track(this, new Cow()));
+    addBehavior(new Hunt(this, new Cow(world)));
     addBehavior(new Wander(this));
     setVisibility(100);
   }
@@ -23,9 +23,11 @@ class Cow extends Animal implements IHerbavore {
     super(_id, _world, _ex, _ey, _rot);
     name = "Cow";
     addSense(new PreyVision(this));
-    //addBehavior(new Graze(this));
-    addBehavior(new Track(this, new Cow(world)));
+
+    addBehavior(new Avoid(this, new Wolf(world)));
+    addBehavior(new Graze(this));
     addBehavior(new Wander(this));
+    
     setVisibility(100);
   }
   Cow(World _world) {
@@ -43,7 +45,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack {
   float stomach = 5;
   float hungerThresh = 0;
   float stomachFull = 150;
-  float memory = 500;
+  float memory = 50;
   int children = 0;
   ICanMate mate;
   int ticksSinceLastChild = 0;
@@ -134,10 +136,11 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack {
   }
 
   void move(float dist) {
-    setBearing(getRotation());
+
     if (outOfBounds()) {
-      setBearing(getBearing()+PI);
+      setRotation (getRotation()+PI);
     }
+    setBearing(getRotation());
     moveOnBearing(dist);
   }
   ArrayList<Observation> sense() {

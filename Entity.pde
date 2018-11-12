@@ -1,4 +1,4 @@
-class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
+class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie {
   String name = "Enity";
   Particle particle;
   PImage skin;
@@ -12,6 +12,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   boolean showSightLine = true;
   boolean showSenseCone = true;
   boolean sensed;
+  boolean dead = false;
   ArrayList<ISenseStrategy> senses;
   ArrayList<ICanSense> iSensedBy;
   ArrayList<Observation> iObserved;
@@ -58,8 +59,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
   }
 
   ArrayList<Observation> getObserved() {
-     return iObserved; 
-    
+    return iObserved;
   }
 
   // -----------------------------------------------------------------------------
@@ -76,7 +76,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     getParticle().setId(_id);
   }
   String getName() {
-     return name; 
+    return name;
   }
   float px() {
     return getParticle().px();
@@ -143,6 +143,14 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     getParticle().addTick();
   }
 
+  void kill() {
+    dead = true;
+    println(name + " [" + getId() + "] is dead.");
+  }
+  boolean isDead() {
+    return dead;
+  }
+
 
   // -----------------------------------------------------------------------------
   // Main Methods
@@ -153,8 +161,8 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
     for (ISenseStrategy iss : senses) {
       iObserved.addAll(iss.sense());
     }
-    
-      
+
+
     return iObserved;
   }
 
@@ -174,37 +182,38 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable {
 
   void draw() {
 
+    if (!isDead()) {
+      imageMode(CENTER);
 
-    imageMode(CENTER);
+      pushMatrix();
+      pushStyle();
+      translate(px(), py());
+      ellipse(0, 0, pSize, pSize);
+      fill(255, 0, 0);
+      textAlign(CENTER, CENTER);
+      textSize(30);
+      text(getId(), 0, 0);
+      pushStyle();
+      rotate(getRotation());
+      fill(col);
+      if (hasSkin) {
+        image(skin, 0, 0);
+      } 
 
-    pushMatrix();
-    pushStyle();
-    translate(px(), py());
-    ellipse(0, 0, pSize, pSize);
-    fill(255, 0, 0);
-    textAlign(CENTER, CENTER);
-    textSize(30);
-    text(getId(), 0, 0);
-    pushStyle();
-    rotate(getRotation());
-    fill(col);
-    if (hasSkin) {
-      image(skin, 0, 0);
-    } 
-
-    //line(-10, 0, 10, 0);  // center X
-    //line(0, -10, 0, 10);
+      //line(-10, 0, 10, 0);  // center X
+      //line(0, -10, 0, 10);
 
 
-    if (showSightLine) line(0, 0, pSize/2, 0);
-    if (showSenseCone) {
-      for (ISenseStrategy iss : senses) {
-        iss.drawSenseCone();
+      if (showSightLine) line(0, 0, pSize/2, 0);
+      if (showSenseCone) {
+        for (ISenseStrategy iss : senses) {
+          iss.drawSenseCone();
+        }
       }
+      popMatrix();
+      popStyle();
+      popStyle();
     }
-    popMatrix();
-    popStyle();
-    popStyle();
   }
 
   String toString() {

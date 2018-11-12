@@ -76,8 +76,16 @@ class World {
 
   void tick() {
     tickCounter++;
-    for (Animal p : entities) {
-      p.tick(tickCounter);
+    for (int i = entities.size() - 1; i >=0; i--) {
+      Animal p = entities.get(i);
+      
+      if (p.isDead()) {
+        entities.remove(i);  // remove dead bodies
+        println("DEAD BODY REMOVED");
+      } else {
+        p.tick(tickCounter);
+      }
+        
     }
   }
 
