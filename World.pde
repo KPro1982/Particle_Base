@@ -54,7 +54,7 @@ class World {
 
   void print() {
     for (Entity p : entities) {
-      println(p);
+      Console(p);
     }
   }
   void draw() {
@@ -83,7 +83,7 @@ class World {
 
   void dinner(Animal p) {
     entities.remove(p);  // remove dead bodies
-    println("Carcass Eaten");
+    Console("Carcass Eaten");
  
   }
 
@@ -115,7 +115,7 @@ class World {
     Entity p = isMouseOver();
     if (p != null) {
       p.mouseClicked();
-      println(p);
+      Report(p);
     }
   }
 }

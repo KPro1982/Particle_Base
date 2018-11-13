@@ -1,22 +1,41 @@
-class Graze implements IBehavior {
-  IHerbavore self;
+class BaseBehavior implements IBehavior, IReportable {
+  IHaveParticle self;
+  
+  BaseBehavior() {
+    
+  }
+  boolean execute() {
+    return false;
+  }
+  String toString() {
+    String s = ""; 
+    return s;
+  }
+  ArrayList<String> getReport() {
+
+    return null;
+  }
+}
+
+
+class Graze extends BaseBehavior  {
+  IHerbivore self;
   boolean grazing = false; 
 
-  Graze(IHerbavore _self) {
+  Graze(IHerbivore _self) {
+    super();
     self = _self;
   }
   boolean execute() {
-    //println(this);
+    Console(this);
     if (!grazing) {
       if (self.getStomach() < 1) {
         self.feed(.1);
         grazing = true;
-        //println(this);
         return true;
       }
     } else if (self.getStomach() < self.getStomachFull()) {
       self.feed(2);
-      //println(this);
       return true;
     }
     grazing = false;
@@ -26,10 +45,11 @@ class Graze implements IBehavior {
     String s = self.getName() + " [" + self.getId() + "] Grazing ...."; 
     return s;
   }
+
 }
 
 
-class Wander implements IBehavior {
+class Wander extends BaseBehavior {
   Animal self;
   int tickCounter = 0;
   float wanderStep = 1;
@@ -46,7 +66,7 @@ class Wander implements IBehavior {
     }
     self.move(wanderStep);
     self.burnFood(foodBurned);
-    //println(this);
+    Console(this);
     return true;
   }
   String toString() {
@@ -94,7 +114,7 @@ class Hunt extends Track {
   }
 }
 
-class Track implements IBehavior {
+class Track extends BaseBehavior  {
   Animal self;
   ISensable target, targetType;
 
@@ -113,7 +133,7 @@ class Track implements IBehavior {
     } 
     turn();
     self.move(trackStep);
-    println(this);
+    Console(this);
     return true;
   }
 
@@ -138,7 +158,6 @@ class Track implements IBehavior {
           target = null;
           return false;
         }
-        
       } else if (prey.size() > 1) {  // there more than 1 in the list so choose closest
 
         for (Observation obs : prey) {
@@ -161,30 +180,30 @@ class Track implements IBehavior {
     }
     return false;  // I don't see anything at all
   }
- 
 
-void turn() {
-  self.rotateTo(target);
-}
 
-float distanceToTarget() {
-  return self.distanceTo(target);
-}
-
-boolean forget() {
-  if (tickCounter++ > maxTickTracked) {
-    tickCounter = 0;
-    target = null;
-    return true;
-  } else {
-    return false;
+  void turn() {
+    self.rotateTo(target);
   }
-}
+
+  float distanceToTarget() {
+    return self.distanceTo(target);
+  }
+
+  boolean forget() {
+    if (tickCounter++ > maxTickTracked) {
+      tickCounter = 0;
+      target = null;
+      return true;
+    } else {
+      return false;
+    }
+  }
 
 
 
-String toString() {
-  String s = self.getName() + " [" + self.getId() + "] Tracking ..." + targetType.getName(); 
-  return s;
-}
+  String toString() {
+    String s = self.getName() + " [" + self.getId() + "] Tracking ..." + targetType.getName(); 
+    return s;
+  }
 }

@@ -5,6 +5,7 @@ class Wolf extends Animal implements ICarnivore {
     name = "Wolf";
     addSense(new PredatorVision(this));
     addBehavior(new Hunt(this, new Cow(world)));
+    addBehavior(new Hunt(this, new Wolf(world)));
     addBehavior(new Wander(this));
     setVisibility(100);
   }
@@ -17,7 +18,7 @@ class Wolf extends Animal implements ICarnivore {
   }
 }
 
-class Cow extends Animal implements IHerbavore {
+class Cow extends Animal implements IHerbivore {
 
   Cow(int _id, World _world, float _ex, float _ey, float _rot) {
     super(_id, _world, _ex, _ey, _rot);
@@ -27,7 +28,7 @@ class Cow extends Animal implements IHerbavore {
     addBehavior(new Avoid(this, new Wolf(world)));
     addBehavior(new Graze(this));
     addBehavior(new Wander(this));
-    
+
     setVisibility(100);
   }
   Cow(World _world) {
@@ -40,7 +41,7 @@ class Cow extends Animal implements IHerbavore {
 }
 
 
-class Animal extends Entity implements ICanMove, ICanMate, ICanTrack {
+class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportable {
   String name = "Animal";
   float stomach = 5;
   float hungerThresh = 0;
@@ -86,7 +87,19 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack {
     return name;
   }
 
+  ArrayList<String> getReport() {
+    ArrayList<String> myData = new ArrayList<String>();
+    myData.add("Name:");
+    myData.add(getName());
+    myData.add("Id:");
+    myData.add(str(getId()));
+    myData.add("Stomach:");
+    myData.add(str(stomach));
+    myData.add("Memory:");
+    myData.add(str(memory));
 
+    return myData;
+  }
 
 
   // ----------------------------------------------------------------------------------
@@ -102,6 +115,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack {
   }
 
 
+
   // ----------------------------------------------------------------------------------
   // main methods
   // ---------------------------------------------------------------------------------- 
@@ -112,7 +126,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack {
     addTick();
     sense();
     execute();
-    //println(this);
+    //Console(this);
   }
 
 

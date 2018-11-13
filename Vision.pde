@@ -55,10 +55,6 @@ class Vision implements ISenseStrategy {
         if (dist < range) {
           float bTo = self.getRotation()  - self.bearingTo(self, sensedBody);
           if (bTo <= +field/2 && bTo >= -field/2) {  // within angle of vision
-            if (bprint) {
-              bprint = !bprint;
-              println("("+ self.getId() + ") BearingTo (" + sensedBody.getId() + "): " + degrees(bTo) + " deg, " + dist);
-            }
             sensed.add(sensedBody);  // it is sensed but not necessarily observed;
             if (isVisible(sensedBody)) {       // can sense it
               addObservation(sensedBody.getObservation());

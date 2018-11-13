@@ -1,4 +1,4 @@
-class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie {
+class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable {
   String name = "Enity";
   Particle particle;
   PImage skin;
@@ -60,6 +60,16 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
 
   ArrayList<Observation> getObserved() {
     return iObserved;
+  }
+
+  ArrayList<String> getReport() {
+    ArrayList<String> myData = new ArrayList<String>();
+    myData.add("Name:");
+    myData.add(getName());
+    myData.add("Id:");
+    myData.add(str(getId()));
+    
+    return myData;
   }
 
   // -----------------------------------------------------------------------------
@@ -146,9 +156,9 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
   void kill() {
     dead = true;
     if (dead == true) {
-     world.dinner((Animal) this);
+      world.dinner((Animal) this);
     }
-    println(name + " [" + getId() + "] is dead.");
+    Console(name + " [" + getId() + "] is dead.");
   }
   boolean isDead() {
     return dead;
@@ -243,7 +253,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
 
     float xOffset = px() - mouseX;
     float yOffset = py() - mouseY;
-    //println("xOffset:" + xOffset + ", yOffset:" + yOffset);
+    //Console("xOffset:" + xOffset + ", yOffset:" + yOffset);
     ex(ex() - xOffset);
     ey(ey() + yOffset);
   }

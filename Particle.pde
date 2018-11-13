@@ -153,7 +153,7 @@ class Particle { //<>// //<>// //<>//
     PVector oVect = PVector.fromAngle(-getRotation());
     float h1 = oVect.heading();
     float h2 = vDiff.heading();
-    println(degrees(h1) + ", " + degrees(h2));
+    Console(degrees(h1) + ", " + degrees(h2));
     angle2 = h1 + h2;
     return angle2;
   }

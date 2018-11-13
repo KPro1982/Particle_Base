@@ -62,7 +62,7 @@ interface ICarnivore extends ICanEat {
   boolean isCarnivore();
 }
 
-interface IHerbavore extends ICanEat {
+interface IHerbivore extends ICanEat {
   boolean isHerbavore();
 }
 interface ICanEat {
@@ -78,4 +78,10 @@ interface ICanTrack {
 }
 interface IBehavior {
   boolean execute();
+}
+
+interface IReportable {
+  ArrayList<String> getReport();
+  String toString();
+  
 }
