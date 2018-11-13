@@ -11,7 +11,7 @@ void setup() {
   size(3000, 2000);
   swamp = new World(width, height, width, height);
 
-  for (int i = 0; i < 50; i++) {
+  for (int i = 0; i < 4; i++) {
     swamp.createParticle();
   }
   myPanel = new CPanel(this);

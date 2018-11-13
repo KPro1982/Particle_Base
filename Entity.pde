@@ -13,6 +13,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
   boolean showSenseCone = true;
   boolean sensed;
   boolean dead = false;
+  boolean tagged = false;
   ArrayList<ISenseStrategy> senses;
   ArrayList<ICanSense> iSensedBy;
   ArrayList<Observation> iObserved;
@@ -61,6 +62,9 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
   ArrayList<Observation> getObserved() {
     return iObserved;
   }
+  void toggleTagged() {
+    tagged = !tagged;
+  }
 
   ArrayList<String> getReport() {
     ArrayList<String> myData = new ArrayList<String>();
@@ -71,6 +75,9 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
     
     return myData;
   }
+  
+ 
+  
 
   // -----------------------------------------------------------------------------
   // IHaveParticle Interface Prereqs

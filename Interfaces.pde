@@ -47,6 +47,7 @@ interface ISensable extends IHaveParticle {
   float getVisibility();
   Observation getObservation();
   String getName();
+  int getId();
   void kill();
   boolean isDead();
 }
@@ -76,12 +77,16 @@ interface ICanEat {
 interface ICanTrack {
   ArrayList<Observation> getObserved();
 }
-interface IBehavior {
+interface IBehavior extends IReportable {
   boolean execute();
+  int getId();
+  void setId(int newId);
 }
 
 interface IReportable {
   ArrayList<String> getReport();
   String toString();
+  void toggleTagged();
+  int getId();
   
 }

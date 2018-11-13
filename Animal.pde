@@ -45,12 +45,13 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   String name = "Animal";
   float stomach = 5;
   float hungerThresh = 0;
-  float stomachFull = 150;
+  float stomachFull = 300;
   float memory = 50;
   int children = 0;
   ICanMate mate;
   int ticksSinceLastChild = 0;
   ArrayList<IBehavior> behaviors;
+  int behaviorCounter = 1;
 
 
   // ----------------------------------------------------------------------------------
@@ -69,6 +70,8 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   }
 
   void addBehavior(IBehavior newB) {
+    int newId = getId()*1000 + behaviorCounter++;
+    newB.setId(newId);
     behaviors.add(newB);
   }
 
@@ -99,6 +102,18 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     myData.add(str(memory));
 
     return myData;
+  }
+
+  void toggleTagged() {
+    super.toggleTagged();
+    for (IBehavior b : behaviors) {
+      b.toggleTagged();
+    }
+  }
+  void selfReport() {
+    if (tagged) {
+      Report(this);
+    }
   }
 
 
@@ -147,6 +162,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
         break;
       }
     }
+    selfReport();
   }
 
   void move(float dist) {

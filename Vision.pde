@@ -13,7 +13,7 @@ class PreyVision extends Vision {
 
   PreyVision(ICanSense _self) {
     super(_self);
-    acuity = 50;
+    acuity = 100;
     range = 200;
     field = radians(300);
     coneCol = color(0, 255, 0, 100);
@@ -22,7 +22,7 @@ class PreyVision extends Vision {
 
 
 class Vision implements ISenseStrategy {
-  float acuity = 50;
+  float acuity;
   float range =  0;
   float field = 0;
   ICanSense self;
@@ -69,12 +69,13 @@ class Vision implements ISenseStrategy {
   }
 
   boolean isVisible(ISensable b) {
-    if (!b.isDead()) {
-      float chance = b.getVisibility() * acuity;
-      return random(0, 100) <= chance;
-    } else {
-      return false;
-    }
+    //if (!b.isDead()) {
+    //  float chance = b.getVisibility() * acuity;
+    //  return random(0, 10000) <= chance;
+    //} else {
+    //  return false;
+    //}
+    return true;  // temporarily disable acuity mechanic for testing
   }
 
     void drawSenseCone() {
@@ -83,8 +84,8 @@ class Vision implements ISenseStrategy {
       pushStyle();
       stroke(210);
       if (showSightCone) {
-        if (sensed.size() > 0) {
-          fill(coneCol);  // green cone if can see
+        if (observations.size() > 0) {
+          fill(coneCol);  // colored cone cone if can see
         } else {
           fill(210, 100);  // otherwise gray
         }

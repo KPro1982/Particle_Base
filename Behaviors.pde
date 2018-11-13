@@ -1,24 +1,43 @@
 class BaseBehavior implements IBehavior, IReportable {
   IHaveParticle self;
-  
+  boolean tagged = false;
+  int behaviorID;
+
   BaseBehavior() {
-    
+    behaviorID = 0;
   }
   boolean execute() {
     return false;
+  }
+  void setId(int newId) {
+    behaviorID = newId;
+  }
+  int getId() {
+    return behaviorID;
   }
   String toString() {
     String s = ""; 
     return s;
   }
-  ArrayList<String> getReport() {
+  void toggleTagged() {
+    tagged = !tagged;
+  }
+  void selfReport() {
+    if (tagged) {
+      Report(this);
+    }
+  }
 
-    return null;
+  ArrayList<String> getReport() {
+    ArrayList<String> sArray = new ArrayList<String>();
+    sArray.add("Behavior Report: ");
+    sArray.add("No behaviors reporting...");
+    return sArray;
   }
 }
 
 
-class Graze extends BaseBehavior  {
+class Graze extends BaseBehavior {
   IHerbivore self;
   boolean grazing = false; 
 
@@ -45,13 +64,15 @@ class Graze extends BaseBehavior  {
     String s = self.getName() + " [" + self.getId() + "] Grazing ...."; 
     return s;
   }
-
 }
 
 
 class Wander extends BaseBehavior {
   Animal self;
   int tickCounter = 0;
+  int wanderMin = 100;
+  int wanderMax = 300;
+  int wanderRate = int(random(wanderMin,wanderMax));
   float wanderStep = 1;
   float foodBurned = .2;
 
@@ -61,17 +82,36 @@ class Wander extends BaseBehavior {
   boolean execute() {
     tickCounter++;
 
-    if (tickCounter % int(random(75, 125)) == 0) {
+    if (tickCounter > wanderRate) {
       self.setRotation(random(0, 2*PI));
+      tickCounter = 0;
+      wanderRate = int(random(wanderMin,wanderMax));
     }
     self.move(wanderStep);
     self.burnFood(foodBurned);
     Console(this);
+    selfReport();
     return true;
   }
   String toString() {
     String s = self.getName() + " [" + self.getId() + "] Wandering ...."; 
     return s;
+  }
+  ArrayList<String> getReport() {
+    ArrayList<String> sArray = new ArrayList<String>();
+    String buf = "";
+    sArray.add("Name: ");
+    sArray.add(self.getName());
+    sArray.add("Id: ");
+    sArray.add(str(getId()));
+    sArray.add("Wandering: ");
+    sArray.add("..." );
+    for (Observation o : self.getObserved()) {
+      buf = buf + o.parent.getId() + " ";
+    }
+    sArray.add("Observed: ");
+    sArray.add(buf);
+    return sArray;
   }
 }
 
@@ -81,6 +121,14 @@ class Avoid extends Track {
     super(_self, _targetType);
     trackStep = 2;
   }
+  boolean execute() {
+
+    if (super.execute()) {
+      selfReport();
+      return true;
+    }
+    return false;
+  }
   void turn() {
     super.turn();
     self.setRotation(self.getRotation()+PI);
@@ -88,6 +136,16 @@ class Avoid extends Track {
   String toString() {
     String s = self.getName() + " [" + self.getId() + "] Avoiding ..." + targetType.getName(); 
     return s;
+  }
+  ArrayList<String> getReport() {
+    ArrayList<String> sArray = new ArrayList<String>();
+    sArray.add("Name: ");
+    sArray.add(self.getName());
+    sArray.add("Id: ");
+    sArray.add(str(getId()));
+    sArray.add("Avoiding: ");
+    sArray.add("..." + str(maxTickTracked - tickCounter));
+    return sArray;
   }
 }
 
@@ -98,28 +156,46 @@ class Hunt extends Track {
     trackStep = 2;
   }
   boolean execute() {
+
     if (!super.execute()) {  // super couldnt find a target
       return false;
     }
-    if (distanceToTarget() < 50) {  // close enough to eat
+    if (distanceToTarget() < 10) {  // close enough to eat
       target.kill();
       self.getObserved().clear();
       target = null;
     }
+    selfReport();
     return true;
   }
   String toString() {
     String s = self.getName() + " [" + self.getId() + "] hunting ..." + targetType.getName(); 
     return s;
   }
+  ArrayList<String> getReport() {
+    ArrayList<String> sArray = new ArrayList<String>();
+    String buf = "";
+    sArray.add("Name: ");
+    sArray.add(self.getName());
+    sArray.add("Id: ");
+    sArray.add(str(getId()));
+    sArray.add("Hunting: ");
+    sArray.add("..." + str(maxTickTracked-tickCounter));
+    for (Observation o : self.getObserved()) {
+      buf = buf + o.parent.getId() + " ";
+    }
+    sArray.add("Observed: ");
+    sArray.add(buf);
+    return sArray;
+  }
 }
 
-class Track extends BaseBehavior  {
+class Track extends BaseBehavior {
   Animal self;
   ISensable target, targetType;
 
   int tickCounter = 0;
-  int maxTickTracked = 50;
+  int maxTickTracked = 150;
   float trackStep = .5;
 
   Track(Animal _self, ISensable _targetType) {
