@@ -4,7 +4,7 @@ class PredatorVision extends Vision {
     super(_self);
     acuity = 100;
     range = 450;
-    field = PI/6;
+    field = PI;
     coneCol = color(255, 0, 0, 100);
   }
 }

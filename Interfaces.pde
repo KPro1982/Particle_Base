@@ -82,7 +82,7 @@ interface IBehavior extends IReportable {
   int getId();
   void setId(int newId);
   String getName();
-  int getkilled();
+
 }
 
 interface IReportable {

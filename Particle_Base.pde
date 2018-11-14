@@ -14,6 +14,7 @@ void setup() {
   for (int i = 0; i < 4; i++) {
     swamp.createParticle();
   }
+  
   myPanel = new CPanel(this);
   myPanel.setButtonSize(100, 75);
   String[] toggles = {"Pause", "Print","Willtron","Narwhal"};

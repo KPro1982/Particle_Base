@@ -170,12 +170,15 @@ class Hunt extends Track {
     }
     if (distanceToTarget() < 10) {  // close enough to eat
       target.kill();
-      self.getObserved().clear();
+      //self.getObserved().clear();
       target = null;
     }
     selfReport();
     return true;
   }
+  
+
+    
   String toString() {
     String s = self.getName() + " [" + self.getId() + "] hunting ..." + targetType.getName(); 
     return s;

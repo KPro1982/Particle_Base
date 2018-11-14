@@ -169,9 +169,9 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   void execute() {
     for (IBehavior b : behaviors) {
       if (b.execute()) {
-        if (b.getName() == "Hunt") {
-          deleteObservationById(b.target.getId());
-        }
+        //if (b.getName() == "Hunt") {
+        //  deleteObservationById(b.getKilled());
+        //}
         break;
       }
     }
