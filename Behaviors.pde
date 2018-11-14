@@ -2,6 +2,7 @@ class BaseBehavior implements IBehavior, IReportable {
   IHaveParticle self;
   boolean tagged = false;
   int behaviorID;
+  String name = "";
 
   BaseBehavior() {
     behaviorID = 0;
@@ -14,6 +15,9 @@ class BaseBehavior implements IBehavior, IReportable {
   }
   int getId() {
     return behaviorID;
+  }
+  String getName() {
+    return name;
   }
   String toString() {
     String s = ""; 
@@ -44,6 +48,7 @@ class Graze extends BaseBehavior {
   Graze(IHerbivore _self) {
     super();
     self = _self;
+    name = "Graze";
   }
   boolean execute() {
     Console(this);
@@ -73,11 +78,12 @@ class Wander extends BaseBehavior {
   int wanderMin = 100;
   int wanderMax = 300;
   int wanderRate = int(random(wanderMin,wanderMax));
-  float wanderStep = 1;
+  float wanderStep = 2;
   float foodBurned = .2;
 
   Wander(Animal _self) {
     self = _self;
+    name = "Graze";
   }
   boolean execute() {
     tickCounter++;
@@ -120,6 +126,7 @@ class Avoid extends Track {
   Avoid(Animal _self, ISensable _targetType) {
     super(_self, _targetType);
     trackStep = 2;
+    name = "Avoid";
   }
   boolean execute() {
 
@@ -154,6 +161,7 @@ class Hunt extends Track {
   Hunt(Animal _self, ISensable _targetType) {
     super(_self, _targetType);
     trackStep = 2;
+    name = "Hunt";
   }
   boolean execute() {
 
@@ -201,6 +209,7 @@ class Track extends BaseBehavior {
   Track(Animal _self, ISensable _targetType) {
     self = _self;
     targetType = _targetType;
+    name = "Track";
   }
 
   boolean execute() {

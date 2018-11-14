@@ -68,10 +68,10 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
 
   ArrayList<String> getReport() {
     ArrayList<String> myData = new ArrayList<String>();
-    myData.add("Name:");
-    myData.add(getName());
-    myData.add("Id:");
-    myData.add(str(getId()));
+    //myData.add("Name:");
+    //myData.add(getName());
+    //myData.add("Id:");
+    //myData.add(str(getId()));
     
     return myData;
   }

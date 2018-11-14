@@ -81,6 +81,8 @@ interface IBehavior extends IReportable {
   boolean execute();
   int getId();
   void setId(int newId);
+  String getName();
+  int getkilled();
 }
 
 interface IReportable {

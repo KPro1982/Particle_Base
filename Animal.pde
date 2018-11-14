@@ -5,8 +5,8 @@ class Wolf extends Animal implements ICarnivore {
     name = "Wolf";
     addSense(new PredatorVision(this));
     addBehavior(new Hunt(this, new Cow(world)));
-    addBehavior(new Hunt(this, new Wolf(world)));
-    addBehavior(new Wander(this));
+    //addBehavior(new Hunt(this, new Wolf(world)));
+    //addBehavior(new Wander(this));
     setVisibility(100);
   }
   Wolf(World _world) {
@@ -46,7 +46,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   float stomach = 5;
   float hungerThresh = 0;
   float stomachFull = 300;
-  float memory = 50;
+  float memory = 300;
   int children = 0;
   ICanMate mate;
   int ticksSinceLastChild = 0;
@@ -96,18 +96,28 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     myData.add(getName());
     myData.add("Id:");
     myData.add(str(getId()));
-    myData.add("Stomach:");
-    myData.add(str(stomach));
-    myData.add("Memory:");
-    myData.add(str(memory));
-
+    //myData.add("Stomach:");
+    //myData.add(str(stomach));
+    //myData.add("Memory:");
+    //myData.add(str(memory));
+    String obsList = "";
+    int i = 0;
+    for (Observation obs : iObserved) {
+      obsList += str(obs.parent.getId());
+      if (i++ < iObserved.size() - 1) {
+        obsList += ", ";      
+      }
+    }
+    
+    myData.add("Observed Objects:");
+    myData.add(obsList);
     return myData;
   }
 
   void toggleTagged() {
     super.toggleTagged();
     for (IBehavior b : behaviors) {
-      b.toggleTagged();
+      //b.toggleTagged();
     }
   }
   void selfReport() {
@@ -159,6 +169,9 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   void execute() {
     for (IBehavior b : behaviors) {
       if (b.execute()) {
+        if (b.getName() == "Hunt") {
+          deleteObservationById(b.target.getId());
+        }
         break;
       }
     }
@@ -196,6 +209,14 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
         }
       }
     }
+  }
+  void deleteObservationById(int _id) {
+   for (int i = iObserved.size() - 1; i >= 0; i--) {
+      if (iObserved.get(i).getId() == _id) {
+        iObserved.remove(i);
+      }
+    } 
+    
   }
 
   String toString() {

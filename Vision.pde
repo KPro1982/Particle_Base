@@ -84,7 +84,7 @@ class Vision implements ISenseStrategy {
       pushStyle();
       stroke(210);
       if (showSightCone) {
-        if (observations.size() > 0) {
+        if (sensed.size() > 0) {
           fill(coneCol);  // colored cone cone if can see
         } else {
           fill(210, 100);  // otherwise gray
