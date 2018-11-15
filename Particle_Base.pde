@@ -11,7 +11,9 @@ void setup() {
   size(3000, 2000);
   swamp = new World(width, height, width, height);
 
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 25; i++) {
+    //swamp.createParticle("Cow",0,0,0);
+    //swamp.createParticle("Wolf", 500,0,0);
     swamp.createParticle();
   }
   

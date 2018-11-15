@@ -168,8 +168,12 @@ class Hunt extends Track {
     if (!super.execute()) {  // super couldnt find a target
       return false;
     }
+    if(self.getStomach() > 200) {
+      trackStep *= 1.3; 
+    }
     if (distanceToTarget() < 10) {  // close enough to eat
       target.kill();
+      self.feed(300);
       //self.getObserved().clear();
       target = null;
     }

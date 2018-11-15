@@ -5,8 +5,8 @@ class Wolf extends Animal implements ICarnivore {
     name = "Wolf";
     addSense(new PredatorVision(this));
     addBehavior(new Hunt(this, new Cow(world)));
-    //addBehavior(new Hunt(this, new Wolf(world)));
-    //addBehavior(new Wander(this));
+    addBehavior(new Hunt(this, new Wolf(world)));
+    addBehavior(new Wander(this));
     setVisibility(100);
   }
   Wolf(World _world) {
@@ -96,10 +96,8 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     myData.add(getName());
     myData.add("Id:");
     myData.add(str(getId()));
-    //myData.add("Stomach:");
-    //myData.add(str(stomach));
-    //myData.add("Memory:");
-    //myData.add(str(memory));
+    myData.addAll(senses.get(0).getReport());
+
     String obsList = "";
     int i = 0;
     for (Observation obs : iObserved) {
@@ -168,13 +166,9 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
   void execute() {
     for (IBehavior b : behaviors) {
-      if (b.execute()) {
-        //if (b.getName() == "Hunt") {
-        //  deleteObservationById(b.getKilled());
-        //}
-        break;
-      }
+      b.execute();
     }
+    sense();
     selfReport();
   }
 

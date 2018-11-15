@@ -6,7 +6,7 @@ int firstId;
 void Report(IReportable rObj) {
   ArrayList<String> data = rObj.getReport();
 
-  int tWidth = 400;
+  int tWidth = 500;
   int tHeight = 1000;
   int tLineHeight  = 30;
 

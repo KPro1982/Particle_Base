@@ -30,13 +30,19 @@ class World {
     }
   }
 
-  void createParticle(float _ex, float _ey, float _rot) {
-    //if (random(0, 2) > .5) {
-    //  entities.add(new Wolf(nextId++, this, _ex, _ey, _rot));
-    //} else {
-    //  entities.add(new Cow(nextId++, this, _ex, _ey, _rot));
-    //}
-    entities.add(new Cow(nextId++, this, _ex, _ey, _rot));
+  void createParticle(String _type, float _ex, float _ey, float _rot) {
+
+    switch(_type) {
+
+    case "Cow":
+      entities.add(new Cow(nextId++, this, _ex, _ey, _rot));
+      break;
+    case "Wolf":
+      entities.add(new Wolf(nextId++, this, _ex, _ey, _rot));
+      break;
+    }
+
+   
   }
 
   void setup() {
@@ -84,17 +90,15 @@ class World {
   void dinner(Animal p) {
     entities.remove(p);  // remove dead bodies
     Console("Carcass Eaten");
- 
   }
 
-  void sense() {
+  //void execute() {
+  //  for (Animal a : entities) {
+  //     a.execute(); 
+  //  }
 
-    for (Animal p : entities) {
-      p.sense();
-    }
-  }
-
-  Entity isMouseOver() {
+  //}
+  Animal isMouseOver() {
 
     for (Animal p : entities) {
       if (p.mouseOver()) {  // assumes that mouse is over only one object at  a time
@@ -105,14 +109,14 @@ class World {
     return null;
   }
   void mouseDragged() {
-    Entity p = isMouseOver();
+    Animal p = isMouseOver();
     if (p != null) {
       p.mouseDragged();
-      sense();
+      p.execute();
     }
   }
   void mouseClicked() {
-    Entity p = isMouseOver();
+    Animal p = isMouseOver();
     if (p != null) {
       p.mouseClicked();
       p.toggleTagged();

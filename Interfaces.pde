@@ -34,6 +34,7 @@ interface ICanDie {
 interface ISenseStrategy {
   ArrayList<Observation> sense();
   void drawSenseCone();
+  ArrayList<String> getReport();
 }
 
 interface ICanSense extends IHaveParticle {

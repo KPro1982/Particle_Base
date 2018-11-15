@@ -4,7 +4,7 @@ class PredatorVision extends Vision {
     super(_self);
     acuity = 100;
     range = 450;
-    field = PI;
+    field = PI/4;
     coneCol = color(255, 0, 0, 100);
   }
 }
@@ -30,6 +30,7 @@ class Vision implements ISenseStrategy {
   String name = "Sensor";
   boolean showSightCone = true;
   color coneCol;
+  float dist, bTo;
 
 
 
@@ -51,9 +52,10 @@ class Vision implements ISenseStrategy {
 
     for (ISensable sensedBody : world.entities) {
       if (self != sensedBody) {
-        float dist = self.distanceTo(sensedBody);  // within vision range
+        dist = self.distanceTo(sensedBody);  // within vision range
+        bTo = self.bearingTo(self, sensedBody);
         if (dist < range) {
-          float bTo = self.getRotation()  - self.bearingTo(self, sensedBody);
+
           if (bTo <= +field/2 && bTo >= -field/2) {  // within angle of vision
             sensed.add(sensedBody);  // it is sensed but not necessarily observed;
             if (isVisible(sensedBody)) {       // can sense it
@@ -68,6 +70,18 @@ class Vision implements ISenseStrategy {
     return observations;
   }
 
+  ArrayList<String> getReport() {
+    ArrayList<String> report = new ArrayList<String>();
+    report.add("Distance:");
+    report.add(str(dist));
+    report.add("AngleTo:");
+    report.add(str(degrees(bTo)));
+    report.add("Field:");
+    String ss = str(degrees(-field/2)) + "," + str(degrees(+field/2));
+    report.add(ss);
+    return report;
+  }
+
   boolean isVisible(ISensable b) {
     //if (!b.isDead()) {
     //  float chance = b.getVisibility() * acuity;
@@ -78,29 +92,31 @@ class Vision implements ISenseStrategy {
     return true;  // temporarily disable acuity mechanic for testing
   }
 
-    void drawSenseCone() {
+  void drawSenseCone() {
 
 
-      pushStyle();
-      stroke(210);
-      if (showSightCone) {
-        if (sensed.size() > 0) {
-          fill(coneCol);  // colored cone cone if can see
-        } else {
-          fill(210, 100);  // otherwise gray
-        }
-        arc(0, 0, range*2, range*2, -field/2, field/2);  // assumes translated to 0,0 BRITTLE
+    pushStyle();
+    stroke(210);
+    if (showSightCone) {
+      if (sensed.size() > 0) {
+        fill(coneCol);  // colored cone cone if can see
+      } else {
+        fill(210, 100);  // otherwise gray
       }
-      popStyle();
+      arc(0, 0, range*2, range*2, -field/2, field/2);  // assumes translated to 0,0 BRITTLE
+      stroke(color(255,0,0));
+      line(0,0,cos(bTo)*250, sin(bTo)*250);
     }
-    void addObservation(Observation _obs) {
-      // is it already in observations
-      for (int i = 0; i < observations.size(); i++) {
-        Observation o = observations.get(i);
-        if (_obs.parent == o.parent) {
-          observations.remove(i);  // remove old duplicates
-        }
-      }
-      observations.add(_obs);  // add now that all duplicates have been removed
-    }
+    popStyle();
   }
+  void addObservation(Observation _obs) {
+    // is it already in observations
+    for (int i = 0; i < observations.size(); i++) {
+      Observation o = observations.get(i);
+      if (_obs.parent == o.parent) {
+        observations.remove(i);  // remove old duplicates
+      }
+    }
+    observations.add(_obs);  // add now that all duplicates have been removed
+  }
+}

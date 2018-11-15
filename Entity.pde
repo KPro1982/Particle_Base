@@ -208,7 +208,11 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
       pushMatrix();
       pushStyle();
       translate(px(), py());
+      fill(col);
+      
       ellipse(0, 0, pSize, pSize);
+      line(-250, 0, 250, 0);  // center X
+      line(0, -250, 0, 250);
       fill(255, 0, 0);
       textAlign(CENTER, CENTER);
       textSize(30);
@@ -220,8 +224,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
         image(skin, 0, 0);
       } 
 
-      //line(-10, 0, 10, 0);  // center X
-      //line(0, -10, 0, 10);
+      
 
 
       if (showSightLine) line(0, 0, pSize/2, 0);
