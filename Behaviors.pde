@@ -41,6 +41,8 @@ class BaseBehavior implements IBehavior, IReportable {
 }
 
 
+
+
 class Graze extends BaseBehavior {
   IHerbivore self;
   boolean grazing = false; 
@@ -77,13 +79,13 @@ class Wander extends BaseBehavior {
   int tickCounter = 0;
   int wanderMin = 100;
   int wanderMax = 300;
-  int wanderRate = int(random(wanderMin,wanderMax));
+  int wanderRate = int(random(wanderMin, wanderMax));
   float wanderStep = 2;
   float foodBurned = .2;
 
   Wander(Animal _self) {
     self = _self;
-    name = "Graze";
+    name = "Wander";
   }
   boolean execute() {
     tickCounter++;
@@ -91,7 +93,7 @@ class Wander extends BaseBehavior {
     if (tickCounter > wanderRate) {
       self.setRotation(random(0, 2*PI));
       tickCounter = 0;
-      wanderRate = int(random(wanderMin,wanderMax));
+      wanderRate = int(random(wanderMin, wanderMax));
     }
     self.move(wanderStep);
     self.burnFood(foodBurned);
@@ -156,6 +158,36 @@ class Avoid extends Track {
   }
 }
 
+class Mate extends Track {
+  Animal self;
+
+  Mate(Animal _self, ISensable _targetType) {
+    super(_self, _targetType);
+    trackStep = 2;
+    name = "Mate";
+  }
+
+  boolean execute() {
+
+    if (!super.execute()) {  // super couldnt find a target
+      return false;
+    }
+
+    if (distanceToTarget() < 10) {  // close enough to mate
+      if (self.isHungry())
+        println("Mating!!!");
+    }
+    //self.feed(300);
+    //self.getObserved().clear();
+    target = null;
+    return true;
+  }
+  
+}
+
+
+
+
 class Hunt extends Track {
 
   Hunt(Animal _self, ISensable _targetType) {
@@ -168,21 +200,22 @@ class Hunt extends Track {
     if (!super.execute()) {  // super couldnt find a target
       return false;
     }
-    if(self.getStomach() > 200) {
-      trackStep *= 1.3; 
-    }
+
     if (distanceToTarget() < 10) {  // close enough to eat
       target.kill();
-      self.feed(300);
+      if (self.getStomach() > 200) {
+        trackStep *= 1.3;
+      }
+      //self.feed(300);
       //self.getObserved().clear();
       target = null;
     }
     selfReport();
     return true;
   }
-  
 
-    
+
+
   String toString() {
     String s = self.getName() + " [" + self.getId() + "] hunting ..." + targetType.getName(); 
     return s;

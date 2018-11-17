@@ -4,10 +4,10 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
   PImage skin;
   String skinFn;
   private boolean hasSkin = false;
-  private int skinSize;
+  private int skinSize = 100;
   private float visibility = 100;
 
-  color col = 255;
+  int col;
   float pSize = 50;
   boolean showSightLine = true;
   boolean showSenseCone = true;
@@ -72,12 +72,14 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
     //myData.add(getName());
     //myData.add("Id:");
     //myData.add(str(getId()));
-    
+
     return myData;
   }
-  
- 
-  
+
+  void entityColor(int _color) {
+    col = _color;
+  }
+
 
   // -----------------------------------------------------------------------------
   // IHaveParticle Interface Prereqs
@@ -188,13 +190,13 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
 
   void addSensedBy(ICanSense p) { 
     sensed = true;
-    col = color(0, 255, 0);
+    //col = color(0, 255, 0);
     iSensedBy.add(p);
   }
 
   void removeSensedBy(ICanSense s) {
     sensed = false;
-    col = color(255);
+
     while (iSensedBy.remove(s)) {  
       // remove all instances of s in list
     }
@@ -209,10 +211,10 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
       pushStyle();
       translate(px(), py());
       fill(col);
-      
-      ellipse(0, 0, pSize, pSize);
-      line(-250, 0, 250, 0);  // center X
-      line(0, -250, 0, 250);
+
+      drawIcon();
+      //line(-250, 0, 250, 0);  // center X
+      //line(0, -250, 0, 250);
       fill(255, 0, 0);
       textAlign(CENTER, CENTER);
       textSize(30);
@@ -224,7 +226,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
         image(skin, 0, 0);
       } 
 
-      
+
 
 
       if (showSightLine) line(0, 0, pSize/2, 0);
@@ -239,6 +241,10 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
     }
   }
 
+  void drawIcon() {
+
+    ellipse(0, 0, pSize, pSize);
+  }
   String toString() {
     return name + " " + getParticle().getId() + ": sensed: " + iObserved.size() + " e(" + ex() + "," + ey()+ "); p(" + px() +"," + py() + "); Rot: " + getRotation();
   }

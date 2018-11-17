@@ -8,6 +8,8 @@ class Wolf extends Animal implements ICarnivore {
     addBehavior(new Hunt(this, new Wolf(world)));
     addBehavior(new Wander(this));
     setVisibility(100);
+    //setSkin("wolf.png");
+    iconType = "Triangle";
   }
   Wolf(World _world) {
     super(_world);
@@ -27,9 +29,12 @@ class Cow extends Animal implements IHerbivore {
 
     addBehavior(new Avoid(this, new Wolf(world)));
     addBehavior(new Graze(this));
+    addBehavior(new Mate(this, new Cow(world)));
     addBehavior(new Wander(this));
 
     setVisibility(100);
+    //setSkin("cow.png");
+    iconType = "Circle";
   }
   Cow(World _world) {
     super(_world);
@@ -43,6 +48,7 @@ class Cow extends Animal implements IHerbivore {
 
 class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportable {
   String name = "Animal";
+  String iconType = "Circle";
   float stomach = 5;
   float hungerThresh = 0;
   float stomachFull = 300;
@@ -52,6 +58,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   int ticksSinceLastChild = 0;
   ArrayList<IBehavior> behaviors;
   int behaviorCounter = 1;
+  String activeBehavior = null;
 
 
   // ----------------------------------------------------------------------------------
@@ -103,10 +110,10 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     for (Observation obs : iObserved) {
       obsList += str(obs.parent.getId());
       if (i++ < iObserved.size() - 1) {
-        obsList += ", ";      
+        obsList += ", ";
       }
     }
-    
+
     myData.add("Observed Objects:");
     myData.add(obsList);
     return myData;
@@ -165,17 +172,52 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   }
 
   void execute() {
-    for (IBehavior b : behaviors) {
-      b.execute();
+    for (int i = 0; i < behaviors.size(); i++) {
+     
+      if(behaviors.get(i).execute()) {
+        activeBehavior = behaviors.get(i).getName();
+        setColor();
+        break;
+      }
+      
     }
     sense();
     selfReport();
   }
+  void setColor() {
 
+    switch(activeBehavior) {
+    case "Hunt":
+      entityColor(color(255, 0, 0));
+      break;
+    case "Avoid":
+      entityColor(color(238, 232, 170));
+      break;
+    case "Graze":
+      entityColor(color(0, 250, 0));
+      break;
+    case "Wander":
+      entityColor(color(255, 218, 185));
+      break;
+    
+    case "Mate":
+      entityColor(color(150,100,100));
+      break;
+    }
+  }
   void move(float dist) {
 
     if (outOfBounds()) {
-      setRotation (getRotation()+PI);
+      if (px()> swamp.screenWidth-10) {
+        getParticle().ex(-swamp.worldWidth/2+20);
+      } else if (px() < 10) {
+        getParticle().ex(swamp.worldWidth/2-20);
+      }
+      if (py() > swamp.screenHeight-10) {  // bottom
+        getParticle().ey(swamp.worldHeight/2-20);  // top
+      } else if (py() < 10) { // top
+        getParticle().ey(-swamp.worldHeight+20);  // bottom
+      }
     }
     setBearing(getRotation());
     moveOnBearing(dist);
@@ -205,13 +247,27 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     }
   }
   void deleteObservationById(int _id) {
-   for (int i = iObserved.size() - 1; i >= 0; i--) {
+    for (int i = iObserved.size() - 1; i >= 0; i--) {
       if (iObserved.get(i).getId() == _id) {
         iObserved.remove(i);
       }
-    } 
-    
+    }
   }
+  void drawIcon() {
+
+    switch(iconType) {
+    case "Circle":
+      ellipse(0, 0, pSize, pSize);
+      break;
+    case "Square":
+      rect(-pSize/2, -pSize/2, pSize, pSize);
+      break;
+    case "Triangle":
+      triangle(0, -pSize, pSize, pSize, -pSize, pSize);
+      break;
+    }
+  }
+
 
   String toString() {
 

@@ -8,7 +8,7 @@ boolean bprint = false;
 boolean selected = false;
 
 void setup() {
-  size(3000, 2000);
+  size(2500, 1500);
   swamp = new World(width, height, width, height);
 
   for (int i = 0; i < 25; i++) {
@@ -16,10 +16,10 @@ void setup() {
     //swamp.createParticle("Wolf", 500,0,0);
     swamp.createParticle();
   }
-  
+
   myPanel = new CPanel(this);
   myPanel.setButtonSize(100, 75);
-  String[] toggles = {"Pause", "Print","Willtron","Narwhal"};
+  String[] toggles = {"Pause", "Print", "Willtron", "Narwhal"};
   myPanel.addToggle(toggles);
 
 

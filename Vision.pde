@@ -28,9 +28,9 @@ class Vision implements ISenseStrategy {
   ICanSense self;
   World world;
   String name = "Sensor";
-  boolean showSightCone = true;
+  boolean showSightCone = false;
   color coneCol;
-  float dist, bTo;
+  float dist, bTo;  
 
 
 
@@ -105,7 +105,7 @@ class Vision implements ISenseStrategy {
       }
       arc(0, 0, range*2, range*2, -field/2, field/2);  // assumes translated to 0,0 BRITTLE
       stroke(color(255,0,0));
-      line(0,0,cos(bTo)*250, sin(bTo)*250);
+      //line(0,0,cos(bTo)*250, sin(bTo)*250);
     }
     popStyle();
   }
