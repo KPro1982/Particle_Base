@@ -8,7 +8,9 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
   private float visibility = 100;
 
   int col;
-  float pSize = 50;
+
+  float maxpSize = 50;
+    float pSize = maxpSize;
   boolean showSightLine = true;
   boolean showSenseCone = true;
   boolean sensed;

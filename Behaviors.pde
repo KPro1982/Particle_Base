@@ -169,14 +169,21 @@ class Mate extends Track {
   }
 
   boolean execute() {
-
+  Animal animal = null;
+  
     if (!super.execute()) {  // super couldnt find a target
       return false;
     }
 
     if (distanceToTarget() < 10) {  // close enough to mate
       if (!self.isHungry())
-        println("Mating!!!");
+
+        animal = animalFactory.getAnimal(self.name);
+        if (animal != null) {
+          animal.clone(self);
+          self.world.addAnimal(animal);
+        }
+        
     }
     //self.feed(300);
     //self.getObserved().clear();

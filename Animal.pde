@@ -159,8 +159,10 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     return mate != null;
   }
 
+  boolean isAdult() {
+    return getTick() > 1000;
 
-
+  }
   // ----------------------------------------------------------------------------------
   // main methods
   // ---------------------------------------------------------------------------------- 
@@ -172,11 +174,22 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
   void tick(int _tick) {
     addTick();
+    if (!isAdult()) {
+      pSize = maxpSize *.5;
+    } else {
+      pSize = maxpSize;
+    }
     sense();
     execute();
     //Console(this);
   }
+  void clone(Animal animal) {
+    ex(animal.ex());
+    ey(animal.ey());
 
+  }
+    
+    
 
 
 
@@ -280,7 +293,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
       rect(-pSize/2, -pSize/2, pSize, pSize);
       break;
     case "Triangle":
-      triangle(0, -pSize, pSize, pSize, -pSize, pSize);
+      triangle(0, -pSize/2, pSize/2, pSize/2, -pSize/2, pSize/2);
       break;
     }
   }
