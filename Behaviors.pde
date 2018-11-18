@@ -125,7 +125,7 @@ class Wander extends BaseBehavior {
 
 class Avoid extends Track {
 
-  Avoid(Animal _self, ISensable _targetType) {
+  Avoid(Animal _self, String _targetType) {
     super(_self, _targetType);
     trackStep = 2;
     name = "Avoid";
@@ -143,7 +143,7 @@ class Avoid extends Track {
     self.setRotation(self.getRotation()+PI);
   }
   String toString() {
-    String s = self.getName() + " [" + self.getId() + "] Avoiding ..." + targetType.getName(); 
+    String s = self.getName() + " [" + self.getId() + "] Avoiding ..." + targetType; 
     return s;
   }
   ArrayList<String> getReport() {
@@ -161,8 +161,9 @@ class Avoid extends Track {
 class Mate extends Track {
   Animal self;
 
-  Mate(Animal _self, ISensable _targetType) {
+  Mate(Animal _self, String _targetType) {
     super(_self, _targetType);
+    self = _self;
     trackStep = 2;
     name = "Mate";
   }
@@ -174,7 +175,7 @@ class Mate extends Track {
     }
 
     if (distanceToTarget() < 10) {  // close enough to mate
-      if (self.isHungry())
+      if (!self.isHungry())
         println("Mating!!!");
     }
     //self.feed(300);
@@ -190,7 +191,7 @@ class Mate extends Track {
 
 class Hunt extends Track {
 
-  Hunt(Animal _self, ISensable _targetType) {
+  Hunt(Animal _self, String _targetType) {
     super(_self, _targetType);
     trackStep = 2;
     name = "Hunt";
@@ -217,7 +218,7 @@ class Hunt extends Track {
 
 
   String toString() {
-    String s = self.getName() + " [" + self.getId() + "] hunting ..." + targetType.getName(); 
+    String s = self.getName() + " [" + self.getId() + "] hunting ..." + targetType; 
     return s;
   }
   ArrayList<String> getReport() {
@@ -240,13 +241,14 @@ class Hunt extends Track {
 
 class Track extends BaseBehavior {
   Animal self;
-  ISensable target, targetType;
+  ISensable target;
+  String targetType;
 
   int tickCounter = 0;
   int maxTickTracked = 150;
   float trackStep = .5;
 
-  Track(Animal _self, ISensable _targetType) {
+  Track(Animal _self, String _targetType) {
     self = _self;
     targetType = _targetType;
     name = "Track";
@@ -269,7 +271,7 @@ class Track extends BaseBehavior {
     if (self.getObserved().size() > 0) {  // I see something
 
       for (Observation obs : self.getObserved()) {   // add all cows to list of prey
-        if (obs.parent.getName() == targetType.getName()) {
+        if (obs.parent.getName() == targetType) {
           prey.add(obs);
         }
       }
@@ -328,7 +330,7 @@ class Track extends BaseBehavior {
 
 
   String toString() {
-    String s = self.getName() + " [" + self.getId() + "] Tracking ..." + targetType.getName(); 
+    String s = self.getName() + " [" + self.getId() + "] Tracking ..." + targetType; 
     return s;
   }
 }

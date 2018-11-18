@@ -3,17 +3,23 @@ class Wolf extends Animal implements ICarnivore {
   Wolf(int _id, World _world, float _ex, float _ey, float _rot) {
     super(_id, _world, _ex, _ey, _rot);
     name = "Wolf";
-    addSense(new PredatorVision(this));
-    addBehavior(new Hunt(this, new Cow(world)));
-    addBehavior(new Hunt(this, new Wolf(world)));
-    addBehavior(new Wander(this));
-    setVisibility(100);
+    config();
+
     //setSkin("wolf.png");
-    iconType = "Triangle";
   }
   Wolf(World _world) {
     super(_world);
     name = "Wolf";
+    config();
+  }
+
+  void config() {
+    addSense(new PredatorVision(this));
+    addBehavior(new Hunt(this, "Cow"));
+    addBehavior(new Hunt(this, "Wolf"));
+    addBehavior(new Wander(this));
+    setVisibility(100);
+    iconType = "Triangle";
   }
   boolean isCarnivore() {
     return true;
@@ -25,20 +31,23 @@ class Cow extends Animal implements IHerbivore {
   Cow(int _id, World _world, float _ex, float _ey, float _rot) {
     super(_id, _world, _ex, _ey, _rot);
     name = "Cow";
-    addSense(new PreyVision(this));
-
-    addBehavior(new Avoid(this, new Wolf(world)));
-    addBehavior(new Graze(this));
-    addBehavior(new Mate(this, new Cow(world)));
-    addBehavior(new Wander(this));
-
-    setVisibility(100);
     //setSkin("cow.png");
-    iconType = "Circle";
+    config();
   }
   Cow(World _world) {
     super(_world);
     name = "Cow";
+    config();
+  }
+
+  void config() {
+    addSense(new PreyVision(this));
+    addBehavior(new Avoid(this, "Wolf"));
+    addBehavior(new Graze(this));
+    addBehavior(new Mate(this, "Cow"));
+    addBehavior(new Wander(this));
+    setVisibility(100);
+    iconType = "Circle";
   }
   boolean isHerbavore() {
     return true;
@@ -50,7 +59,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   String name = "Animal";
   String iconType = "Circle";
   float stomach = 5;
-  float hungerThresh = 0;
+  float hungerThresh = 100;
   float stomachFull = 300;
   float memory = 300;
   int children = 0;
@@ -68,12 +77,18 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   Animal(int _id, World _world, float _ex, float _ey, float _rot) {
     super(_world, _ex, _ey, _rot);
     getParticle().setId(_id);
-    stomach = int(random(0, stomachFull));
-    behaviors = new ArrayList<IBehavior>();
+    setupAnimal();
   }
 
   Animal(World _world) {
     super(_world, 0, 0, 0);
+    randomize();
+    setupAnimal();
+  }
+
+  void setupAnimal() {
+    stomach = int(random(0, stomachFull));
+    behaviors = new ArrayList<IBehavior>();
   }
 
   void addBehavior(IBehavior newB) {
@@ -150,7 +165,10 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   // main methods
   // ---------------------------------------------------------------------------------- 
 
-
+  void randomize() {
+    ex(random(-world.worldWidth/2, +world.worldWidth/2));
+    ey(random(-world.worldHeight/2, +world.worldHeight/2));
+  }
 
   void tick(int _tick) {
     addTick();
@@ -173,13 +191,12 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
   void execute() {
     for (int i = 0; i < behaviors.size(); i++) {
-     
-      if(behaviors.get(i).execute()) {
+
+      if (behaviors.get(i).execute()) {
         activeBehavior = behaviors.get(i).getName();
         setColor();
         break;
       }
-      
     }
     sense();
     selfReport();
@@ -199,9 +216,9 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     case "Wander":
       entityColor(color(255, 218, 185));
       break;
-    
+
     case "Mate":
-      entityColor(color(150,100,100));
+      entityColor(color(150, 100, 100));
       break;
     }
   }
@@ -273,5 +290,26 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
     String s = "[" + getId() + "] " + name + " -- observed: " + iObserved.size() + " children: " + children;
     return s;
+  }
+}
+
+class AnimalFactory {
+  World world = null;
+
+  AnimalFactory(World _world) {
+
+    world = _world;
+  }
+
+  Animal getAnimal(String _type) {
+
+    switch(_type) {
+    case "Wolf":  
+      return new Wolf(world);
+    case "Cow":
+      return new Cow(world);
+    default:
+      return null;
+    }
   }
 }
