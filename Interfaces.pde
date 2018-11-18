@@ -70,6 +70,8 @@ interface IHerbivore extends ICanEat {
 interface ICanEat {
   void feed(float _food);
   float getStomach();
+  boolean isHungry();
+  boolean isFull();
   float getStomachFull();
   void burnFood(float _food);
   String getName();

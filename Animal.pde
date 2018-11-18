@@ -19,7 +19,7 @@ class Wolf extends Animal implements ICarnivore {
     addBehavior(new Hunt(this, "Wolf"));
     addBehavior(new Wander(this));
     setVisibility(100);
-    iconType = "Triangle";
+    iconType = "Square";
   }
   boolean isCarnivore() {
     return true;
@@ -58,8 +58,8 @@ class Cow extends Animal implements IHerbivore {
 class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportable {
   String name = "Animal";
   String iconType = "Circle";
+  int iconColor = 0;
   float stomach = 5;
-  float hungerThresh = 100;
   float stomachFull = 300;
   float memory = 300;
   int children = 0;
@@ -101,7 +101,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   // getters and setters
   // ----------------------------------------------------------------------------------
   float getStomach() {
-    return stomach;
+    return stomach/stomachFull;
   }
 
   float getStomachFull() {
@@ -152,7 +152,10 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   // ----------------------------------------------------------------------------------
 
   boolean isHungry() {
-    return stomach < hungerThresh;
+    return stomach < stomachFull/3;
+  }
+  boolean isFull() {
+    return stomach > 2/3*stomachFull;
   }
 
   boolean hasMate() {
@@ -161,7 +164,6 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
   boolean isAdult() {
     return getTick() > 1000;
-
   }
   // ----------------------------------------------------------------------------------
   // main methods
@@ -170,6 +172,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   void randomize() {
     ex(random(-world.worldWidth/2, +world.worldWidth/2));
     ey(random(-world.worldHeight/2, +world.worldHeight/2));
+    getParticle().tickCounter = int(random(0, 2000));
   }
 
   void tick(int _tick) {
@@ -186,10 +189,9 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   void clone(Animal animal) {
     ex(animal.ex());
     ey(animal.ey());
-
   }
-    
-    
+
+
 
 
 
@@ -211,6 +213,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
         break;
       }
     }
+    setIconColor();
     sense();
     selfReport();
   }
@@ -234,6 +237,9 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
       entityColor(color(150, 100, 100));
       break;
     }
+  }
+  void setIconColor() {
+    iconColor = lerpColor(color(255, 0, 0), color(0,255, 0), getStomach());
   }
   void move(float dist) {
 
@@ -285,7 +291,12 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   }
   void drawIcon() {
 
+    pushStyle();
+    stroke(iconColor);
+    strokeWeight(6);
+    fill(col);
     switch(iconType) {
+
     case "Circle":
       ellipse(0, 0, pSize, pSize);
       break;
@@ -296,6 +307,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
       triangle(0, -pSize/2, pSize/2, pSize/2, -pSize/2, pSize/2);
       break;
     }
+    popStyle();
   }
 
 

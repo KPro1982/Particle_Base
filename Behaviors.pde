@@ -54,14 +54,12 @@ class Graze extends BaseBehavior {
   }
   boolean execute() {
     Console(this);
-    if (!grazing) {
-      if (self.getStomach() < 1) {
-        self.feed(.1);
+    if (!grazing && self.isHungry()) {
+        self.feed(1);
         grazing = true;
         return true;
-      }
-    } else if (self.getStomach() < self.getStomachFull()) {
-      self.feed(2);
+    } else if (grazing && self.getStomach() < 1) {
+      self.feed(1);
       return true;
     }
     grazing = false;
@@ -169,28 +167,26 @@ class Mate extends Track {
   }
 
   boolean execute() {
-  Animal animal = null;
-  
+    Animal animal = null;
+
     if (!super.execute()) {  // super couldnt find a target
       return false;
     }
 
     if (distanceToTarget() < 10) {  // close enough to mate
-      if (!self.isHungry())
+      if (!self.isHungry() && self.isAdult())
 
         animal = animalFactory.getAnimal(self.name);
-        if (animal != null) {
-          animal.clone(self);
-          self.world.addAnimal(animal);
-        }
-        
+      if (animal != null) {
+        animal.clone(self);
+        self.world.addAnimal(animal);
+      }
     }
     //self.feed(300);
     //self.getObserved().clear();
     target = null;
     return true;
   }
-  
 }
 
 
@@ -205,21 +201,25 @@ class Hunt extends Track {
   }
   boolean execute() {
 
-    if (!super.execute()) {  // super couldnt find a target
+    if (self.isAdult() && self.isHungry()) {
+      if (!super.execute()) {  // super couldnt find a target
+        return false;
+      }
+
+      if (distanceToTarget() < 10) {  // close enough to eat
+        target.kill();
+        if (self.getStomach() > 200) {
+          trackStep *= 1.3;
+        }
+        //self.feed(300);
+        //self.getObserved().clear();
+        target = null;
+      }
+      selfReport();
+      return true;
+    } else {
       return false;
     }
-
-    if (distanceToTarget() < 10) {  // close enough to eat
-      target.kill();
-      if (self.getStomach() > 200) {
-        trackStep *= 1.3;
-      }
-      //self.feed(300);
-      //self.getObserved().clear();
-      target = null;
-    }
-    selfReport();
-    return true;
   }
 
 

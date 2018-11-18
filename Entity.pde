@@ -10,7 +10,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
   int col;
 
   float maxpSize = 50;
-    float pSize = maxpSize;
+  float pSize = maxpSize;
   boolean showSightLine = true;
   boolean showSenseCone = true;
   boolean sensed;
@@ -212,9 +212,10 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
       pushMatrix();
       pushStyle();
       translate(px(), py());
-      fill(col);
+
 
       drawIcon();
+      //fill(col);
       //line(-250, 0, 250, 0);  // center X
       //line(0, -250, 0, 250);
       fill(255, 0, 0);
