@@ -222,8 +222,8 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
 
       drawIcon();
       //fill(col);
-      //line(-250, 0, 250, 0);  // center X
-      //line(0, -250, 0, 250);
+      line(-250, 0, 250, 0);  // center X
+      line(0, -250, 0, 250);
       fill(0);
       textAlign(CENTER, CENTER);
       textSize(30);

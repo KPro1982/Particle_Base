@@ -21,7 +21,7 @@ class Wolf extends Animal implements ICarnivore {
     iconType = "Square";
 
     addSense(new PredatorVision(this));
-    addBehavior(new Hunt(this, "Cow"));
+    addBehavior(new Hunt(this, "Sheep"));
     //addBehavior(new Hunt(this, "Wolf"));
     addBehavior(new Wander(this));
   }
@@ -54,17 +54,17 @@ class Wolf extends Animal implements ICarnivore {
   }
 }
 
-class Cow extends Animal implements IHerbivore {
+class Sheep extends Animal implements IHerbivore {
 
-  Cow(int _id, World _world, float _ex, float _ey, float _rot) {
+  Sheep(int _id, World _world, float _ex, float _ey, float _rot) {
     super(_id, _world, _ex, _ey, _rot);
-    name = "Cow";
+    name = "Sheep";
     //setSkin("cow.png");
     config();
   }
-  Cow(World _world) {
+  Sheep(World _world) {
     super(_world);
-    name = "Cow";
+    name = "Sheep";
     config();
   }
 
@@ -72,7 +72,7 @@ class Cow extends Animal implements IHerbivore {
     addSense(new PreyVision(this));
     //addBehavior(new Avoid(this, "Wolf"));
     addBehavior(new Graze(this));
-    //addBehavior(new Mate(this, "Cow"));
+    //addBehavior(new Mate(this, "Sheep"));
     addBehavior(new Wander(this));
     setVisibility(100);
     iconType = "Circle";
@@ -185,7 +185,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
       }
     }
 
-    myData.add("Observed Objects:");
+    myData.add("Objects in Memory:");
     myData.add(obsList);
 
     for (IBehavior b : behaviors) {
@@ -232,6 +232,10 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   boolean isAdult() {
     return getTick() > 1000;
   }
+  
+  boolean isTagged() {
+    return tagged;
+  }
   // ----------------------------------------------------------------------------------
   // main methods
   // ---------------------------------------------------------------------------------- 
@@ -249,7 +253,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     } else {
       pSize = maxpSize;
     }
-    sense();
+    //sense();
     execute();
     //Console(this);
   }
@@ -345,7 +349,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
   void deleteAgedObservations() {
     for (int i = iObserved.size() - 1; i >= 0; i--) {
-      if (iObserved.get(i).getAge() > memory) {
+      if (iObserved.get(i).getAge() > 1 || iObserved.get(i).parent.isDead()) {
         iObserved.remove(i);
       }
     }
@@ -409,8 +413,8 @@ class AnimalFactory {
     switch(_type) {
     case "Wolf":  
       return new Wolf(world);
-    case "Cow":
-      return new Cow(world);
+    case "Sheep":
+      return new Sheep(world);
     default:
       return null;
     }

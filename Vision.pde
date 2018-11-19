@@ -73,14 +73,14 @@ class Vision implements ISenseStrategy {
 
   ArrayList<String> getReport() {
     ArrayList<String> report = new ArrayList<String>();
-    //report.add("Distance:");
-    //report.add(str(dist));
-    //report.add("AngleTo:");
-    //report.add(str(degrees(bTo)));
-    //report.add("Field:");
-    //String ss = str(degrees(-field/2)) + "," + str(degrees(+field/2));
-    //report.add(ss);
-    report.add("Sensed: ");
+    report.add("Distance:");
+    report.add(str(dist));
+    report.add("AngleTo:");
+    report.add(str(degrees(bTo)));
+    report.add("Field:");
+    String ss = str(degrees(-field/2)) + "," + str(degrees(+field/2));
+    report.add(ss);
+    report.add("In Sight: ");
     String oo = "";
     for (ISensable o : sensed) {
       oo += o.getId() + ",";
@@ -108,7 +108,7 @@ class Vision implements ISenseStrategy {
       fill(_color);  // colored cone cone if can see
       arc(0, 0, range*2, range*2, -field/2, field/2);  // assumes translated to 0,0 BRITTLE
       stroke(color(255, 0, 0));
-      //line(0,0,cos(bTo)*250, sin(bTo)*250);
+      line(0,0,250, 0);
     }
     popStyle();
   }

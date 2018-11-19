@@ -226,9 +226,9 @@ class Hunt extends Track {
   }
   boolean execute() {
 
-    if (self.isAdult() && self.isHungry()) {
+    if (self.isAdult() ) {
       //println("[" + self.getId() + "] is looking for targets.");
-      if (!super.execute()) {  // super couldnt find a target
+      if (super.execute() == false) {  // super couldnt find a target
         println("[" + self.getId() + "] could not find a target.");
         return false;
       }
@@ -259,10 +259,10 @@ class Hunt extends Track {
     if (target != null) {
       sArray.add("[" + str(self.getId()) + "] is hunting [" + str(target.getId()) + "] ..." + str(memoryCounter));
     }
-    for (Observation o : prey) {
-      buf = buf + o.parent.getId() + " ";
+    for (ISensable o : prey) {
+      buf = buf + o.getId() + " [" + self.distanceTo(o) + "] \n" ;
     }
-    sArray.add("Prey: ");
+    sArray.add("\nPrey: ");
     sArray.add(buf);
     if (closestPrey != null) {
       //sArray.add("closest Prey: " + str(closestPrey.getId()));
@@ -275,7 +275,7 @@ class Hunt extends Track {
 class Track extends BaseBehavior {
   ISensable target;
   String targetType;
-  ArrayList<Observation> prey = null;
+  ArrayList<ISensable> prey = null;
   ISensable closestPrey = null;
 
 
@@ -284,7 +284,7 @@ class Track extends BaseBehavior {
     super((Animal)_self);
     targetType = _targetType;
     name = "Track";
-    prey = new ArrayList<Observation>();
+    prey = new ArrayList<ISensable>();
     memoryCounter = self.getMemory();
   }
 
@@ -308,34 +308,41 @@ class Track extends BaseBehavior {
   boolean acquire() {
 
     prey.clear();
+    target = null;
+    closestPrey = null;
     if (self.getObserved().size() > 0) {  // I see something
-
+      if (self.isTagged()) {
+        println("Num obj in memory:" + self.getObserved().size());
+      }
       for (Observation obs : self.getObserved()) {   // add all cows to list of prey
         if (obs.parent.getName() == targetType) {
-          prey.add(obs);
+          if (!obs.parent.isDead()) {  // only consider living animals prey
+            prey.add(obs.parent);
+          }
         }
       }
 
       // compare distance to each prey and hunt closest
       if (prey.size() == 1) {
-        if (!prey.get(0).parent.isDead() ) {
-          target = prey.get(0).parent;
+        if (!prey.get(0).isDead() ) {   // this should always be true because dead animals are not added to prey in code above
+          target = prey.get(0);
           return true;
         } else {
-          target = null;
+          target = null;  // should never reach this
           return false;
         }
       } else if (prey.size() > 1) {  // there more than 1 in the list so choose closest
-        //println(self.getId() + "choosing closest prey of of " + prey.size());
-        for (Observation obs : prey) {
-          if (!obs.parent.isDead()) {
+        println(self.getId() + "] choosing closest prey of of " + prey.size());
+        for (ISensable obs : prey) {
+          if (!obs.isDead()) {
             if (closestPrey == null) {
-              closestPrey = obs.parent;
+              closestPrey = obs;
             } else {
               float distanceObs = self.distanceTo(obs);
               float distancePrey = self.distanceTo(closestPrey);
+              println(obs.getId() + ": " + distanceObs + " / " + closestPrey.getId() + ": " + distancePrey);
               if (distanceObs < distancePrey) {
-                closestPrey = obs.parent;
+                closestPrey = obs;
                 println(self.getId() + "] " + closestPrey.getId() + " is the new Closest.");
               } else {
                 println(self.getId() + "] " + closestPrey.getId() + " remains the Closest.");
@@ -345,7 +352,7 @@ class Track extends BaseBehavior {
         }
         target = closestPrey;
       } else if (prey.size() == 0) {  
-        println(self.getId() + "] Only wolves in sight");
+        //println(self.getId() + "] Only wolves in sight");
         return false; // only wolves  in sight
       }
     }

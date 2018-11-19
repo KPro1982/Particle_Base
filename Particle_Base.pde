@@ -14,17 +14,16 @@ void setup() {
   animalFactory = new AnimalFactory(swamp);
   Animal newAnimal;
 
-  for (int i = 0; i < 20; i++) {
-    if (random(0, 2) > 1.6) {
-
-      newAnimal = animalFactory.getAnimal("Wolf");
-    } else {
-      newAnimal = animalFactory.getAnimal("Cow");
-    }
+  for (int i = 0; i < 10; i++) {
+    newAnimal = animalFactory.getAnimal("Sheep");
     newAnimal.randomize();
     swamp.addAnimal(newAnimal);
   }
-
+  
+  newAnimal = animalFactory.getAnimal("Wolf");
+  newAnimal.toggleTagged();
+  swamp.addAnimal(newAnimal);
+  
   myPanel = new CPanel(this);
   myPanel.setButtonSize(100, 75);
   String[] toggles = {"Pause", "Print", "Willtron", "Narwhal"};

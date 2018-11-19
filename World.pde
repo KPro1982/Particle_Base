@@ -100,8 +100,11 @@ class World {
     Animal p = isMouseOver();
     if (p != null) {
       p.mouseClicked();
-      p.toggleTagged();
+      //p.toggleTagged();
     }
+  }
+  void mouseReleased() {
+    tick();
   }
 }
 
