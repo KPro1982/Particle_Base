@@ -14,14 +14,14 @@ class BaseBehavior implements IBehavior, IReportable {
   boolean execute() {
     return false;
   }
-  void move(float _step) {
+  void move() {
      self.burnFood(averageFoodBurned);
     if (self.getStomach() > .5) {
       moveStep = averageStep * 1.3;
     } else if (self.isHungry()) {
       moveStep = averageStep * .7;
     }
-    self.move(_step);
+    self.move(moveStep);
   }
   void setId(int newId) {
     behaviorID = newId;
@@ -104,7 +104,7 @@ class Wander extends BaseBehavior {
       tickCounter = 0;
       wanderRate = int(random(wanderMin, wanderMax));
     }
-    move(averageStep);
+    move();
    
     Console(this);
     selfReport();
@@ -149,6 +149,17 @@ class Avoid extends Track {
   void turn() {
     super.turn();
     self.setRotation(self.getRotation()+PI);
+  }
+  void move() {
+         self.burnFood(averageFoodBurned);
+    if (self.getStomach() > .5) {
+      moveStep = averageStep * 1.3;
+    } else if (self.isHungry()) {
+      moveStep = averageStep * .7;
+    }
+    self.move(moveStep);
+    
+    
   }
   String toString() {
     String s = self.getName() + " [" + self.getId() + "] Avoiding ..." + targetType; 
@@ -262,7 +273,7 @@ class Track extends BaseBehavior {
 
   int tickCounter = 0;
   int maxTickTracked = 150;
-  float trackStep = .5;
+
 
   Track(Animal _self, String _targetType) {
     super(_self);
@@ -277,7 +288,7 @@ class Track extends BaseBehavior {
       return false; // lost scent
     } 
     turn();
-    move(trackStep);
+    move();
     Console(this);
     return true;
   }

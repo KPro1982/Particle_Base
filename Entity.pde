@@ -12,7 +12,7 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
   float maxpSize = 50;
   float pSize = maxpSize;
   boolean showSightLine = true;
-  boolean showSenseCone = true;
+  boolean showSenseCone = false;
   boolean sensed;
   boolean dead = false;
   boolean tagged = false;
@@ -66,6 +66,9 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
   }
   void toggleTagged() {
     tagged = !tagged;
+    if(tagged) {
+      showSenseCone = true;
+    }
   }
 
   ArrayList<String> getReport() {

@@ -22,6 +22,7 @@ class Wolf extends Animal implements ICarnivore {
     iconType = "Square";
     stomachFull = 1000;
     stomach = 1000;
+    memory = 500;
   }
   boolean isCarnivore() {
     return true;
@@ -149,9 +150,9 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
   void toggleTagged() {
     super.toggleTagged();
-    for (IBehavior b : behaviors) {
-      //b.toggleTagged();
-    }
+    //for (IBehavior b : behaviors) {
+    //  b.toggleTagged();
+    //}
   }
   void selfReport() {
     if (tagged) {

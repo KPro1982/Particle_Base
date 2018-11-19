@@ -3,9 +3,10 @@ class PredatorVision extends Vision {
   PredatorVision(ICanSense _self) {
     super(_self);
     acuity = 100;
-    range = 450;
+    range = 1000;
     field = PI/4;
     coneCol = color(255, 0, 0, 100);
+    //showSightCone = true;
   }
 }
 
@@ -97,7 +98,7 @@ class Vision implements ISenseStrategy {
 
     pushStyle();
     stroke(210);
-    if (showSightCone) {
+    if (true) {
       if (sensed.size() > 0) {
         fill(coneCol);  // colored cone cone if can see
       } else {

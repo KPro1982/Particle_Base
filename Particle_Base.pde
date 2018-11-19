@@ -14,8 +14,8 @@ void setup() {
   animalFactory = new AnimalFactory(swamp);
   Animal newAnimal;
 
-  for (int i = 0; i < 10; i++) {
-    if (random(0, 2) > 1.5) {
+  for (int i = 0; i < 20; i++) {
+    if (random(0, 2) > 1.6) {
 
       newAnimal = animalFactory.getAnimal("Wolf");
     } else {
