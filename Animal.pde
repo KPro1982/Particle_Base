@@ -16,7 +16,7 @@ class Wolf extends Animal implements ICarnivore {
   void config() {
     addSense(new PredatorVision(this));
     addBehavior(new Hunt(this, "Cow"));
-    addBehavior(new Hunt(this, "Wolf"));
+    addBehavior(new Mate(this, "Wolf"));
     addBehavior(new Wander(this));
     setVisibility(100);
     iconType = "Square";
@@ -131,6 +131,8 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     myData.add(str(getId()));
     myData.add("Stomach:");
     myData.add(str(stomach));
+    myData.add("Memory:");
+    myData.add(str(memory));
 
     myData.addAll(senses.get(0).getReport());
 
@@ -145,6 +147,9 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
     myData.add("Observed Objects:");
     myData.add(obsList);
+    for (IBehavior b : behaviors) {
+      myData.addAll(b.getReport());
+    }
     return myData;
   }
 
@@ -220,9 +225,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   void burnFood(float _food) {
     stomach -= _food;
     if (stomach < 0) {
-        stomach = 0;  // can't starve to death
-        
-
+      stomach = 0;  // can't starve to death
     }
   }
 

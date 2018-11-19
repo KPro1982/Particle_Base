@@ -6,6 +6,7 @@ class BaseBehavior implements IBehavior, IReportable {
   float averageStep = 1;
   float moveStep = averageStep;
   float averageFoodBurned = 1;
+  boolean reportable = false;
 
   BaseBehavior(Animal _self) {
     behaviorID = 0;
@@ -15,7 +16,7 @@ class BaseBehavior implements IBehavior, IReportable {
     return false;
   }
   void move() {
-     self.burnFood(averageFoodBurned);
+    self.burnFood(averageFoodBurned);
     if (self.getStomach() > .5) {
       moveStep = averageStep * 1.3;
     } else if (self.isHungry()) {
@@ -40,15 +41,13 @@ class BaseBehavior implements IBehavior, IReportable {
     tagged = !tagged;
   }
   void selfReport() {
-    if (tagged) {
-      Report(this);
-    }
+
+    Report(this);
   }
 
   ArrayList<String> getReport() {
     ArrayList<String> sArray = new ArrayList<String>();
-    sArray.add("Behavior Report: ");
-    sArray.add("No behaviors reporting...");
+    sArray.add("");
     return sArray;
   }
 }
@@ -62,6 +61,7 @@ class Graze extends BaseBehavior {
   Graze(Animal _self) {
     super(_self);
     name = "Graze";
+    reportable = false;
   }
   boolean execute() {
     Console(this);
@@ -93,7 +93,7 @@ class Wander extends BaseBehavior {
 
   Wander(Animal _self) {
     super(_self);
-
+    reportable = false;
     name = "Wander";
   }
   boolean execute() {
@@ -105,9 +105,9 @@ class Wander extends BaseBehavior {
       wanderRate = int(random(wanderMin, wanderMax));
     }
     move();
-   
+
     Console(this);
-    selfReport();
+    //selfReport();
     return true;
   }
   String toString() {
@@ -117,16 +117,18 @@ class Wander extends BaseBehavior {
   ArrayList<String> getReport() {
     ArrayList<String> sArray = new ArrayList<String>();
     String buf = "";
-    sArray.add("Name: ");
-    sArray.add(self.getName());
-    sArray.add("Id: ");
-    sArray.add(str(getId()));
-    sArray.add("Wandering: ");
-    sArray.add("..." );
-    for (Observation o : self.getObserved()) {
-      buf = buf + o.parent.getId() + " ";
+    if (reportable) {
+      sArray.add("Name: ");
+      sArray.add(self.getName());
+      sArray.add("Id: ");
+      sArray.add(str(getId()));
+      sArray.add("Wandering: ");
+      sArray.add("..." );
+      for (Observation o : self.getObserved()) {
+        buf = buf + o.parent.getId() + " ";
+      }
+      sArray.add("Observed: ");
     }
-    sArray.add("Observed: ");
     sArray.add(buf);
     return sArray;
   }
@@ -137,11 +139,12 @@ class Avoid extends Track {
   Avoid(Animal _self, String _targetType) {
     super(_self, _targetType);
     name = "Avoid";
+    reportable = false;
   }
   boolean execute() {
 
     if (super.execute()) {
-      selfReport();
+      //selfReport();
       return true;
     }
     return false;
@@ -151,15 +154,13 @@ class Avoid extends Track {
     self.setRotation(self.getRotation()+PI);
   }
   void move() {
-         self.burnFood(averageFoodBurned);
+    self.burnFood(averageFoodBurned);
     if (self.getStomach() > .5) {
       moveStep = averageStep * 1.3;
     } else if (self.isHungry()) {
       moveStep = averageStep * .7;
     }
     self.move(moveStep);
-    
-    
   }
   String toString() {
     String s = self.getName() + " [" + self.getId() + "] Avoiding ..." + targetType; 
@@ -167,12 +168,14 @@ class Avoid extends Track {
   }
   ArrayList<String> getReport() {
     ArrayList<String> sArray = new ArrayList<String>();
-    sArray.add("Name: ");
-    sArray.add(self.getName());
-    sArray.add("Id: ");
-    sArray.add(str(getId()));
-    sArray.add("Avoiding: ");
-    sArray.add("..." + str(maxTickTracked - tickCounter));
+    if (reportable) {
+      sArray.add("Name: ");
+      sArray.add(self.getName());
+      sArray.add("Id: ");
+      sArray.add(str(getId()));
+      sArray.add("Avoiding: ");
+      sArray.add("..." + str(self.memory - memoryCounter));
+    }
     return sArray;
   }
 }
@@ -183,6 +186,7 @@ class Mate extends Track {
   Mate(Animal _self, String _targetType) {
     super(_self, _targetType);  
     name = "Mate";
+    reportable = false;
   }
 
   boolean execute() {
@@ -223,6 +227,7 @@ class Hunt extends Track {
   Hunt(Animal _self, String _targetType) {
     super(_self, _targetType);
     name = "Hunt";
+    reportable = true;
   }
   boolean execute() {
 
@@ -236,7 +241,7 @@ class Hunt extends Track {
         self.feed(self.stomachFull);
         target = null;
       }
-      selfReport();
+      //selfReport();
       return true;
     } else {
       return false;
@@ -252,16 +257,20 @@ class Hunt extends Track {
   ArrayList<String> getReport() {
     ArrayList<String> sArray = new ArrayList<String>();
     String buf = "";
-    sArray.add("Name: ");
-    sArray.add(self.getName());
-    sArray.add("Id: ");
-    sArray.add(str(getId()));
-    sArray.add("Hunting: ");
-    sArray.add("..." + str(maxTickTracked-tickCounter));
-    for (Observation o : self.getObserved()) {
-      buf = buf + o.parent.getId() + " ";
-    }
-    sArray.add("Observed: ");
+    //if (reportable) {
+    //  sArray.add("[");
+    //  sArray.add(str(self.getId()));
+    //  sArray.add("] is Hunting [");
+    //  if (target != null) { // BUT when should it ever be null???
+    //    sArray.add(str(target.getId()));
+    //  }
+    //  sArray.add("]...");
+    //  sArray.add(str(memoryCounter));
+    //  for (Observation o : self.getObserved()) {
+    //    buf = buf + o.parent.getId() + " ";
+    //  }
+    //  sArray.add("Observed: ");
+    //}
     sArray.add(buf);
     return sArray;
   }
@@ -271,13 +280,13 @@ class Track extends BaseBehavior {
   ISensable target;
   String targetType;
 
-  int tickCounter = 0;
-  int maxTickTracked = 150;
+  float memoryCounter = self.memory;
+
 
 
   Track(Animal _self, String _targetType) {
     super(_self);
-    
+    reportable = false;
     targetType = _targetType;
     name = "Track";
   }
@@ -349,8 +358,8 @@ class Track extends BaseBehavior {
   }
 
   boolean forget() {
-    if (tickCounter++ > maxTickTracked) {
-      tickCounter = 0;
+    if (memoryCounter-- == 0) {
+      memoryCounter = self.memory;  // forgot about target
       target = null;
       return true;
     } else {
