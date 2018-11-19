@@ -132,7 +132,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     myData.add("Stomach:");
     myData.add(str(stomach));
 
-    myData.addAll(senses.get(0).getReport());
+    //myData.addAll(senses.get(0).getReport());
 
     String obsList = "";
     int i = 0;
@@ -145,6 +145,14 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
     myData.add("Observed Objects:");
     myData.add(obsList);
+    
+    for (IBehavior b : behaviors) {
+      if (b.getName() == "Hunt") {
+        myData.addAll(b.getReport());
+        break;
+      }
+    }
+    
     return myData;
   }
 
