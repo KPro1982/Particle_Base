@@ -6,7 +6,7 @@ class BaseBehavior implements IBehavior, IReportable {
   float averageStep = 1;
   float moveStep = averageStep;
   float averageFoodBurned = 1;
-  float memoryCounter = 1;
+  float memoryCounter = 0;
 
   BaseBehavior(Animal _self) {
     behaviorID = 0;
@@ -220,11 +220,16 @@ class Hunt extends Track {
   Hunt(ICarnivore _self, String _targetType) {
     super((Animal)_self, _targetType);
     name = "Hunt";
+    averageStep = 2;
+    memoryCounter = self.getMemory();
+    //println("memory in Hunt :" + _self.getMemory());
   }
   boolean execute() {
 
-    if (self.isAdult() && !self.isFull()) {
+    if (self.isAdult() && self.isHungry()) {
+      //println("[" + self.getId() + "] is looking for targets.");
       if (!super.execute()) {  // super couldnt find a target
+        println("[" + self.getId() + "] could not find a target.");
         return false;
       }
 
@@ -232,6 +237,8 @@ class Hunt extends Track {
         target.kill();
         self.feed(self.stomachFull);
         target = null;
+        closestPrey = null;
+        prey.clear();
       }
       selfReport();
       return true;
@@ -257,7 +264,10 @@ class Hunt extends Track {
     }
     sArray.add("Prey: ");
     sArray.add(buf);
-    sArray.add("closest Prey: " + str(closestPrey.getId()));
+    if (closestPrey != null) {
+      //sArray.add("closest Prey: " + str(closestPrey.getId()));
+      sArray.add("Target: " + str(target.getId()));
+    }
     return sArray;
   }
 }
@@ -266,7 +276,7 @@ class Track extends BaseBehavior {
   ISensable target;
   String targetType;
   ArrayList<Observation> prey = null;
-  Observation closestPrey = null;
+  ISensable closestPrey = null;
 
 
 
@@ -274,25 +284,30 @@ class Track extends BaseBehavior {
     super((Animal)_self);
     targetType = _targetType;
     name = "Track";
+    prey = new ArrayList<Observation>();
+    memoryCounter = self.getMemory();
   }
 
   boolean execute() {
 
-    if (forget() || !acquire()) {
-      return false; // lost scent
+
+    if (target == null) { 
+      if (!acquire()) {
+        return false; // lost scent
+      }
     } 
-    self.setTarget(target);
+    //self.setTarget(target);
     turn();
     move();
-    Console(this);
+    //Console(this);
     return true;
   }
 
 
 
   boolean acquire() {
-    prey = new ArrayList<Observation>();
-    
+
+    prey.clear();
     if (self.getObserved().size() > 0) {  // I see something
 
       for (Observation obs : self.getObserved()) {   // add all cows to list of prey
@@ -311,22 +326,26 @@ class Track extends BaseBehavior {
           return false;
         }
       } else if (prey.size() > 1) {  // there more than 1 in the list so choose closest
-
+        //println(self.getId() + "choosing closest prey of of " + prey.size());
         for (Observation obs : prey) {
-          if (closestPrey == null) {
-            closestPrey = obs;
-          } else {
-            float distanceObs = self.distanceTo(obs);
-            float distancePrey = self.distanceTo(closestPrey);
-            if (distanceObs < distancePrey) {
-              closestPrey = obs;
+          if (!obs.parent.isDead()) {
+            if (closestPrey == null) {
+              closestPrey = obs.parent;
             } else {
-              // do nothing because closest is still closests
+              float distanceObs = self.distanceTo(obs);
+              float distancePrey = self.distanceTo(closestPrey);
+              if (distanceObs < distancePrey) {
+                closestPrey = obs.parent;
+                println(self.getId() + "] " + closestPrey.getId() + " is the new Closest.");
+              } else {
+                println(self.getId() + "] " + closestPrey.getId() + " remains the Closest.");
+              }
             }
           }
         }
-        target = closestPrey.parent;
+        target = closestPrey;
       } else if (prey.size() == 0) {  
+        println(self.getId() + "] Only wolves in sight");
         return false; // only wolves  in sight
       }
     }
@@ -343,16 +362,17 @@ class Track extends BaseBehavior {
   }
 
   boolean forget() {
-    if (memoryCounter-- <= 0) {
-      memoryCounter = self.getMemory(); // reset memory counter
-      target = null;
-      if(self != null) {
-        self.setTarget(null);  // How can self be null?
-      }
-      return true;
-    } else {
-      return false;
-    }
+    //if (memoryCounter-- <= 0) {
+    //  memoryCounter = self.getMemory(); // reset memory counter
+    //  target = null;
+    //  if(self != null) {
+    //    self.setTarget(null);  // How can self be null?
+    //  }
+    //  return true;
+    //} else {
+    //  return false;
+    //}
+    return false;
   }
 
 

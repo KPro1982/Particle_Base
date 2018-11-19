@@ -14,29 +14,43 @@ class Wolf extends Animal implements ICarnivore {
   }
 
   void config() {
+    stomachFull = 1000;
+    stomach = 1000;
+    setMemory(1000);
+    setVisibility(100);
+    iconType = "Square";
+
     addSense(new PredatorVision(this));
     addBehavior(new Hunt(this, "Cow"));
     //addBehavior(new Hunt(this, "Wolf"));
     addBehavior(new Wander(this));
-    setVisibility(100);
-    iconType = "Square";
-    stomachFull = 1000;
-    stomach = 1000;
-    memory = 500;
   }
+  void executeBehaviors() {
+    IBehavior aHunt = behaviors.get(0);
+    IBehavior aWander = behaviors.get(1);
+
+    if (aHunt.execute() == false) { // no target
+      if (aWander.execute() == true) {
+        activeBehavior = "Wander";
+      }
+    } else {
+      activeBehavior = "Hunt";  //  hunting
+    }
+    setColor();
+  }
+
+
+
   boolean isCarnivore() {
     return true;
   }
-  
+
   void drawSenseCone() {
-    if(hasTarget()) {
-      super.drawSenseCone(color(255,0,0,100));
+    if (hasTarget()) {
+      super.drawSenseCone(color(255, 0, 0, 100));
     } else {
-      super.drawSenseCone(color(100,100));
+      super.drawSenseCone(color(100, 100));
     }
-    
-    
-    
   }
 }
 
@@ -56,9 +70,9 @@ class Cow extends Animal implements IHerbivore {
 
   void config() {
     addSense(new PreyVision(this));
-    addBehavior(new Avoid(this, "Wolf"));
+    //addBehavior(new Avoid(this, "Wolf"));
     addBehavior(new Graze(this));
-    addBehavior(new Mate(this, "Cow"));
+    //addBehavior(new Mate(this, "Cow"));
     addBehavior(new Wander(this));
     setVisibility(100);
     iconType = "Circle";
@@ -75,7 +89,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   int iconColor = 0;
   float stomachFull = 300;
   float stomach = stomachFull;
-  float memory = 300;
+  float memory = 0;
   int children = 0;
   ICanMate mate;
   int ticksSinceLastChild = 0;
@@ -120,12 +134,11 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   }
   Animal getTarget() {
     return target;
-      
   }
   void setTarget(ISensable _target) {
     target = (Animal)_target;
   }
-  
+
   float getStomachFull() {
     return stomachFull;
   }
@@ -144,6 +157,9 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   float getMemory() {
     return memory;
   }
+  void setMemory(float _mem) {
+    memory = _mem;
+  }
 
   ArrayList<String> getReport() {
     ArrayList<String> myData = new ArrayList<String>();
@@ -153,8 +169,12 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     myData.add(str(getId()));
     myData.add("Stomach:");
     myData.add(str(stomach));
+    myData.add("Memory:");
+    myData.add(str(getMemory()));
+    myData.add("Active Behavior: ");
+    myData.add(activeBehavior);
 
-    //myData.addAll(senses.get(0).getReport());
+    myData.addAll(senses.get(0).getReport());
 
     String obsList = "";
     int i = 0;
@@ -167,14 +187,14 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
     myData.add("Observed Objects:");
     myData.add(obsList);
-    
+
     for (IBehavior b : behaviors) {
-      if (b.getName() == "Hunt" && activeBehavior == "Hunt") {
+      if (b.getName() == "Hunt" && tagged == true ) {
         myData.addAll(b.getReport());
         break;
       }
     }
-    
+
     return myData;
   }
 
@@ -253,9 +273,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   void burnFood(float _food) {
     stomach -= _food;
     if (stomach < 0) {
-        stomach = 0;  // can't starve to death
-        
-
+      stomach = 0;  // can't starve to death
     }
   }
 

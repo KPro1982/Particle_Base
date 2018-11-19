@@ -65,6 +65,7 @@ class Particle { //<>// //<>// //<>//
 
     rot = rot % (2*PI);  // make sure that rot does not exceed 2PI
     rot = _rot;
+    setBearing(rot);
   }
   float getBearing() {
     return bearing;

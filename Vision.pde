@@ -73,13 +73,19 @@ class Vision implements ISenseStrategy {
 
   ArrayList<String> getReport() {
     ArrayList<String> report = new ArrayList<String>();
-    report.add("Distance:");
-    report.add(str(dist));
-    report.add("AngleTo:");
-    report.add(str(degrees(bTo)));
-    report.add("Field:");
-    String ss = str(degrees(-field/2)) + "," + str(degrees(+field/2));
-    report.add(ss);
+    //report.add("Distance:");
+    //report.add(str(dist));
+    //report.add("AngleTo:");
+    //report.add(str(degrees(bTo)));
+    //report.add("Field:");
+    //String ss = str(degrees(-field/2)) + "," + str(degrees(+field/2));
+    //report.add(ss);
+    report.add("Sensed: ");
+    String oo = "";
+    for (ISensable o : sensed) {
+      oo += o.getId() + ",";
+    }
+    report.add(oo);
     return report;
   }
 

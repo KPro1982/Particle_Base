@@ -65,6 +65,7 @@ interface ICanMate {
 
 interface ICarnivore extends ICanEat {
   boolean isCarnivore();
+  float getMemory();
 }
 
 interface IHerbivore extends ICanEat {
