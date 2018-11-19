@@ -6,6 +6,7 @@ class BaseBehavior implements IBehavior, IReportable {
   float averageStep = 1;
   float moveStep = averageStep;
   float averageFoodBurned = 1;
+  float memoryCounter = 1;
 
   BaseBehavior(Animal _self) {
     behaviorID = 0;
@@ -15,7 +16,7 @@ class BaseBehavior implements IBehavior, IReportable {
     return false;
   }
   void move() {
-     self.burnFood(averageFoodBurned);
+    self.burnFood(averageFoodBurned);
     if (self.getStomach() > .5) {
       moveStep = averageStep * 1.3;
     } else if (self.isHungry()) {
@@ -84,28 +85,26 @@ class Graze extends BaseBehavior {
 
 
 class Wander extends BaseBehavior {
-  int tickCounter = 0;
-  int wanderMin = 100;
-  int wanderMax = 300;
-  int wanderRate = int(random(wanderMin, wanderMax));
+  float wanderMin = 100;
+  float wanderMax = 300;
+  float wanderRate = random(wanderMin, wanderMax);
 
 
 
   Wander(Animal _self) {
     super(_self);
-
+    memoryCounter = wanderRate;
     name = "Wander";
   }
   boolean execute() {
-    tickCounter++;
 
-    if (tickCounter > wanderRate) {
+    if (memoryCounter-- <= 0) {
       self.setRotation(random(0, 2*PI));
-      tickCounter = 0;
+      memoryCounter = wanderRate;  // reset counter
       wanderRate = int(random(wanderMin, wanderMax));
     }
     move();
-   
+
     Console(this);
     selfReport();
     return true;
@@ -151,15 +150,13 @@ class Avoid extends Track {
     self.setRotation(self.getRotation()+PI);
   }
   void move() {
-         self.burnFood(averageFoodBurned);
+    self.burnFood(averageFoodBurned);
     if (self.getStomach() > .5) {
       moveStep = averageStep * 1.3;
     } else if (self.isHungry()) {
       moveStep = averageStep * .7;
     }
     self.move(moveStep);
-    
-    
   }
   String toString() {
     String s = self.getName() + " [" + self.getId() + "] Avoiding ..." + targetType; 
@@ -172,7 +169,7 @@ class Avoid extends Track {
     sArray.add("Id: ");
     sArray.add(str(getId()));
     sArray.add("Avoiding: ");
-    sArray.add("..." + str(maxTickTracked - tickCounter));
+    sArray.add("..." + str(memoryCounter));
     return sArray;
   }
 }
@@ -252,17 +249,15 @@ class Hunt extends Track {
   ArrayList<String> getReport() {
     ArrayList<String> sArray = new ArrayList<String>();
     String buf = "";
-    sArray.add("Name: ");
-    sArray.add(self.getName());
-    sArray.add("Id: ");
-    sArray.add(str(getId()));
-    sArray.add("Hunting: ");
-    sArray.add("..." + str(maxTickTracked-tickCounter));
-    for (Observation o : self.getObserved()) {
+    if (target != null) {
+      sArray.add("[" + str(self.getId()) + "] is hunting [" + str(target.getId()) + "] ..." + str(memoryCounter));
+    }
+    for (Observation o : prey) {
       buf = buf + o.parent.getId() + " ";
     }
-    sArray.add("Observed: ");
+    sArray.add("Prey: ");
     sArray.add(buf);
+    sArray.add("closest Prey: " + str(closestPrey.getId()));
     return sArray;
   }
 }
@@ -270,14 +265,13 @@ class Hunt extends Track {
 class Track extends BaseBehavior {
   ISensable target;
   String targetType;
+  ArrayList<Observation> prey = null;
+  Observation closestPrey = null;
 
-  int tickCounter = 0;
-  int maxTickTracked = 150;
 
 
   Track(Animal _self, String _targetType) {
     super(_self);
-    
     targetType = _targetType;
     name = "Track";
   }
@@ -296,9 +290,8 @@ class Track extends BaseBehavior {
 
 
   boolean acquire() {
-    ArrayList<Observation> prey = new ArrayList<Observation>();
-    Observation closestPrey = null;
-
+    prey = new ArrayList<Observation>();
+    
     if (self.getObserved().size() > 0) {  // I see something
 
       for (Observation obs : self.getObserved()) {   // add all cows to list of prey
@@ -349,8 +342,8 @@ class Track extends BaseBehavior {
   }
 
   boolean forget() {
-    if (tickCounter++ > maxTickTracked) {
-      tickCounter = 0;
+    if (memoryCounter-- <= 0) {
+      memoryCounter = self.getMemory(); // reset memory counter
       target = null;
       return true;
     } else {

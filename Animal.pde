@@ -16,7 +16,7 @@ class Wolf extends Animal implements ICarnivore {
   void config() {
     addSense(new PredatorVision(this));
     addBehavior(new Hunt(this, "Cow"));
-    addBehavior(new Hunt(this, "Wolf"));
+    //addBehavior(new Hunt(this, "Wolf"));
     addBehavior(new Wander(this));
     setVisibility(100);
     iconType = "Square";
@@ -122,6 +122,9 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
       setTick(1000);
     }
   }
+  float getMemory() {
+    return memory;
+  }
 
   ArrayList<String> getReport() {
     ArrayList<String> myData = new ArrayList<String>();
@@ -147,7 +150,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     myData.add(obsList);
     
     for (IBehavior b : behaviors) {
-      if (b.getName() == "Hunt") {
+      if (b.getName() == "Hunt" && activeBehavior == "Hunt") {
         myData.addAll(b.getReport());
         break;
       }
