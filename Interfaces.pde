@@ -58,6 +58,9 @@ interface ICanMove {
 }
 
 interface ICanMate {
+  boolean isAdult();
+  boolean isFull();
+  boolean isHungry();
 }
 
 interface ICarnivore extends ICanEat {

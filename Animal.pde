@@ -20,6 +20,8 @@ class Wolf extends Animal implements ICarnivore {
     addBehavior(new Wander(this));
     setVisibility(100);
     iconType = "Square";
+    stomachFull = 1000;
+    stomach = 1000;
   }
   boolean isCarnivore() {
     return true;
@@ -59,8 +61,8 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   String name = "Animal";
   String iconType = "Circle";
   int iconColor = 0;
-  float stomach = 5;
   float stomachFull = 300;
+  float stomach = stomachFull;
   float memory = 300;
   int children = 0;
   ICanMate mate;
@@ -87,7 +89,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   }
 
   void setupAnimal() {
-    stomach = int(random(0, stomachFull));
+    stomach = int(random(stomachFull/2, stomachFull));
     behaviors = new ArrayList<IBehavior>();
   }
 
@@ -112,12 +114,23 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     return name;
   }
 
+  void setChild(boolean flag) {
+    if (flag) {
+      setTick(0);
+    } else {
+      setTick(1000);
+    }
+  }
+
   ArrayList<String> getReport() {
     ArrayList<String> myData = new ArrayList<String>();
     myData.add("Name:");
     myData.add(getName());
     myData.add("Id:");
     myData.add(str(getId()));
+    myData.add("Stomach:");
+    myData.add(str(stomach));
+
     myData.addAll(senses.get(0).getReport());
 
     String obsList = "";
@@ -152,10 +165,10 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   // ----------------------------------------------------------------------------------
 
   boolean isHungry() {
-    return stomach < stomachFull/3;
+    return stomach < .2*stomachFull;
   }
   boolean isFull() {
-    return stomach > 2/3*stomachFull;
+    return stomach > .7*stomachFull;
   }
 
   boolean hasMate() {
@@ -198,13 +211,29 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
   void feed(float _food) {
     stomach += _food;
+    if (stomach > stomachFull) {
+      stomach = stomachFull;
+    }
   }
 
   void burnFood(float _food) {
     stomach -= _food;
+    if (stomach < 0) {
+        stomach = 0;  // can't starve to death
+        
+
+    }
   }
 
   void execute() {
+    executeBehaviors();
+    setIconColor();
+    sense();
+    selfReport();
+  }
+
+  void executeBehaviors() {
+
     for (int i = 0; i < behaviors.size(); i++) {
 
       if (behaviors.get(i).execute()) {
@@ -213,9 +242,6 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
         break;
       }
     }
-    setIconColor();
-    sense();
-    selfReport();
   }
   void setColor() {
 
@@ -224,22 +250,22 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
       entityColor(color(255, 0, 0));
       break;
     case "Avoid":
-      entityColor(color(238, 232, 170));
+      entityColor(color(255, 255, 0));
       break;
     case "Graze":
       entityColor(color(0, 250, 0));
       break;
     case "Wander":
-      entityColor(color(255, 218, 185));
+      entityColor(color(255, 255, 255));
       break;
 
     case "Mate":
-      entityColor(color(150, 100, 100));
+      entityColor(color(254, 58, 145));
       break;
     }
   }
   void setIconColor() {
-    iconColor = lerpColor(color(255, 0, 0), color(0,255, 0), getStomach());
+    iconColor = lerpColor(color(255, 0, 0), color(0, 255, 0), getStomach());
   }
   void move(float dist) {
 

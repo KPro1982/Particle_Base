@@ -1,14 +1,27 @@
 class BaseBehavior implements IBehavior, IReportable {
-  IHaveParticle self;
+  Animal self;
   boolean tagged = false;
   int behaviorID;
   String name = "";
+  float averageStep = 1;
+  float moveStep = averageStep;
+  float averageFoodBurned = 1;
 
-  BaseBehavior() {
+  BaseBehavior(Animal _self) {
     behaviorID = 0;
+    self = _self;
   }
   boolean execute() {
     return false;
+  }
+  void move(float _step) {
+     self.burnFood(averageFoodBurned);
+    if (self.getStomach() > .5) {
+      moveStep = averageStep * 1.3;
+    } else if (self.isHungry()) {
+      moveStep = averageStep * .7;
+    }
+    self.move(_step);
   }
   void setId(int newId) {
     behaviorID = newId;
@@ -44,20 +57,18 @@ class BaseBehavior implements IBehavior, IReportable {
 
 
 class Graze extends BaseBehavior {
-  IHerbivore self;
   boolean grazing = false; 
 
-  Graze(IHerbivore _self) {
-    super();
-    self = _self;
+  Graze(Animal _self) {
+    super(_self);
     name = "Graze";
   }
   boolean execute() {
     Console(this);
     if (!grazing && self.isHungry()) {
-        self.feed(1);
-        grazing = true;
-        return true;
+      self.feed(1);
+      grazing = true;
+      return true;
     } else if (grazing && self.getStomach() < 1) {
       self.feed(1);
       return true;
@@ -73,16 +84,16 @@ class Graze extends BaseBehavior {
 
 
 class Wander extends BaseBehavior {
-  Animal self;
   int tickCounter = 0;
   int wanderMin = 100;
   int wanderMax = 300;
   int wanderRate = int(random(wanderMin, wanderMax));
-  float wanderStep = 2;
-  float foodBurned = .2;
+
+
 
   Wander(Animal _self) {
-    self = _self;
+    super(_self);
+
     name = "Wander";
   }
   boolean execute() {
@@ -93,8 +104,8 @@ class Wander extends BaseBehavior {
       tickCounter = 0;
       wanderRate = int(random(wanderMin, wanderMax));
     }
-    self.move(wanderStep);
-    self.burnFood(foodBurned);
+    move(averageStep);
+   
     Console(this);
     selfReport();
     return true;
@@ -125,7 +136,6 @@ class Avoid extends Track {
 
   Avoid(Animal _self, String _targetType) {
     super(_self, _targetType);
-    trackStep = 2;
     name = "Avoid";
   }
   boolean execute() {
@@ -157,35 +167,40 @@ class Avoid extends Track {
 }
 
 class Mate extends Track {
-  Animal self;
+
 
   Mate(Animal _self, String _targetType) {
-    super(_self, _targetType);
-    self = _self;
-    trackStep = 2;
+    super(_self, _targetType);  
     name = "Mate";
   }
 
   boolean execute() {
     Animal animal = null;
+    ICanMate targetMate = null;
 
-    if (!super.execute()) {  // super couldnt find a target
+    if (self.isFull()) {
+      if (!super.execute()) {  // super couldnt find a target
+        return false;
+      }
+      targetMate = (ICanMate)target;  
+
+      if (distanceToTarget() < 10) {  // close enough to mate
+        if (self.isFull() && self.isAdult())
+          if (targetMate.isAdult()) {
+            animal = animalFactory.getAnimal(self.name);
+            if (animal != null) {
+              animal.clone(self);
+              animal.setChild(true);
+              animal.feed(animal.stomachFull);  // kids start full
+              self.world.addAnimal(animal);
+            }
+          }
+      }
+      return true;
+    } else {
+      target = null;
       return false;
     }
-
-    if (distanceToTarget() < 10) {  // close enough to mate
-      if (!self.isHungry() && self.isAdult())
-
-        animal = animalFactory.getAnimal(self.name);
-      if (animal != null) {
-        animal.clone(self);
-        self.world.addAnimal(animal);
-      }
-    }
-    //self.feed(300);
-    //self.getObserved().clear();
-    target = null;
-    return true;
   }
 }
 
@@ -196,23 +211,18 @@ class Hunt extends Track {
 
   Hunt(Animal _self, String _targetType) {
     super(_self, _targetType);
-    trackStep = 2;
     name = "Hunt";
   }
   boolean execute() {
 
-    if (self.isAdult() && self.isHungry()) {
+    if (self.isAdult() && !self.isFull()) {
       if (!super.execute()) {  // super couldnt find a target
         return false;
       }
 
       if (distanceToTarget() < 10) {  // close enough to eat
         target.kill();
-        if (self.getStomach() > 200) {
-          trackStep *= 1.3;
-        }
-        //self.feed(300);
-        //self.getObserved().clear();
+        self.feed(self.stomachFull);
         target = null;
       }
       selfReport();
@@ -247,7 +257,6 @@ class Hunt extends Track {
 }
 
 class Track extends BaseBehavior {
-  Animal self;
   ISensable target;
   String targetType;
 
@@ -256,20 +265,24 @@ class Track extends BaseBehavior {
   float trackStep = .5;
 
   Track(Animal _self, String _targetType) {
-    self = _self;
+    super(_self);
+    
     targetType = _targetType;
     name = "Track";
   }
 
   boolean execute() {
+
     if (forget() || !acquire()) {
       return false; // lost scent
     } 
     turn();
-    self.move(trackStep);
+    move(trackStep);
     Console(this);
     return true;
   }
+
+
 
   boolean acquire() {
     ArrayList<Observation> prey = new ArrayList<Observation>();

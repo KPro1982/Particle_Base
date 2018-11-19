@@ -163,6 +163,9 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
   void addTick() {
     getParticle().addTick();
   }
+  void setTick(int _tick) {
+    getParticle().tickCounter = _tick;
+  }
 
   void kill() {
     dead = true;
