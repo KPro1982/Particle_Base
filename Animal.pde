@@ -27,6 +27,17 @@ class Wolf extends Animal implements ICarnivore {
   boolean isCarnivore() {
     return true;
   }
+  
+  void drawSenseCone() {
+    if(hasTarget()) {
+      super.drawSenseCone(color(255,0,0,100));
+    } else {
+      super.drawSenseCone(color(100,100));
+    }
+    
+    
+    
+  }
 }
 
 class Cow extends Animal implements IHerbivore {
@@ -71,6 +82,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   ArrayList<IBehavior> behaviors;
   int behaviorCounter = 1;
   String activeBehavior = null;
+  Animal target = null;
 
 
   // ----------------------------------------------------------------------------------
@@ -106,7 +118,14 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   float getStomach() {
     return stomach/stomachFull;
   }
-
+  Animal getTarget() {
+    return target;
+      
+  }
+  void setTarget(ISensable _target) {
+    target = (Animal)_target;
+  }
+  
   float getStomachFull() {
     return stomachFull;
   }
@@ -185,6 +204,9 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
 
   boolean hasMate() {
     return mate != null;
+  }
+  boolean hasTarget() {
+    return target != null;
   }
 
   boolean isAdult() {

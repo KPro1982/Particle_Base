@@ -93,19 +93,15 @@ class Vision implements ISenseStrategy {
     return true;  // temporarily disable acuity mechanic for testing
   }
 
-  void drawSenseCone() {
+  void drawSenseCone(int _color) {
 
 
     pushStyle();
     stroke(210);
     if (true) {
-      if (sensed.size() > 0) {
-        fill(coneCol);  // colored cone cone if can see
-      } else {
-        fill(210, 100);  // otherwise gray
-      }
+      fill(_color);  // colored cone cone if can see
       arc(0, 0, range*2, range*2, -field/2, field/2);  // assumes translated to 0,0 BRITTLE
-      stroke(color(255,0,0));
+      stroke(color(255, 0, 0));
       //line(0,0,cos(bTo)*250, sin(bTo)*250);
     }
     popStyle();

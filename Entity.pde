@@ -235,21 +235,33 @@ class Entity implements IHaveParticle, ISensable, ICanSense, IClickable, ICanDie
         image(skin, 0, 0);
       } 
 
-
-
-
-      if (showSightLine) line(0, 0, pSize/2, 0);
       if (showSenseCone) {
-        for (ISenseStrategy iss : senses) {
-          iss.drawSenseCone();
-        }
+        drawSenseCone();
       }
+      if (showSightLine) {
+        line(0, 0, pSize/2, 0);
+      }
+      
       popMatrix();
       popStyle();
       popStyle();
     }
   }
-
+  void drawSenseCone() {
+    
+    if (showSenseCone) {
+        for (ISenseStrategy iss : senses) {
+          iss.drawSenseCone(color(255,0,0,100));
+        }
+      }
+    
+  }
+  void drawSenseCone(int _col) {
+     for (ISenseStrategy iss : senses) {
+          iss.drawSenseCone(_col);
+        }
+    
+  }
   void drawIcon() {
 
     ellipse(0, 0, pSize, pSize);

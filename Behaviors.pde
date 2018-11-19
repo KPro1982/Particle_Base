@@ -217,8 +217,8 @@ class Mate extends Track {
 
 class Hunt extends Track {
 
-  Hunt(Animal _self, String _targetType) {
-    super(_self, _targetType);
+  Hunt(ICarnivore _self, String _targetType) {
+    super((Animal)_self, _targetType);
     name = "Hunt";
   }
   boolean execute() {
@@ -270,8 +270,8 @@ class Track extends BaseBehavior {
 
 
 
-  Track(Animal _self, String _targetType) {
-    super(_self);
+  Track(ICanTrack _self, String _targetType) {
+    super((Animal)_self);
     targetType = _targetType;
     name = "Track";
   }
@@ -281,6 +281,7 @@ class Track extends BaseBehavior {
     if (forget() || !acquire()) {
       return false; // lost scent
     } 
+    self.setTarget(target);
     turn();
     move();
     Console(this);
@@ -345,6 +346,9 @@ class Track extends BaseBehavior {
     if (memoryCounter-- <= 0) {
       memoryCounter = self.getMemory(); // reset memory counter
       target = null;
+      if(self != null) {
+        self.setTarget(null);  // How can self be null?
+      }
       return true;
     } else {
       return false;

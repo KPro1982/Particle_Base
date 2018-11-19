@@ -33,7 +33,7 @@ interface ICanDie {
 
 interface ISenseStrategy {
   ArrayList<Observation> sense();
-  void drawSenseCone();
+  void drawSenseCone(int _col);
   ArrayList<String> getReport();
 }
 
@@ -82,13 +82,14 @@ interface ICanEat {
 }
 interface ICanTrack {
   ArrayList<Observation> getObserved();
+  ISensable getTarget();
+  void setTarget(ISensable _target);
 }
 interface IBehavior extends IReportable {
   boolean execute();
   int getId();
   void setId(int newId);
   String getName();
-
 }
 
 interface IReportable {
@@ -96,5 +97,4 @@ interface IReportable {
   String toString();
   void toggleTagged();
   int getId();
-  
 }
