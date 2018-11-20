@@ -47,7 +47,7 @@ interface ISensable extends IHaveParticle {
   void removeSensedBy(ICanSense s);
   float getVisibility();
   Observation getObservation();
-  String getName();
+  String getObjectName();
   int getId();
   void kill();
   boolean isDead();
@@ -78,7 +78,7 @@ interface ICanEat {
   boolean isFull();
   float getStomachFull();
   void burnFood(float _food);
-  String getName();
+  String getObjectName();
   int getId();
 }
 interface ICanTrack {
@@ -90,7 +90,7 @@ interface IBehavior extends IReportable {
   boolean execute();
   int getId();
   void setId(int newId);
-  String getName();
+  String getObjectName();
 }
 
 interface IReportable {

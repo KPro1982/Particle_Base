@@ -36,7 +36,7 @@ class Wolf extends Animal implements ICarnivore {
     } else {
       activeBehavior = "Hunt";  //  hunting
     }
-    setColor();
+    determineColor();
   }
 
 
@@ -83,20 +83,47 @@ class Sheep extends Animal implements IHerbivore {
 }
 
 
-class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportable {
+class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable {
+  // -----------------------------------------------------------------------------
+  // Variables
+  // -----------------------------------------------------------------------------
+
+  World world;
+  Particle particle;
+  ICanMate mate;
+  Animal target = null;
+
   String name = "Animal";
   String iconType = "Circle";
+  String activeBehavior = null;
+  String skinFn;
+  PImage skin;
+
+  ArrayList<ISenseStrategy> senses;
+  ArrayList<ICanSense> iSensedBy;
+  ArrayList<Observation> iObserved;
+  ArrayList<IBehavior> behaviors;
+
+  boolean showSightLine = true;
+  boolean showSenseCone = false;
+  boolean sensed;
+  boolean dead = false;
+  boolean tagged = false;
+  boolean hasSkin = false;
+
   int iconColor = 0;
+  int children = 0;
+  int ticksSinceLastChild = 0;
+  int behaviorCounter = 1;
+  int skinSize = 100;
+  int col;
+
   float stomachFull = 300;
   float stomach = stomachFull;
   float memory = 0;
-  int children = 0;
-  ICanMate mate;
-  int ticksSinceLastChild = 0;
-  ArrayList<IBehavior> behaviors;
-  int behaviorCounter = 1;
-  String activeBehavior = null;
-  Animal target = null;
+  float visibility = 100;
+  float maxpSize = 50;
+  float pSize = maxpSize;
 
 
   // ----------------------------------------------------------------------------------
@@ -104,15 +131,34 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   // ----------------------------------------------------------------------------------
 
   Animal(int _id, World _world, float _ex, float _ey, float _rot) {
-    super(_world, _ex, _ey, _rot);
+    world = _world;
+    particle = new Particle(_world, _ex, _ey, _rot);
+    
+    senses = new ArrayList<ISenseStrategy>();
+    iSensedBy = new ArrayList<ICanSense>();
+    iObserved = new ArrayList<Observation>();
+    behaviors = new ArrayList<IBehavior>();
+
     getParticle().setId(_id);
     setupAnimal();
   }
 
   Animal(World _world) {
-    super(_world, 0, 0, 0);
+    world = _world;
+    particle = new Particle(_world, 0, 0, 0);
+    
+    senses = new ArrayList<ISenseStrategy>();
+    iSensedBy = new ArrayList<ICanSense>();
+    iObserved = new ArrayList<Observation>();
+    behaviors = new ArrayList<IBehavior>();
+
+    getParticle().setId(-1);
+
     randomize();
     setupAnimal();
+    
+    
+    
   }
 
   void setupAnimal() {
@@ -125,7 +171,20 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     newB.setId(newId);
     behaviors.add(newB);
   }
+  void addSense(ISenseStrategy _senseStrategy) {
+    senses.add(_senseStrategy);
+  }
 
+  void loadSkin() {
+    //if (hasSkin) {
+    //  skin = loadImage(skinFn);
+    //  skin.resize(skinSize, skinSize);  // assume square image
+    //}
+  }
+  void setSkin(String _fn) {
+    //skinFn = _fn;
+    //hasSkin = true;
+  }
   // ----------------------------------------------------------------------------------
   // getters and setters
   // ----------------------------------------------------------------------------------
@@ -143,7 +202,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     return stomachFull;
   }
 
-  String getName() {
+  String getObjectName() {
     return name;
   }
 
@@ -160,11 +219,36 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   void setMemory(float _mem) {
     memory = _mem;
   }
+  // -----------------------------------------------------------------------------
+  float getVisibility() {
+    return visibility;
+  }
+  void setVisibility(float _v) {
+    visibility = _v;
+  }
+  Observation getObservation() {
+    return new Observation(this);
+  }
+
+  ArrayList<Observation> getObserved() {
+    return iObserved;
+  }
+  void toggleTagged() {
+    tagged = !tagged;
+    if (tagged) {
+      showSenseCone = true;
+    }
+  }
+
+
+  // -----------------------------------------------------------------------------
+  // REPORTING
+  // -----------------------------------------------------------------------------
 
   ArrayList<String> getReport() {
     ArrayList<String> myData = new ArrayList<String>();
     myData.add("Name:");
-    myData.add(getName());
+    myData.add(getObjectName());
     myData.add("Id:");
     myData.add(str(getId()));
     myData.add("Stomach:");
@@ -189,7 +273,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     myData.add(obsList);
 
     for (IBehavior b : behaviors) {
-      if (b.getName() == "Hunt" && tagged == true ) {
+      if (b.getObjectName() == "Hunt" && tagged == true ) {
         myData.addAll(b.getReport());
         break;
       }
@@ -198,12 +282,7 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     return myData;
   }
 
-  void toggleTagged() {
-    super.toggleTagged();
-    //for (IBehavior b : behaviors) {
-    //  b.toggleTagged();
-    //}
-  }
+
   void selfReport() {
     if (tagged) {
       Report(this);
@@ -232,10 +311,111 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
   boolean isAdult() {
     return getTick() > 1000;
   }
-  
+
   boolean isTagged() {
     return tagged;
   }
+
+  // -----------------------------------------------------------------------------
+  // IHaveParticle Interface Prereqs
+  // -----------------------------------------------------------------------------
+
+  Particle getParticle() {
+    return particle;
+  }
+  int getId() {
+    return getParticle().getId();
+  }
+  void setId(int _id) {
+    getParticle().setId(_id);
+  }
+
+  float px() {
+    return getParticle().px();
+  }
+
+  float py() {
+    return getParticle().py();
+  }
+
+  float ex() {
+    return getParticle().ex();
+  }
+  float ey() {
+    return getParticle().ey();
+  }
+  void ex(float _ex) {
+    getParticle().ex(_ex);
+  }
+  void ey(float _ey) {
+    getParticle().ey(_ey);
+  }
+
+  void setColor(int _color) {
+    col = _color;
+  }
+  int getColor() {
+    return col;
+  }
+  World getWorld() {
+    return getParticle().world;
+  }
+
+  float getRotation() {
+    return getParticle().getRotation();
+  }
+  void setRotation(float _rot) {
+    getParticle().setRotation(_rot);
+  }
+  float getBearing() {
+    return getParticle().getBearing();
+  }
+  void setBearing(float _bearing) {
+    getParticle().setBearing(_bearing);
+  }
+
+  float bearingTo(IHaveParticle p1, IHaveParticle p2) {
+    return getParticle().bearingTo(p1.getParticle(), p2.getParticle());
+  }
+  float distanceTo(IHaveParticle _p) {
+    return getParticle().distanceTo(_p.getParticle()) ;
+  }
+
+  boolean outOfBounds() {
+    return getParticle().outOfBounds();
+  }
+
+  void rotateTo(IHaveParticle _p) {
+    getParticle().rotateTo(_p.getParticle());
+  }
+
+  void moveOnBearing(float _dist) {
+    getParticle().moveOnBearing(_dist);
+  }
+
+  int getTick() {
+    return getParticle().getTick();
+  }
+
+  void addTick() {
+    getParticle().addTick();
+  }
+  void setTick(int _tick) {
+    getParticle().tickCounter = _tick;
+  }
+
+  void kill() {
+    dead = true;
+    if (dead == true) {
+      world.dinner((Animal) this);
+    }
+    Console(name + " [" + getId() + "] is dead.");
+  }
+  boolean isDead() {
+    return dead;
+  }
+
+
   // ----------------------------------------------------------------------------------
   // main methods
   // ---------------------------------------------------------------------------------- 
@@ -293,30 +473,30 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     for (int i = 0; i < behaviors.size(); i++) {
 
       if (behaviors.get(i).execute()) {
-        activeBehavior = behaviors.get(i).getName();
-        setColor();
+        activeBehavior = behaviors.get(i).getObjectName();
+        determineColor();
         break;
       }
     }
   }
-  void setColor() {
+  void determineColor() {
 
     switch(activeBehavior) {
     case "Hunt":
-      entityColor(color(255, 0, 0));
+      setColor(color(255, 0, 0));
       break;
     case "Avoid":
-      entityColor(color(255, 255, 0));
+      setColor(color(255, 255, 0));
       break;
     case "Graze":
-      entityColor(color(0, 250, 0));
+      setColor(color(0, 250, 0));
       break;
     case "Wander":
-      entityColor(color(255, 255, 255));
+      setColor(color(255, 255, 255));
       break;
 
     case "Mate":
-      entityColor(color(254, 58, 145));
+      setColor(color(254, 58, 145));
       break;
     }
   }
@@ -341,11 +521,30 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     moveOnBearing(dist);
   }
   ArrayList<Observation> sense() {
-    iObserved.addAll(super.sense());
+    iObserved.clear();
+    for (ISenseStrategy iss : senses) {
+      iObserved.addAll(iss.sense());
+    }
     removeDuplicates();
     deleteAgedObservations();
     return iObserved;
   }
+  void addSensedBy(ICanSense p) { 
+    sensed = true;
+    //col = color(0, 255, 0);
+    iSensedBy.add(p);
+  }
+
+  void removeSensedBy(ICanSense s) {
+    sensed = false;
+
+    while (iSensedBy.remove(s)) {  
+      // remove all instances of s in list
+    }
+  }
+
+
+
 
   void deleteAgedObservations() {
     for (int i = iObserved.size() - 1; i >= 0; i--) {
@@ -369,6 +568,62 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
       if (iObserved.get(i).getId() == _id) {
         iObserved.remove(i);
       }
+    }
+  }
+
+
+  // -----------------------------------------------------------------------------
+  // Draw Methods
+  // ----------------------------------------------------------------------------- 
+
+  void draw() {
+
+    if (!isDead()) {
+      imageMode(CENTER);
+
+      pushMatrix();
+      pushStyle();
+      translate(px(), py());
+
+
+      drawIcon();
+      //fill(col);
+      line(-250, 0, 250, 0);  // center X
+      line(0, -250, 0, 250);
+      fill(0);
+      textAlign(CENTER, CENTER);
+      textSize(30);
+      text(getId(), 0, 0);
+      pushStyle();
+      rotate(getRotation());
+      fill(col);
+      if (hasSkin) {
+        image(skin, 0, 0);
+      } 
+
+      if (showSenseCone) {
+        drawSenseCone();
+      }
+      if (showSightLine) {
+        line(0, 0, pSize/2, 0);
+      }
+
+      popMatrix();
+      popStyle();
+      popStyle();
+    }
+  }
+  void drawSenseCone() {
+
+    if (showSenseCone) {
+      for (ISenseStrategy iss : senses) {
+        iss.drawSenseCone(color(255, 0, 0, 100));
+      }
+    }
+  }
+  void drawSenseCone(int _col) {
+    for (ISenseStrategy iss : senses) {
+      iss.drawSenseCone(_col);
     }
   }
   void drawIcon() {
@@ -398,10 +653,49 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IReportabl
     String s = "[" + getId() + "] " + name + " -- observed: " + iObserved.size() + " children: " + children;
     return s;
   }
+
+
+  // --------------------------------------------------------------------------------------
+  // MOUSE CONTROL HANDLERS
+  //  -------------------------------------------------------------------------------------
+  boolean mouseOver() {
+    float dx = abs(mouseX - px());
+    float dy = abs(mouseY - py());
+    float dist = sqrt(dx*dx+dy*dy);
+    if (dist <= pSize) {  // mouse is over
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void mouseDragged() {
+
+    float xOffset = px() - mouseX;
+    float yOffset = py() - mouseY;
+    //Console("xOffset:" + xOffset + ", yOffset:" + yOffset);
+    ex(ex() - xOffset);
+    ey(ey() + yOffset);
+  }
+
+  void mouseClicked() {
+    //if (col == color(255, 0, 0)) {
+    //  col = 255;
+    //} else {
+    //  col = color(255, 0, 0);
+    //}
+  }
 }
 
+
+
+
+
+
+
+
 class AnimalFactory {
-  World world = null;
+  World world;
 
   AnimalFactory(World _world) {
 

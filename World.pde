@@ -3,8 +3,8 @@ class World {
   boolean showAxes = true;
 
   float screenWidth, screenHeight, worldWidth, worldHeight;
-  ArrayList<Animal> entities;
-  Entity selected;
+  ArrayList<Animal> animals;
+  Animal selected;
   int nextId = 0;
   int tickCounter = 0;
 
@@ -14,33 +14,33 @@ class World {
     screenHeight = _screenHeight;
     worldWidth = _worldWidth;
     worldHeight = _worldHeight;
-    entities = new ArrayList<Animal>();
+    animals = new ArrayList<Animal>();
   }
 
   void addParticle(Animal _p) {
 
-    entities.add(_p);
+    animals.add(_p);
   }
   void addAnimal(Animal _animal) {
     _animal.setId(nextId++);
-    entities.add(_animal);
+    animals.add(_animal);
   }
 
   void setup() {
 
-    for (Entity p : entities) {
-      p.loadSkin();
+    for (Animal p : animals) {
+      //p.loadSkin();
     }
-    selected = entities.get(0);
+    selected = animals.get(0);
   }
 
-  //void sortByDistance(Entity p) {
+  //void sortByDistance(Animal p) {
 
-  //  Collections.sort(entities, new DistanceComparator(p));
+  //  Collections.sort(animals, new DistanceComparator(p));
   //}  
 
   void print() {
-    for (Entity p : entities) {
+    for (Animal p : animals) {
       Console(p);
     }
   }
@@ -54,7 +54,7 @@ class World {
     }
     popStyle();
 
-    for (Entity p : entities) {
+    for (Animal p : animals) {
 
       p.draw();
     }
@@ -62,26 +62,26 @@ class World {
 
   void tick() {
     tickCounter++;
-    for (int i = entities.size() - 1; i >=0; i--) {
-      Animal p = entities.get(i);
+    for (int i = animals.size() - 1; i >=0; i--) {
+      Animal p = animals.get(i);
       p.tick(tickCounter);
     }
   }
 
   void dinner(Animal p) {
-    entities.remove(p);  // remove dead bodies
+    animals.remove(p);  // remove dead bodies
     Console("Carcass Eaten");
   }
 
   //void execute() {
-  //  for (Animal a : entities) {
+  //  for (Animal a : animals) {
   //     a.execute(); 
   //  }
 
   //}
   Animal isMouseOver() {
 
-    for (Animal p : entities) {
+    for (Animal p : animals) {
       if (p.mouseOver()) {  // assumes that mouse is over only one object at  a time
         return p;
       } else {
@@ -109,7 +109,7 @@ class World {
 }
 
 
-void setSelected(Entity _p) {
+void setSelected(Animal _p) {
 
   //  if (selected != null) {  // reset old selected
   //    selected.isSelected = false;

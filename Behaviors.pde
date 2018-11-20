@@ -30,7 +30,7 @@ class BaseBehavior implements IBehavior, IReportable {
   int getId() {
     return behaviorID;
   }
-  String getName() {
+  String getObjectName() {
     return name;
   }
   String toString() {
@@ -78,7 +78,7 @@ class Graze extends BaseBehavior {
     return false;
   }
   String toString() {
-    String s = self.getName() + " [" + self.getId() + "] Grazing ...."; 
+    String s = self.getObjectName() + " [" + self.getId() + "] Grazing ...."; 
     return s;
   }
 }
@@ -110,14 +110,14 @@ class Wander extends BaseBehavior {
     return true;
   }
   String toString() {
-    String s = self.getName() + " [" + self.getId() + "] Wandering ...."; 
+    String s = self.getObjectName() + " [" + self.getId() + "] Wandering ...."; 
     return s;
   }
   ArrayList<String> getReport() {
     ArrayList<String> sArray = new ArrayList<String>();
     String buf = "";
     sArray.add("Name: ");
-    sArray.add(self.getName());
+    sArray.add(self.getObjectName());
     sArray.add("Id: ");
     sArray.add(str(getId()));
     sArray.add("Wandering: ");
@@ -159,13 +159,13 @@ class Avoid extends Track {
     self.move(moveStep);
   }
   String toString() {
-    String s = self.getName() + " [" + self.getId() + "] Avoiding ..." + targetType; 
+    String s = self.getObjectName() + " [" + self.getId() + "] Avoiding ..." + targetType; 
     return s;
   }
   ArrayList<String> getReport() {
     ArrayList<String> sArray = new ArrayList<String>();
     sArray.add("Name: ");
-    sArray.add(self.getName());
+    sArray.add(self.getObjectName());
     sArray.add("Id: ");
     sArray.add(str(getId()));
     sArray.add("Avoiding: ");
@@ -250,7 +250,7 @@ class Hunt extends Track {
 
 
   String toString() {
-    String s = self.getName() + " [" + self.getId() + "] hunting ..." + targetType; 
+    String s = self.getObjectName() + " [" + self.getId() + "] hunting ..." + targetType; 
     return s;
   }
   ArrayList<String> getReport() {
@@ -315,7 +315,7 @@ class Track extends BaseBehavior {
         println("Num obj in memory:" + self.getObserved().size());
       }
       for (Observation obs : self.getObserved()) {   // add all cows to list of prey
-        if (obs.parent.getName() == targetType) {
+        if (obs.parent.getObjectName() == targetType) {
           if (!obs.parent.isDead()) {  // only consider living animals prey
             prey.add(obs.parent);
           }
@@ -385,7 +385,7 @@ class Track extends BaseBehavior {
 
 
   String toString() {
-    String s = self.getName() + " [" + self.getId() + "] Tracking ..." + targetType; 
+    String s = self.getObjectName() + " [" + self.getId() + "] Tracking ..." + targetType; 
     return s;
   }
 }
