@@ -1,13 +1,13 @@
-class DistanceComparator implements Comparator<Entity> {
-  Entity center;
+class DistanceComparator implements Comparator<Observation> {
+  ICanSense center;
 
-  DistanceComparator(Entity _center) {
+  DistanceComparator(ICanSense _center) {
     center = _center;
   }
 
-  int compare(Entity a, Entity b) {
-    float dB = center.getParticle().distanceTo(a.getParticle());
-    float dA = center.getParticle().distanceTo(b.getParticle());
+  int compare(Observation a, Observation b) {
+    float dB = center.distanceTo(a);
+    float dA = center.distanceTo(b);
     return int(dB - dA);
   }
 }

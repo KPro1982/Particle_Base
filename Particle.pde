@@ -7,6 +7,7 @@ class Particle { //<>// //<>// //<>//
 
   // IDENTITY
 
+  int id;
   World world;
 
 
@@ -14,15 +15,11 @@ class Particle { //<>// //<>// //<>//
 
   float px, py, ex, ey;
   float rot, bearing = 0;
+  int tickCounter = 0;
 
-
-
-
-
-  // ***************** END DECLARATIONS **************************************
 
   // -------------------------------------------------------------------------
-  // CONTRUCTORS
+  // CONTRUCTORS AND INITIALIZERS
   // -------------------------------------------------------------------------
   Particle(World _world) {
     world = _world;
@@ -39,27 +36,44 @@ class Particle { //<>// //<>// //<>//
 
     ex = _ex;
     ey = _ey;
-    rot = _rot;
+    setRotation(_rot);
     px = px();
     py = py();
+  }
+  
+  Particle clone() {
+    Particle p = new Particle(world, ex(),ey(),getRotation());
+    p.setTick(getTick());
+    p.setBearing(getBearing());
+    return p;
   }
 
   //  -------------------------------------------------------------------------
   //    Getters and Setters 
   //  -------------------------------------------------------------------------
+  void setId(int _id) {
+    id = _id;
+  }
+  int getId() {
+    return id;
+  }
   float getRotation() {
+    rot = rot % (2*PI); // make sure that rot does not exceed 2PI
     return rot;
   }
   void setRotation(float _rot) {
+
+    rot = rot % (2*PI);  // make sure that rot does not exceed 2PI
     rot = _rot;
+    setBearing(rot);
   }
-   float getBearing() {
+  float getBearing() {
     return bearing;
   }
   void setBearing(float _bearing) {
     bearing = _bearing;
   }
-  
+
   float px() {
     px = map(ex, -world.worldWidth/2, +world.worldWidth/2, 0, world.screenWidth);
     return px;
@@ -81,7 +95,15 @@ class Particle { //<>// //<>// //<>//
   void ey(float _ey) {
     ey = _ey;
   }
-
+  int getTick() {
+    return tickCounter;
+  }
+  void addTick() {
+    tickCounter++;
+  }
+  void setTick(int _tick) {
+    tickCounter = _tick;
+  }
 
   PVector getPVector() {
     return new PVector(ex, ey);
@@ -108,16 +130,14 @@ class Particle { //<>// //<>// //<>//
     PVector targetVect = new PVector(mouseX, mouseY);
     PVector pVect = new PVector(px(), py());
 
-    rot += angleTo(pVect, targetVect);
-    //println("heading:" + pVect.heading2D());
+    setRotation(getRotation() + angleTo(pVect, targetVect));
   }
 
   void rotateTo(Particle _p) {
 
     PVector targetVect = new PVector(_p.px(), _p.py());  // this should be based of of ex, ey but doesn't work for some reason
     PVector pVect = new PVector(px(), py());             // this may break if the environment > screen
-
-    rot += angleTo(pVect, targetVect);
+    setRotation(getRotation() + angleTo(pVect, targetVect));
   }
 
   float angleTo(Particle _p) {
@@ -126,15 +146,15 @@ class Particle { //<>// //<>// //<>//
 
     return angleTo(targetVect, pVect);
   }
-  
+
   float angleTo(PVector v1, PVector v2) {
     float angle2 = 0;
     PVector vDiff = PVector.sub(v2, v1);
     vDiff.normalize();
-    PVector oVect = PVector.fromAngle(-rot);
+    PVector oVect = PVector.fromAngle(-getRotation());
     float h1 = oVect.heading();
     float h2 = vDiff.heading();
-    println(degrees(h1) + ", " + degrees(h2));
+    Console(degrees(h1) + ", " + degrees(h2));
     angle2 = h1 + h2;
     return angle2;
   }
@@ -150,7 +170,7 @@ class Particle { //<>// //<>// //<>//
     vDiff.normalize();
     return vDiff.heading();
   }
-  
+
   void moveOnBearing(float dist) {
     ex += dist*cos(bearing);
     ey -= dist*sin(bearing);

@@ -1,6 +1,3 @@
-interface ICanSense extends IHaveParticle {
-  World getWorld();
-}
 
 interface IClickable {
   boolean mouseOver();
@@ -25,19 +22,80 @@ interface IHaveParticle {
   float distanceTo(IHaveParticle _p);
   boolean outOfBounds();
   void moveOnBearing(float dist);
+  int getId();
+  int getTick();
+  void addTick();
+}
+interface ICanDie {
+  void kill();
+  boolean isDead();
+}
+
+interface ISenseStrategy {
+  ArrayList<Observation> sense();
+  void drawSenseCone(int _col);
+  ArrayList<String> getReport();
+}
+
+interface ICanSense extends IHaveParticle {
+  World getWorld();
+  ArrayList<Observation> sense();
 }
 
 interface ISensable extends IHaveParticle {
   void addSensedBy(ICanSense s);
   void removeSensedBy(ICanSense s);
+  float getVisibility();
+  Observation getObservation();
+  String getObjectName();
+  int getId();
+  void kill();
+  boolean isDead();
 }
-interface ISenseStrategy {
-  ArrayList<ISensable> sense();
-  void drawSenseCone();
-}
+
 
 interface ICanMove {
 }
 
 interface ICanMate {
+  boolean isAdult();
+  boolean isFull();
+  boolean isHungry();
+}
+
+interface ICarnivore extends ICanEat {
+  boolean isCarnivore();
+  float getMemory();
+}
+
+interface IHerbivore extends ICanEat {
+  boolean isHerbavore();
+}
+interface ICanEat {
+  void feed(float _food);
+  float getStomach();
+  boolean isHungry();
+  boolean isFull();
+  float getStomachFull();
+  void burnFood(float _food);
+  String getObjectName();
+  int getId();
+}
+interface ICanTrack {
+  ArrayList<Observation> getObserved();
+  ISensable getTarget();
+  void setTarget(ISensable _target);
+}
+interface IBehavior extends IReportable {
+  boolean execute();
+  int getId();
+  void setId(int newId);
+  String getObjectName();
+}
+
+interface IReportable {
+  ArrayList<String> getReport();
+  String toString();
+  void toggleTagged();
+  int getId();
 }

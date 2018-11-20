@@ -3,8 +3,10 @@ class World {
   boolean showAxes = true;
 
   float screenWidth, screenHeight, worldWidth, worldHeight;
-  ArrayList<Entity> entities;
-  Entity selected;
+  ArrayList<Animal> animals;
+  Animal selected;
+  int nextId = 0;
+  int tickCounter = 0;
 
 
   World(float _screenWidth, float _screenHeight, float _worldWidth, float _worldHeight) {
@@ -12,42 +14,34 @@ class World {
     screenHeight = _screenHeight;
     worldWidth = _worldWidth;
     worldHeight = _worldHeight;
-    entities = new ArrayList<Entity>();
+    animals = new ArrayList<Animal>();
   }
 
-  void addParticle(Entity _p) {
+  void addParticle(Animal _p) {
 
-    entities.add(_p);
+    animals.add(_p);
   }
-
-  //void createParticle() {
-  //  Particle p = new LadyBug(this);
-  //  p.loadSkin();
-  //  entities.add(p);
-
-  //}
-
-  void createParticle(float _ex, float _ey, float _rot) {
-    entities.add(new Animal(this, _ex, _ey, _rot));
-  
+  void addAnimal(Animal _animal) {
+    _animal.setId(nextId++);
+    animals.add(_animal);
   }
 
   void setup() {
 
-    for (Entity p : entities) {
-      p.loadSkin();
+    for (Animal p : animals) {
+      //p.loadSkin();
     }
-    selected = entities.get(0);
+    selected = animals.get(0);
   }
 
-  void sortByDistance(Entity p) {
+  //void sortByDistance(Animal p) {
 
-    Collections.sort(entities, new DistanceComparator(p));
-  }
+  //  Collections.sort(animals, new DistanceComparator(p));
+  //}  
 
   void print() {
-    for (Entity p : entities) {
-      println(p);
+    for (Animal p : animals) {
+      Console(p);
     }
   }
   void draw() {
@@ -60,22 +54,34 @@ class World {
     }
     popStyle();
 
-    for (Entity p : entities) {
+    for (Animal p : animals) {
 
       p.draw();
     }
   }
 
-  void step() {
-
-    for (Entity p : entities) {
-      ((Animal) p).step();
+  void tick() {
+    tickCounter++;
+    for (int i = animals.size() - 1; i >=0; i--) {
+      Animal p = animals.get(i);
+      p.tick(tickCounter);
     }
   }
 
-  Entity isMouseOver() {
+  void dinner(Animal p) {
+    animals.remove(p);  // remove dead bodies
+    Console("Carcass Eaten");
+  }
 
-    for (Entity p : entities) {
+  //void execute() {
+  //  for (Animal a : animals) {
+  //     a.execute(); 
+  //  }
+
+  //}
+  Animal isMouseOver() {
+
+    for (Animal p : animals) {
       if (p.mouseOver()) {  // assumes that mouse is over only one object at  a time
         return p;
       } else {
@@ -84,23 +90,26 @@ class World {
     return null;
   }
   void mouseDragged() {
-    Entity p = isMouseOver();
+    Animal p = isMouseOver();
     if (p != null) {
       p.mouseDragged();
-      //step();
+      p.execute();
     }
-    
   }
   void mouseClicked() {
-    Entity p = isMouseOver();
+    Animal p = isMouseOver();
     if (p != null) {
       p.mouseClicked();
+      //p.toggleTagged();
     }
+  }
+  void mouseReleased() {
+    tick();
   }
 }
 
 
-void setSelected(Entity _p) {
+void setSelected(Animal _p) {
 
   //  if (selected != null) {  // reset old selected
   //    selected.isSelected = false;

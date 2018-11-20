@@ -1,15 +1,20 @@
-public void Mouse(int theValue) {
-  //rotateMouse = !rotateMouse;
+public void Pause () {
+  pause = !pause;
 }
-public void Sel(int theValue) {
+public void Print() {
 
-  //rotateSelected = !rotateSelected;
+  bprint = !bprint;
 }
 
-public void Drag(int theValue) {
+public void Select() {
 
-  //rotateDrag = !rotateDrag;
+  selected = !selected;
 }
-public void Add(int theValue) {
+public void Add() {
   //swamp.createParticle();
+}
+
+public void Narwhal() {
+  println ("Moo!");
+  
 }
