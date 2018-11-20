@@ -29,7 +29,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
 
   int iconColor = 0;
   int children = 0;
-  int ticksSinceLastChild = 0;
+  int lastChildTick = 0;
   int behaviorCounter = 1;
   int skinSize = 100;
   int col;
@@ -40,6 +40,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   float visibility = 100;
   float maxpSize = 50;
   float pSize = maxpSize;
+  float mateRate = 0;
 
 
   // ----------------------------------------------------------------------------------
@@ -114,7 +115,18 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   float getStomachFull() {
     return stomachFull;
   }
-
+  void setStomach(float _stomach) {
+     stomach = _stomach; 
+  }
+  float getMateRate() {
+    return mateRate;
+  }
+  void setMateRate(float _rate) {
+    mateRate = _rate;
+  }
+  boolean isReadyToMate() {
+    return getTick() - getLastChildTick() > getMateRate();
+  }
   String getObjectName() {
     return name;
   }
@@ -131,6 +143,12 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   }
   void setMemory(float _mem) {
     memory = _mem;
+  }
+  int getLastChildTick() {
+    return lastChildTick;
+  }
+  void setLastChildTick(int _tick) {
+    lastChildTick = _tick;
   }
   // -----------------------------------------------------------------------------
   float getVisibility() {
@@ -355,8 +373,16 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     ey(animal.ey());
   }
 
-
-
+  Animal spawn() {
+    Animal childAnimal = animalFactory.getAnimal(getObjectName());
+    childAnimal.clone(this);
+    feed(childAnimal.getStomachFull());  // child starts full
+    childAnimal.setChild(true);
+    setStomach(getStomach()/2); // parent loses half stomach
+    world.addAnimal(childAnimal);
+    setLastChildTick(getTick());
+    return childAnimal;
+  }
 
 
 

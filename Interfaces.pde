@@ -61,6 +61,11 @@ interface ICanMate {
   boolean isAdult();
   boolean isFull();
   boolean isHungry();
+  boolean isReadyToMate();
+  int getLastChildTick();
+  void setLastChildTick(int _tick);
+  Animal spawn();
+ 
 }
 
 interface ICarnivore extends ICanEat {

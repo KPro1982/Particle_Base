@@ -41,6 +41,7 @@ class Wolf extends Animal implements ICarnivore {
     stomachFull = 1000;
     stomach = 1000;
     setMemory(1000);
+    setMateRate(1000);
     setVisibility(100);
     iconType = "Square";
 
@@ -103,6 +104,7 @@ class Sheep extends Animal implements IHerbivore {
     addBehavior(new Graze(this));
     addBehavior(new Mate(this, "Sheep"));
     addBehavior(new Wander(this));
+    setMateRate(500);
     setVisibility(100);
     iconType = "Circle";
   }

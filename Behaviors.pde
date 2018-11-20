@@ -189,23 +189,18 @@ class Mate extends Track {
     Animal animal = null;
     ICanMate targetMate = null;
 
-    if (self.isFull()) {
+    if (!self.isHungry() && self.isReadyToMate()) {
       if (!super.execute()) {  // super couldnt find a target
         return false;
       }
       targetMate = (ICanMate)target;  
 
       if (distanceToTarget() < 10) {  // close enough to mate
-        if (self.isFull() && self.isAdult())
-          if (targetMate.isAdult()) {
-            animal = animalFactory.getAnimal(self.name);
-            if (animal != null) {
-              animal.clone(self);
-              animal.setChild(true);
-              animal.feed(animal.stomachFull);  // kids start full
-              self.world.addAnimal(animal);
-            }
+        if (!self.isHungry() && self.isAdult()) {
+          if (targetMate.isAdult() && targetMate.isReadyToMate()) {
+            self.spawn();
           }
+        }
       }
       return true;
     } else {
