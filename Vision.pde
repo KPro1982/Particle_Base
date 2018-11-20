@@ -3,8 +3,8 @@ class PredatorVision extends Vision {
   PredatorVision(ICanSense _self) {
     super(_self);
     acuity = 100;
-    range = 1000;
-    field = PI/4;
+    range = 650;
+    field = PI/2;
     coneCol = color(255, 0, 0, 100);
     //showSightCone = true;
   }
@@ -29,7 +29,6 @@ class Vision implements ISenseStrategy {
   ICanSense self;
   World world;
   String name = "Sensor";
-  boolean showSightCone = false;
   color coneCol;
   float dist, bTo;  
 

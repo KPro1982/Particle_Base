@@ -10,8 +10,8 @@ public void Select() {
 
   selected = !selected;
 }
-public void Add() {
-  //swamp.createParticle();
+public void ToMouse() {
+  bToMouse = !bToMouse;
 }
 
 public void Freeze() {

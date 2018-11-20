@@ -44,26 +44,28 @@ class Wolf extends Animal implements ICarnivore {
     setVisibility(100);
     iconType = "Square";
 
+
     addSense(new PredatorVision(this));
     addBehavior(new Hunt(this, "Sheep"));
-    //addBehavior(new Hunt(this, "Wolf"));
+
+    addBehavior(new Mate(this, "Wolf"));
+    addBehavior(new Hunt(this, "Wolf"));
     addBehavior(new Wander(this));
   }
-  void executeBehaviors() {
-    IBehavior aHunt = behaviors.get(0);
-    IBehavior aWander = behaviors.get(1);
+  //void executeBehaviors() {
+  //  IBehavior aHunt = behaviors.get(0);
+  //  IBehavior aWander = behaviors.get(1);
+  //  activeBehavior = "";
 
-    if (aHunt.execute() == false) { // no target
-      if (!bFreeze) {
-        if (aWander.execute() == true) {
-          activeBehavior = "Wander";
-        }
-      }
-    } else {
-      activeBehavior = "Hunt";  //  hunting
-    }
-    determineColor();
-  }
+  //  if (aHunt.execute() == false) { // no target
+  //    if (aWander.execute() == true) {
+  //      activeBehavior = "Wander";
+  //    }
+  //  } else {
+  //    activeBehavior = "Hunt";  //  hunting
+  //  }
+  //  determineColor();
+  //}
 
   boolean isCarnivore() {
     return true;
@@ -97,9 +99,9 @@ class Sheep extends Animal implements IHerbivore {
 
   void config() {
     addSense(new PreyVision(this));
-    //addBehavior(new Avoid(this, "Wolf"));
+    addBehavior(new Avoid(this, "Wolf"));
     addBehavior(new Graze(this));
-    //addBehavior(new Mate(this, "Sheep"));
+    addBehavior(new Mate(this, "Sheep"));
     addBehavior(new Wander(this));
     setVisibility(100);
     iconType = "Circle";

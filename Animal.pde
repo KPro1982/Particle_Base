@@ -19,8 +19,9 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   ArrayList<Observation> iObserved;
   ArrayList<IBehavior> behaviors;
 
-  boolean showSightLine = true;
+  boolean showSightLine = false;
   boolean showSenseCone = false;
+  boolean showAngleMarks = false;
   boolean sensed;
   boolean dead = false;
   boolean tagged = false;
@@ -48,7 +49,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   Animal(int _id, World _world, float _ex, float _ey, float _rot) {
     world = _world;
     particle = new Particle(_world, _ex, _ey, _rot);
-    
+
     senses = new ArrayList<ISenseStrategy>();
     iSensedBy = new ArrayList<ICanSense>();
     iObserved = new ArrayList<Observation>();
@@ -61,7 +62,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   Animal(World _world) {
     world = _world;
     particle = new Particle(_world, 0, 0, 0);
-    
+
     senses = new ArrayList<ISenseStrategy>();
     iSensedBy = new ArrayList<ICanSense>();
     iObserved = new ArrayList<Observation>();
@@ -71,9 +72,6 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
 
     randomize();
     setupAnimal();
-    
-    
-    
   }
 
   void setupAnimal() {
@@ -413,6 +411,9 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     case "Mate":
       setColor(color(254, 58, 145));
       break;
+    default:
+      setColor(0);
+      break;
     }
   }
   void setIconColor() {
@@ -507,21 +508,23 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
 
       drawIcon();
       //fill(col);
-      line(-250, 0, 250, 0);  // center X
-      line(0, -250, 0, 250);
+      if (showAngleMarks) {
+        line(-250, 0, 250, 0);  // center X
+        line(0, -250, 0, 250);
+      }
       fill(0);
       textAlign(CENTER, CENTER);
       textSize(30);
       text(getId(), 0, 0);
       pushStyle();
-      
-       if (showSenseCone) {
+
+      if (showSenseCone) {
         drawSenseCone();
       }
       if (showSightLine) {
         line(0, 0, pSize/2, 0);
       }
-      
+
       rotate(getRotation());
       fill(col);
       if (hasSkin) {
@@ -601,10 +604,8 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   }
 
   void mouseClicked() {
-    //if (col == color(255, 0, 0)) {
-    //  col = 255;
-    //} else {
-    //  col = color(255, 0, 0);
-    //}
+    if (bToMouse) {
+      getParticle().rotateToMouse();
+    }
   }
 }

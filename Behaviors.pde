@@ -224,15 +224,14 @@ class Hunt extends Track {
     super((Animal)_self, _targetType);
     name = "Hunt";
     averageStep = 2;
-    memoryCounter = self.getMemory();
     //println("memory in Hunt :" + _self.getMemory());
   }
   boolean execute() {
 
-    if (self.isAdult() ) {
-      //println("[" + self.getId() + "] is looking for targets.");
+    if (self.isAdult() && self.isHungry()) {
+
       if (super.execute() == false) {  // super couldnt find a target
-        println("[" + self.getId() + "] could not find a target.");
+
         return false;
       }
 
@@ -243,7 +242,7 @@ class Hunt extends Track {
         closestPrey = null;
         prey.clear();
       }
-      selfReport();
+      //selfReport();
       return true;
     } else {
       return false;
@@ -292,14 +291,10 @@ class Track extends BaseBehavior {
   }
 
   boolean execute() {
+    if (!acquire()) {
+      return false; // lost scent
+    }
 
-
-    if (target == null) { 
-      if (!acquire()) {
-        return false; // lost scent
-      }
-    } 
-    //self.setTarget(target);
     turn();
     move();
     //Console(this);
@@ -309,18 +304,20 @@ class Track extends BaseBehavior {
 
 
   boolean acquire() {
-
+    //println("tracking..." + self.getTick());
     prey.clear();
     target = null;
     closestPrey = null;
+
     if (self.getObserved().size() > 0) {  // I see something
-      if (self.isTagged()) {
-        println("Num obj in memory:" + self.getObserved().size());
-      }
-      for (Observation obs : self.getObserved()) {   // add all cows to list of prey
+
+      for (Observation obs : self.getObserved()) {   // add all sheep to list of prey
         if (obs.parent.getObjectName() == targetType) {
           if (!obs.parent.isDead()) {  // only consider living animals prey
             prey.add(obs.parent);
+            if (self.isTagged()) {
+              println("Adding prey:" + prey.size());
+            }
           }
         }
       }
@@ -329,6 +326,7 @@ class Track extends BaseBehavior {
       if (prey.size() == 1) {
         if (!prey.get(0).isDead() ) {   // this should always be true because dead animals are not added to prey in code above
           target = prey.get(0);
+          closestPrey = target;  // by definition because its the ONLY prey
           return true;
         } else {
           target = null;  // should never reach this
@@ -337,19 +335,17 @@ class Track extends BaseBehavior {
       } else if (prey.size() > 1) {  // there more than 1 in the list so choose closest
         println(self.getId() + "] choosing closest prey of of " + prey.size());
         for (ISensable obs : prey) {
-          if (!obs.isDead()) {
-            if (closestPrey == null) {
+          if (closestPrey == null) {
+            closestPrey = obs;
+          } else {
+            float distanceObs = self.distanceTo(obs);
+            float distancePrey = self.distanceTo(closestPrey);
+            println(obs.getId() + ": " + distanceObs + " / " + closestPrey.getId() + ": " + distancePrey);
+            if (distanceObs < distancePrey) {
               closestPrey = obs;
+              println(self.getId() + "] " + closestPrey.getId() + " is the new Closest.");
             } else {
-              float distanceObs = self.distanceTo(obs);
-              float distancePrey = self.distanceTo(closestPrey);
-              println(obs.getId() + ": " + distanceObs + " / " + closestPrey.getId() + ": " + distancePrey);
-              if (distanceObs < distancePrey) {
-                closestPrey = obs;
-                println(self.getId() + "] " + closestPrey.getId() + " is the new Closest.");
-              } else {
-                println(self.getId() + "] " + closestPrey.getId() + " remains the Closest.");
-              }
+              println(self.getId() + "] " + closestPrey.getId() + " remains the Closest.");
             }
           }
         }

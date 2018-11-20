@@ -94,13 +94,19 @@ class World {
     if (p != null) {
       p.mouseDragged();
       tick();
+    } else {
+
+      for (Animal a : animals) {
+        if (a.isTagged()) {
+          a.getParticle().rotateToMouse();
+        }
+      }
     }
   }
   void mouseClicked() {
     Animal p = isMouseOver();
     if (p != null) {
       p.mouseClicked();
-      //p.toggleTagged();
     }
   }
   void mouseReleased() {
