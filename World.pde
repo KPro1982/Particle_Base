@@ -93,7 +93,7 @@ class World {
     Animal p = isMouseOver();
     if (p != null) {
       p.mouseDragged();
-      p.execute();
+      tick();
     }
   }
   void mouseClicked() {

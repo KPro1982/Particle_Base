@@ -54,8 +54,10 @@ class Wolf extends Animal implements ICarnivore {
     IBehavior aWander = behaviors.get(1);
 
     if (aHunt.execute() == false) { // no target
-      if (aWander.execute() == true) {
-        activeBehavior = "Wander";
+      if (!bFreeze) {
+        if (aWander.execute() == true) {
+          activeBehavior = "Wander";
+        }
       }
     } else {
       activeBehavior = "Hunt";  //  hunting
@@ -75,10 +77,10 @@ class Wolf extends Animal implements ICarnivore {
     }
   }
 }
-  // -----------------------------------------------------------------------------
-  // SHEEP
-  // -----------------------------------------------------------------------------
-  
+// -----------------------------------------------------------------------------
+// SHEEP
+// -----------------------------------------------------------------------------
+
 class Sheep extends Animal implements IHerbivore {
 
   Sheep(int _id, World _world, float _ex, float _ey, float _rot) {

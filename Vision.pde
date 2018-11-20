@@ -55,9 +55,10 @@ class Vision implements ISenseStrategy {
       if (self != sensedBody) {
         dist = self.distanceTo(sensedBody);  // within vision range
         bTo = self.bearingTo(self, sensedBody);
+        float rot = self.getRotation();
         if (dist < range) {
 
-          if (bTo <= +field/2 && bTo >= -field/2) {  // within angle of vision
+          if (bTo <= rot + field/2 && bTo >= rot -field/2) {  // within angle of vision
             sensed.add(sensedBody);  // it is sensed but not necessarily observed;
             if (isVisible(sensedBody)) {       // can sense it
               addObservation(sensedBody.getObservation());
@@ -101,12 +102,12 @@ class Vision implements ISenseStrategy {
 
   void drawSenseCone(int _color) {
 
-
+    float rot = self.getRotation();
     pushStyle();
     stroke(210);
     if (true) {
       fill(_color);  // colored cone cone if can see
-      arc(0, 0, range*2, range*2, -field/2, field/2);  // assumes translated to 0,0 BRITTLE
+      arc(0, 0, range*2, range*2, rot-field/2, rot+field/2);  // assumes translated to 0,0 but not rotated
       stroke(color(255, 0, 0));
       line(0,0,250, 0);
     }

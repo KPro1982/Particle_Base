@@ -14,7 +14,7 @@ public void Add() {
   //swamp.createParticle();
 }
 
-public void Narwhal() {
-  println ("Moo!");
+public void Freeze() {
+  bFreeze = !bFreeze;
   
 }

@@ -496,6 +496,10 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     if (!isDead()) {
       imageMode(CENTER);
 
+
+
+
+
       pushMatrix();
       pushStyle();
       translate(px(), py());
@@ -510,18 +514,21 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
       textSize(30);
       text(getId(), 0, 0);
       pushStyle();
+      
+       if (showSenseCone) {
+        drawSenseCone();
+      }
+      if (showSightLine) {
+        line(0, 0, pSize/2, 0);
+      }
+      
       rotate(getRotation());
       fill(col);
       if (hasSkin) {
         image(skin, 0, 0);
       } 
 
-      if (showSenseCone) {
-        drawSenseCone();
-      }
-      if (showSightLine) {
-        line(0, 0, pSize/2, 0);
-      }
+
 
       popMatrix();
       popStyle();

@@ -16,13 +16,16 @@ class BaseBehavior implements IBehavior, IReportable {
     return false;
   }
   void move() {
-    self.burnFood(averageFoodBurned);
-    if (self.getStomach() > .5) {
-      moveStep = averageStep * 1.3;
-    } else if (self.isHungry()) {
-      moveStep = averageStep * .7;
+
+    if (!bFreeze) {
+      self.burnFood(averageFoodBurned);
+      if (self.getStomach() > .5) {
+        moveStep = averageStep * 1.3;
+      } else if (self.isHungry()) {
+        moveStep = averageStep * .7;
+      }
+      self.move(moveStep);
     }
-    self.move(moveStep);
   }
   void setId(int newId) {
     behaviorID = newId;
