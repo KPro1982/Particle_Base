@@ -36,8 +36,8 @@ class World {
     murdered++;
   }
   void setup() {
-    animalReport = new ReportWindow(this, "TOPRIGHT", 500, 1000);
-    popReport = new ReportWindow(this, "TOPLEFT", 500, 1000);
+    animalReport = new ReportWindow(this, "TOPRIGHT", 500, 600);
+    popReport = new ReportWindow(this, "TOPLEFT", 500, 300);
     for (Animal p : animals) {
       //p.loadSkin();
     }
@@ -99,6 +99,14 @@ class World {
       p.draw();
     }
   }
+  Animal findAnimal(int _id) {
+    for (Animal a : animals) {
+      if (a.getId() == _id) {
+        return a;
+      }
+    }
+    return null;
+  }
 
   void tick() {
     tickCounter++;
@@ -121,13 +129,43 @@ class World {
     myData.add(str(countAnimal("Wolf")) + " (" + str(countAnimal("Wolf", true)) + "/" + str(countAnimal("Wolf", false)) + ")");
     myData.add("Sheep:");
     myData.add(str(countAnimal("Sheep")) + " (" + str(countAnimal("Sheep", true)) + "/" + str(countAnimal("Sheep", false)) + ")");
+    myData.add("Biggest Mama:");
+    myData.add(str(biggestMama().getId()) + " (" + str(biggestMama().getNumberChildren())+ ")");
     myData.add("Murdered:");
     myData.add(str(murdered));
+    myData.add("Serial Killer:");
+    myData.add(str(highestMurders().getId()) + " (" + str(highestMurders().getNumberAnimalsMurdered())+ ")");
 
 
 
     popReport.output(myData);
   }
+  Animal highestMurders() {
+    int currentRecord = 0;
+    Animal serialKiller = null;
+    for (Animal a : animals) {
+      if (a.getNumberAnimalsMurdered() >= currentRecord) {
+        serialKiller = a;
+        currentRecord = a.getNumberAnimalsMurdered();
+      }
+    }
+
+    return serialKiller;
+  }
+
+  Animal biggestMama() {
+    int currentRecord = 0;
+    Animal bigMama = null;
+    for (Animal a : animals) {
+      if (a.getNumberChildren() >= currentRecord) {
+        bigMama = a;
+        currentRecord = a.getNumberChildren();
+      }
+    }
+
+    return bigMama;
+  }
+  
   int countAnimal(String _type, boolean _adult) {
     int i = 0;
     for (Animal a : animals) {

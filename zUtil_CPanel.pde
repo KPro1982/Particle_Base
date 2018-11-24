@@ -13,7 +13,6 @@ class CPanel {
     nextId = 0;
     h = 75;
     w = 75;
-
   }
 
   void calculateLocation() {
@@ -51,14 +50,20 @@ class CPanel {
       .setFont(myFont)
       ;
     panel.getController(tName).getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
-
   }
 
   void addToggle(StringList tnames) {
-    calcPosition(tnames.size());
+    calcPosition(tnames.size()+1);
     for (String s : tnames) {
       addToggle(s);
     }
+    panel.addNumberbox("FindAnimal")
+      .setPosition(nextId*w+xPos, yPos)
+      .setSize(w, h)
+      .setScrollSensitivity(1)
+      .setValue(-1)
+      .setFont(myFont)
+      ;
   }
   void setPosition(String _location) {
     location = _location;

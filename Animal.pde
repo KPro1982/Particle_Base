@@ -40,6 +40,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   int behaviorCounter = 1;
   int skinSize = 100;
   int col;
+  int numberMurdered = 0;
 
 
   float stomachFull = 300;
@@ -172,11 +173,18 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
       setTick(1000);
     }
   }
+  int getNumberChildren() {
+     return children;
+  }
   String getAnimalsMurdered() {
 
     return animalsMurdered;
   }
+  int getNumberAnimalsMurdered() {
+    return numberMurdered;
+  }
   void addAnimalsMurdered(int a) {
+    numberMurdered++;
     if (animalsMurdered == "") {
       animalsMurdered = str(a);
     } else {
