@@ -39,6 +39,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   int skinSize = 100;
   int col;
 
+
   float stomachFull = 300;
   float stomach = stomachFull;
   float memory = 0;
@@ -46,6 +47,8 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   float maxpSize = 50;
   float pSize = maxpSize;
   float mateRate = 0;
+  float walkStep = 1;
+  float runStep = 2;
 
 
   // ----------------------------------------------------------------------------------
@@ -171,6 +174,18 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   void setMemory(float _mem) {
     memory = _mem;
   }
+  float getWalkRate() {
+    return walkStep;
+  }
+  void setWalkRate(float _walk) {
+    walkStep = _walk;
+  }
+  float getRunRate() {
+    return (getStomach() > .2) ? runStep : walkStep;
+  }
+  void setRunRate(float _run) {
+    runStep = _run;
+  }
   int getLastChildTick() {
     return lastChildTick;
   }
@@ -224,14 +239,18 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     myData.add(getObjectName());
     myData.add("Id:");
     myData.add(str(getId()));
+    myData.add("Children:");
+    myData.add(str(children));
     myData.add("Stomach:");
     myData.add(str(stomach));
+    myData.add("Run Rate:");
+    myData.add(str(getRunRate()));
     myData.add("Memory:");
     myData.add(str(getMemory()));
     myData.add("Active Behavior: ");
     myData.add(activeBehavior);
 
-    myData.addAll(senses.get(0).getReport());
+    myData.addAll(senses.get(0).getReport());  // assumes only one sense = vision
 
     String obsList = "";
     int i = 0;
@@ -258,7 +277,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
 
   void selfReport() {
     if (tagged) {
-      Report(this);
+      world.animalReport.output(this);
     }
   }
 
@@ -396,15 +415,16 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
 
 
   void tick(int _tick) {
-    addTick();
-    if (!isAdult()) {
-      pSize = maxpSize *.5;
-    } else {
-      pSize = maxpSize;
+    if (!bFreeze) {
+      addTick();
+      if (!isAdult()) {
+        pSize = maxpSize *.5;
+      } else {
+        pSize = maxpSize;
+      }
     }
-    //sense();
+
     execute();
-    //Console(this);
   }
   void clone(Animal animal) {
     ex(animal.ex());
@@ -414,6 +434,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   Animal spawn() {
     Animal childAnimal = animalFactory.getAnimal(getObjectName());
     childAnimal.clone(this);
+    children++;
     feed(childAnimal.getStomachFull());  // child starts full
     childAnimal.setChild(true);
     setStomach(getStomach()/2); // parent loses half stomach
@@ -460,7 +481,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
 
     switch(activeBehavior) {
     case "Hunt":
-      setColor(color(255, 0, 0));
+      setColor(color(209, 62, 62));
       break;
     case "Avoid":
       setColor(color(255, 255, 0));
@@ -474,6 +495,9 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     case "Mate":
       setColor(color(254, 58, 145));
       break;
+    case "Cannibalize":
+      setColor(color(255, 0, 0));
+      break;
     default:
       setColor(0);
       break;
@@ -483,21 +507,22 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     iconColor = lerpColor(color(255, 0, 0), color(0, 255, 0), getStomach());
   }
   void move(float dist) {
-
-    if (outOfBounds()) {
-      if (px()> swamp.worldWidth-10) {
-        getParticle().ex(-swamp.worldWidth/2+20);
-      } else if (px() < 10) {
-        getParticle().ex(swamp.worldWidth/2-20);
+    if (!bFreeze) {
+      if (outOfBounds()) {
+        if (px()> swamp.worldWidth-10) {
+          getParticle().ex(-swamp.worldWidth/2+20);
+        } else if (px() < 10) {
+          getParticle().ex(swamp.worldWidth/2-20);
+        }
+        if (py() > swamp.worldHeight-10) {  // bottom
+          getParticle().ey(swamp.worldHeight/2-20);  // top
+        } else if (py() < 10) { // top
+          getParticle().ey(-swamp.worldHeight+20);  // bottom
+        }
       }
-      if (py() > swamp.worldHeight-10) {  // bottom
-        getParticle().ey(swamp.worldHeight/2-20);  // top
-      } else if (py() < 10) { // top
-        getParticle().ey(-swamp.worldHeight+20);  // bottom
-      }
+      setBearing(getRotation());
+      moveOnBearing(dist);
     }
-    setBearing(getRotation());
-    moveOnBearing(dist);
   }
   ArrayList<Observation> sense() {
     iObserved.clear();
@@ -559,10 +584,6 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
 
     if (!isDead()) {
       imageMode(CENTER);
-
-
-
-
 
       pushMatrix();
       pushStyle();

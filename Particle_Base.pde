@@ -3,7 +3,7 @@ import java.util.*;
 CPanel myPanel;
 World swamp; 
 AnimalFactory animalFactory;
-
+PApplet thisApp; 
 
 boolean pause = false;
 boolean bprint = false;
@@ -17,27 +17,34 @@ void setup() {
   swamp = new World(width, height, width*2, height*2);
   animalFactory = new AnimalFactory(swamp);
   Animal newAnimal;
+  thisApp = this;
 
-  for (int i = 0; i < 20; i++) {
+  for (int i = 0; i < 50; i++) {
     newAnimal = animalFactory.getAnimal("Sheep");
     newAnimal.randomize();
     swamp.addAnimal(newAnimal);
   }
-  for (int i = 0; i < 5; i++) {
-  newAnimal = animalFactory.getAnimal("Wolf");
-  swamp.addAnimal(newAnimal);
+  for (int i = 0; i < 10; i++) {
+    newAnimal = animalFactory.getAnimal("Wolf");
+    swamp.addAnimal(newAnimal);
   }
-  
+  for (int i = 0; i < 5; i++) {
+    newAnimal = animalFactory.getAnimal("Bear");
+    swamp.addAnimal(newAnimal);
+  }
+
+
   myPanel = new CPanel(this);
+  myPanel.setPosition("TOPCENTER");
   myPanel.setButtonSize(100, 75);
-  String[] toggles = {"Freeze", "Scale", "Print", "Select"};
-  myPanel.addToggle(toggles);
+  myPanel.addToggle(new StringList("Freeze", "Scale", "Print", "Select"));
+
 
 
   swamp.setup();
   //swamp.print();
 }
 void draw() {
-  if (!pause) swamp.tick();
+  swamp.tick();
   swamp.draw();
 }

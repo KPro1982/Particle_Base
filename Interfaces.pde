@@ -73,7 +73,7 @@ interface ICarnivore extends ICanEat {
   float getMemory();
 }
 interface ICannibal  {
-  boolean canSeePrey();
+
   
   
 }

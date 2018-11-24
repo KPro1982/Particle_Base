@@ -4,12 +4,23 @@ class PredatorVision extends Vision {
     super(_self);
     acuity = 100;
     range = 650;
-    field = PI/2;
+    field = PI;
     coneCol = color(255, 0, 0, 100);
     //showSightCone = true;
   }
 }
 
+class BearVision extends Vision {
+
+  BearVision(ICanSense _self) {
+    super(_self);
+    acuity = 100;
+    range = 750;
+    field = PI/2;
+    coneCol = color(255, 0, 0, 100);
+    //showSightCone = true;
+  }
+}
 class PreyVision extends Vision {
 
   PreyVision(ICanSense _self) {
@@ -108,7 +119,7 @@ class Vision implements ISenseStrategy {
       fill(_color);  // colored cone cone if can see
       arc(0, 0, range*2, range*2, rot-field/2, rot+field/2);  // assumes translated to 0,0 but not rotated
       stroke(color(255, 0, 0));
-      line(0,0,250, 0);
+      line(0, 0, cos(rot)*250, sin(rot)*250);
     }
     popStyle();
   }

@@ -16,16 +16,8 @@ class BaseBehavior implements IBehavior, IReportable {
     return false;
   }
   void move() {
-
-    if (!bFreeze) {
       self.burnFood(averageFoodBurned);
-      if (self.getStomach() > .5) {
-        moveStep = averageStep * 1.3;
-      } else if (self.isHungry()) {
-        moveStep = averageStep * .7;
-      }
-      self.move(moveStep);
-    }
+      self.move(self.getWalkRate());
   }
   void setId(int newId) {
     behaviorID = newId;
@@ -46,7 +38,7 @@ class BaseBehavior implements IBehavior, IReportable {
   }
   void selfReport() {
     if (tagged) {
-      Report(this);
+      self.world.animalReport.output(this);
     }
   }
   void  drawTrackLine() {
@@ -143,6 +135,7 @@ class Avoid extends Track {
   Avoid(Animal _self, StringList _targetTypes) {
     super(_self, _targetTypes);
     name = "Avoid";
+    averageStep = self.getRunRate();
   }
   boolean execute() {
 
@@ -158,12 +151,7 @@ class Avoid extends Track {
   }
   void move() {
     self.burnFood(averageFoodBurned);
-    if (self.getStomach() > .5) {
-      moveStep = averageStep * 1.3;
-    } else if (self.isHungry()) {
-      moveStep = averageStep * .7;
-    }
-    self.move(moveStep);
+    self.move(self.getWalkRate());
   }
   String toString() {
     String s = self.getObjectName() + " [" + self.getId() + "] Avoiding ..." + targetTypes.get(0); 
@@ -193,18 +181,19 @@ class Mate extends Track {
     Animal animal = null;
     ICanMate targetMate = null;
 
-    if (!self.isHungry() && self.isReadyToMate()) {
+    if (!self.isHungry() && self.isReadyToMate() && self.isAdult()) {
       if (!super.execute()) {  // super couldnt find a target
         return false;
       }
-      targetMate = (ICanMate)target;  
+      targetMate = (ICanMate)target; 
 
-      if (distanceToTarget() < 10) {  // close enough to mate
-        if (!self.isHungry() && self.isAdult()) {
-          if (targetMate.isAdult() && targetMate.isReadyToMate()) {
-            self.spawn();
-          }
+      if (targetMate.isAdult() && targetMate.isReadyToMate()) {
+        if (distanceToTarget() < 10) {  // close enough to mate
+          self.spawn();
+          return true;
         }
+      } else {
+        return false;
       }
       return true;
     } else {
@@ -240,7 +229,7 @@ class Hunt extends Track {
   Hunt(ICarnivore _self, StringList _targetTypes) {
     super((Animal)_self, _targetTypes);
     name = "Hunt";
-    averageStep = 2;
+    averageStep = self.getRunRate();
     //println("memory in Hunt :" + _self.getMemory());
   }
   boolean execute() {
@@ -409,14 +398,14 @@ class Track extends BaseBehavior {
 
     pushStyle();
     strokeWeight(5);
-    
+
     if (target != null) { 
-      
+
       float x1 = 0;
       float y1 = 0;
       float x2 = target.getParticle().px() - self.getParticle().px();
       float y2 = target.getParticle().py() - self.getParticle().py();
-      
+
       for (int i = 0; i <= 10; i++) {
         float x = lerp(x1, x2, i/10.0) ;
         float y = lerp(y1, y2, i/10.0);

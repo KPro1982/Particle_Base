@@ -1,10 +1,11 @@
 class World {
 
- 
+
   boolean showAxes = true;
 
   float screenWidth, screenHeight, worldWidth, worldHeight;
   ArrayList<Animal> animals;
+  ReportWindow animalReport, popReport;
   Animal selected = null;
   int nextId = 0;
   int tickCounter = 0;
@@ -31,7 +32,8 @@ class World {
   }
 
   void setup() {
-
+    animalReport = new ReportWindow(this, "TOPRIGHT", 500, 1000);
+    popReport = new ReportWindow(this, "TOPLEFT", 500, 1000);
     for (Animal p : animals) {
       //p.loadSkin();
     }
@@ -100,12 +102,57 @@ class World {
       Animal p = animals.get(i);
       p.tick(tickCounter);
     }
+    reportPopulation();
+  }
+  void reportPopulation() {
+
+    ArrayList<String> myData = new ArrayList();
+    myData.add("Ticks:");
+    myData.add(str(tickCounter));
+    myData.add("Total Population:");
+    myData.add(str(animals.size()) + "/" + countAnimal(false));
+    myData.add("Bears:");
+    myData.add(str(countAnimal("Bear")) + " (" + str(countAnimal("Bear", true)) + "/" + str(countAnimal("Bear", false)) + ")");
+    myData.add("Wolves:");
+    myData.add(str(countAnimal("Wolf")) + " (" + str(countAnimal("Wolf", true)) + "/" + str(countAnimal("Wolf", false)) + ")");
+    myData.add("Sheep:");
+    myData.add(str(countAnimal("Sheep")) + " (" + str(countAnimal("Sheep", true)) + "/" + str(countAnimal("Sheep", false)) + ")");
+    popReport.output(myData);
+  }
+  int countAnimal(String _type, boolean _adult) {
+    int i = 0;
+    for (Animal a : animals) {
+      if (a.getObjectName() == _type && a.isAdult() == _adult) {
+        i++;
+      }
+    }
+    return i;
+  }
+  int countAnimal(String _type) {
+    int i = 0;
+    for (Animal a : animals) {
+      if (a.getObjectName() == _type) {
+        i++;
+      }
+    }
+    return i;
+  }
+
+  int countAnimal(boolean _adult) {
+    int i = 0;
+    for (Animal a : animals) {
+      if (a.isAdult() == _adult) {
+        i++;
+      }
+    }
+    return i;
   }
 
   void dinner(Animal p) {
     animals.remove(p);  // remove dead bodies
     Console("Carcass Eaten");
   }
+
 
   //void execute() {
   //  for (Animal a : animals) {

@@ -2,7 +2,8 @@
 class CPanel {
   ControlP5 panel;
   int nextId;
-  int h, w, xPos, yPos;
+  int x, y, h, w, xPos, yPos, totalWidth, numButtons;
+  String location;
   PFont myFont;
 
   CPanel(processing.core.PApplet theParent) {
@@ -12,10 +13,32 @@ class CPanel {
     nextId = 0;
     h = 75;
     w = 75;
-    xPos = 0;
-    yPos = 0;
-    
+
   }
+
+  void calculateLocation() {
+    switch(location) {
+    case "TOPLEFT":
+      xPos = 0;
+      yPos = 0;
+      break;
+    case "TOPRIGHT":
+      xPos = int(swamp.screenWidth-totalWidth);
+      yPos = 0;
+      break;
+    case "TOPCENTER":
+      xPos = int(swamp.screenWidth/2-totalWidth/2);
+      yPos = 0;
+      break;
+    default:
+      xPos = 0;
+      yPos = 0;
+      break;
+    }
+    println("Pos(" + xPos + "," + yPos + ")");
+  }
+
+
   void setButtonSize(int _w, int _h) {
     h = _h;
     w = _w;
@@ -29,20 +52,21 @@ class CPanel {
       ;
     panel.getController(tName).getCaptionLabel().align(ControlP5.CENTER, ControlP5.CENTER);
 
-
   }
-  
-    void addToggle(String tnames[]) {
+
+  void addToggle(StringList tnames) {
+    calcPosition(tnames.size());
     for (String s : tnames) {
       addToggle(s);
     }
-      
-
   }
-
-  void setPosition(int _x, int _y) {
-    xPos = _x;
-    yPos = _y;
+  void setPosition(String _location) {
+    location = _location;
+  }
+  void calcPosition(int _numButtons) {
+    totalWidth = w*_numButtons;
+    println("Buttons: " + numButtons + " " + totalWidth);
+    calculateLocation();
   }
   void testLabel() {
     Controller c = panel.getController("ADD");

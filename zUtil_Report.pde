@@ -1,20 +1,28 @@
-ControlP5 reportCP5;
-Textarea output;
-String dataText = "";
-int firstId;
 
-void Report(IReportable rObj) {
-  ArrayList<String> data = rObj.getReport();
+class ReportWindow {
+  ControlP5 reportCP5;
+  World world;
+  Textarea tOutput;
+  String dataText = "";
+  int firstId;
+  int x, y;
 
   int tWidth = 500;
   int tHeight = 1000;
   int tLineHeight  = 30;
 
+  ReportWindow(World _world, String _location, int _tWidth, int _tHeight) {
 
-  if (reportCP5 == null) {  // only create the first time
-    reportCP5 = new ControlP5(this);
-    output = reportCP5.addTextarea("output")
-      .setPosition(swamp.screenWidth-tWidth, 0)
+
+    tWidth = _tWidth;
+    tHeight = _tHeight;
+    world = _world;
+
+    setLocation(_location);
+
+    reportCP5 = new ControlP5(thisApp);
+    tOutput = reportCP5.addTextarea("output")
+      .setPosition(x, y)
       .setSize(tWidth, tHeight)
       .setFont(createFont("arial", tLineHeight))
       .setLineHeight(tLineHeight)
@@ -22,32 +30,46 @@ void Report(IReportable rObj) {
       .setColorBackground(color(255, 100))
       .setColorForeground(color(255, 100));
     ;
-    firstId = rObj.getId();
+  }
+  void setLocation(String _location) {
+    switch(_location) {
+    case "TOPLEFT":
+      x = 0;
+      y = 0;
+      break;
+    case "TOPRIGHT":
+      x = int(swamp.screenWidth-tWidth);
+      y = 0;
+      break;
+    default:
+      x = 0;
+      y = 0;
+      break;
+    }
   }
 
-  if (firstId == rObj.getId()) {  // if repeating reset console
-    output.clear();
+  void output(ArrayList<String> data) {
+
+    tOutput.clear();
     dataText = "";
-  } else if (dataText.length() > 200) {
-    output.clear();
-    dataText = "";
+    for (int i = 0; i < data.size()-1; i += 2) {
+      dataText += data.get(i) + " " + data.get(i+1) + "\n";
+    }
+    tOutput.setText(dataText);
   }
 
-  for (int i = 0; i < data.size()-1; i += 2) {
-    dataText += data.get(i) + " " + data.get(i+1) + "\n";
-  }
-  output.setText(dataText);
-}
-
-
-
-void Console(IReportable s) {
-  if (bprint) {
-    println(s);
+  void output(IReportable rObj) {
+    output(rObj.getReport());
   }
 }
-void Console(String s) {
-  if (bprint) {
-    println(s);
+
+  void Console(IReportable s) {
+    if (bprint) {
+      println(s);
+    }
   }
-}
+  void Console(String s) {
+    if (bprint) {
+      println(s);
+    }
+  }
