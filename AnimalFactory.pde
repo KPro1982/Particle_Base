@@ -41,7 +41,7 @@ class Wolf extends Animal implements ICarnivore {
     stomachFull = 1000;
     stomach = 1000;
     setMemory(1000);
-    setMateRate(1000);
+    setMateRate(250);
     setVisibility(100);
     iconType = "Square";
 

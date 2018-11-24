@@ -7,6 +7,9 @@ class World {
   Animal selected;
   int nextId = 0;
   int tickCounter = 0;
+  float scale = 1;
+  float xOffset = 0;
+  float yOffset = 0;
 
 
   World(float _screenWidth, float _screenHeight, float _worldWidth, float _worldHeight) {
@@ -39,6 +42,39 @@ class World {
   //  Collections.sort(animals, new DistanceComparator(p));
   //}  
 
+
+  float getScale() {
+     return scale; 
+  }
+  void setScale(float _scale) {
+    scale = _scale;
+  }
+  void addScale(float _scale) {
+    scale += _scale;
+    
+  }
+  PVector getOffset() {
+    
+    return new PVector(xOffset,yOffset);
+  }
+  void setOffset(PVector _offset) {
+    xOffset = _offset.x;
+    yOffset = _offset.y;
+  }
+    void addOffset(PVector _offset) {
+    xOffset += _offset.x;
+    yOffset += _offset.y;
+  }
+  float getScaleFactor() {
+    if (scale < 0) 
+    {
+       return 1/abs(scale);
+    } else {
+      return scale;
+      
+    }
+    
+  }
   void print() {
     for (Animal p : animals) {
       Console(p);

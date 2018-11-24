@@ -75,6 +75,12 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     setupAnimal();
   }
 
+  void randomize() {
+    ex(random(-world.screenWidth/2, +world.screenWidth/2));
+    ey(random(-world.screenHeight/2, +world.screenHeight/2));
+    getParticle().tickCounter = int(random(0, 2000));
+  }
+
   void setupAnimal() {
     stomach = int(random(stomachFull/2, stomachFull));
     behaviors = new ArrayList<IBehavior>();
@@ -351,11 +357,6 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   // main methods
   // ---------------------------------------------------------------------------------- 
 
-  void randomize() {
-    ex(random(-world.worldWidth/2, +world.worldWidth/2));
-    ey(random(-world.worldHeight/2, +world.worldHeight/2));
-    getParticle().tickCounter = int(random(0, 2000));
-  }
 
   void tick(int _tick) {
     addTick();

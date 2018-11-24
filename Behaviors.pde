@@ -311,7 +311,7 @@ class Track extends BaseBehavior {
           if (!obs.parent.isDead()) {  // only consider living animals prey
             prey.add(obs.parent);
             if (self.isTagged()) {
-              println("Adding prey:" + prey.size());
+              //println("Adding prey:" + prey.size());
             }
           }
         }
@@ -328,19 +328,19 @@ class Track extends BaseBehavior {
           return false;
         }
       } else if (prey.size() > 1) {  // there more than 1 in the list so choose closest
-        println(self.getId() + "] choosing closest prey of of " + prey.size());
+        //println(self.getId() + "] choosing closest prey of of " + prey.size());
         for (ISensable obs : prey) {
           if (closestPrey == null) {
             closestPrey = obs;
           } else {
             float distanceObs = self.distanceTo(obs);
             float distancePrey = self.distanceTo(closestPrey);
-            println(obs.getId() + ": " + distanceObs + " / " + closestPrey.getId() + ": " + distancePrey);
+            //println(obs.getId() + ": " + distanceObs + " / " + closestPrey.getId() + ": " + distancePrey);
             if (distanceObs < distancePrey) {
               closestPrey = obs;
-              println(self.getId() + "] " + closestPrey.getId() + " is the new Closest.");
+              //println(self.getId() + "] " + closestPrey.getId() + " is the new Closest.");
             } else {
-              println(self.getId() + "] " + closestPrey.getId() + " remains the Closest.");
+              //println(self.getId() + "] " + closestPrey.getId() + " remains the Closest.");
             }
           }
         }

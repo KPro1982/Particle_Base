@@ -18,3 +18,8 @@ public void Freeze() {
   bFreeze = !bFreeze;
   
 }
+
+public void Scale() {
+  bScale = !bScale;
+  
+}
