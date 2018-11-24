@@ -75,13 +75,20 @@ class Particle { //<>// //<>// //<>//
   }
 
   float px() {
-    px = map(ex, -world.worldWidth/2*world.getScaleFactor()+world.getOffset().x, +world.worldWidth/2*world.getScaleFactor()+world.getOffset().x, 0, world.screenWidth);
+    px = map(ex, (-world.worldWidth/2+scaleEx(world.getOffset().x))*world.getScaleFactor(), (+world.worldWidth/2+scaleEx(world.getOffset().x))*world.getScaleFactor(), 0, world.screenWidth);
     return px;
   }
 
   float py() {
-    py = map(ey, +world.worldHeight/2*world.getScaleFactor()+world.getOffset().y, -world.worldHeight/2*world.getScaleFactor()+world.getOffset().y, 0, world.screenHeight);
+    py = map(ey, (+world.worldHeight/2+scaleEy(world.getOffset().y))*world.getScaleFactor(), (-world.worldHeight/2+scaleEy(world.getOffset().y))*world.getScaleFactor(), 0, world.screenHeight);
     return py;
+  }
+  float scaleEx(float _px) {
+    return _px / world.screenWidth * world.worldWidth; 
+    
+  }
+    float scaleEy(float _py) {
+    return _py / world.screenHeight * world.worldHeight; 
   }
   float ex() {
     return ex;

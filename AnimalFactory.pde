@@ -22,7 +22,7 @@ class AnimalFactory {
 // WOLF
 // -----------------------------------------------------------------------------
 
-class Wolf extends Animal implements ICarnivore {
+class Wolf extends Animal implements ICarnivore, ICannibal {
 
   Wolf(int _id, World _world, float _ex, float _ey, float _rot) {
     super(_id, _world, _ex, _ey, _rot);
@@ -45,12 +45,11 @@ class Wolf extends Animal implements ICarnivore {
     setVisibility(100);
     iconType = "Square";
 
-
+    setPreyTypes(new StringList("Sheep"));
     addSense(new PredatorVision(this));
-    addBehavior(new Hunt(this, "Sheep"));
-
-    addBehavior(new Mate(this, "Wolf"));
-    addBehavior(new Hunt(this, "Wolf"));
+    addBehavior(new Mate(this));
+    addBehavior(new Hunt(this, getPreyTypes()));
+    addBehavior(new Cannibalize(this));
     addBehavior(new Wander(this));
   }
   //void executeBehaviors() {
@@ -71,7 +70,9 @@ class Wolf extends Animal implements ICarnivore {
   boolean isCarnivore() {
     return true;
   }
-
+  boolean canSeePrey() {
+    return true;
+  }
   void drawSenseCone() {
     if (hasTarget()) {
       super.drawSenseCone(color(255, 0, 0, 100));
@@ -99,10 +100,12 @@ class Sheep extends Animal implements IHerbivore {
   }
 
   void config() {
+
     addSense(new PreyVision(this));
-    addBehavior(new Avoid(this, "Wolf"));
+    setPredatorTypes(new StringList("Wolf"));
+    addBehavior(new Avoid(this, getPredatorTypes()));
     addBehavior(new Graze(this));
-    addBehavior(new Mate(this, "Sheep"));
+    addBehavior(new Mate(this));
     addBehavior(new Wander(this));
     setMateRate(500);
     setVisibility(100);

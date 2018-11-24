@@ -7,14 +7,14 @@ AnimalFactory animalFactory;
 
 boolean pause = false;
 boolean bprint = false;
-boolean selected = false;
+boolean bSelected = false;
 boolean bFreeze = false;
 boolean bToMouse = false;
 boolean bScale = false;
 
 void setup() {
   size(2500, 2000);
-  swamp = new World(width, height, width*8, height*8);
+  swamp = new World(width, height, width*2, height*2);
   animalFactory = new AnimalFactory(swamp);
   Animal newAnimal;
 
@@ -30,7 +30,7 @@ void setup() {
   
   myPanel = new CPanel(this);
   myPanel.setButtonSize(100, 75);
-  String[] toggles = {"Freeze", "Scale", "Print", "ToMouse"};
+  String[] toggles = {"Freeze", "Scale", "Print", "Select"};
   myPanel.addToggle(toggles);
 
 

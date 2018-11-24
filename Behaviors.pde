@@ -30,6 +30,7 @@ class BaseBehavior implements IBehavior, IReportable {
   void setId(int newId) {
     behaviorID = newId;
   }
+
   int getId() {
     return behaviorID;
   }
@@ -47,6 +48,9 @@ class BaseBehavior implements IBehavior, IReportable {
     if (tagged) {
       Report(this);
     }
+  }
+  void  drawTrackLine() {
+    // do nothing because it is abstract
   }
 
   ArrayList<String> getReport() {
@@ -136,8 +140,8 @@ class Wander extends BaseBehavior {
 
 class Avoid extends Track {
 
-  Avoid(Animal _self, String _targetType) {
-    super(_self, _targetType);
+  Avoid(Animal _self, StringList _targetTypes) {
+    super(_self, _targetTypes);
     name = "Avoid";
   }
   boolean execute() {
@@ -162,7 +166,7 @@ class Avoid extends Track {
     self.move(moveStep);
   }
   String toString() {
-    String s = self.getObjectName() + " [" + self.getId() + "] Avoiding ..." + targetType; 
+    String s = self.getObjectName() + " [" + self.getId() + "] Avoiding ..." + targetTypes.get(0); 
     return s;
   }
   ArrayList<String> getReport() {
@@ -180,8 +184,8 @@ class Avoid extends Track {
 class Mate extends Track {
 
 
-  Mate(Animal _self, String _targetType) {
-    super(_self, _targetType);  
+  Mate(Animal _self) {
+    super(_self, new StringList(_self.getObjectName()));  
     name = "Mate";
   }
 
@@ -212,11 +216,29 @@ class Mate extends Track {
 
 
 
+class Cannibalize extends Hunt {
+
+  Cannibalize(ICarnivore _self) {
+    super(_self, new StringList(_self.getObjectName()));  
+    name = "Cannibalize";
+  }
+
+  boolean execute() {
+    if (self.isAdult() && self.getStomach() < .1) { // only if starving
+      if (acquire(self.getPreyTypes())) {   // check to see if there are regular prey
+        return false;  // fail if regular prey exists
+      } else {
+        return super.execute();
+      }
+    }
+    return false;
+  }
+}
 
 class Hunt extends Track {
 
-  Hunt(ICarnivore _self, String _targetType) {
-    super((Animal)_self, _targetType);
+  Hunt(ICarnivore _self, StringList _targetTypes) {
+    super((Animal)_self, _targetTypes);
     name = "Hunt";
     averageStep = 2;
     //println("memory in Hunt :" + _self.getMemory());
@@ -247,7 +269,7 @@ class Hunt extends Track {
 
 
   String toString() {
-    String s = self.getObjectName() + " [" + self.getId() + "] hunting ..." + targetType; 
+    String s = self.getObjectName() + " [" + self.getId() + "] hunting ..." + targetTypes.get(0); 
     return s;
   }
   ArrayList<String> getReport() {
@@ -271,15 +293,15 @@ class Hunt extends Track {
 
 class Track extends BaseBehavior {
   ISensable target;
-  String targetType;
+  StringList targetTypes;
   ArrayList<ISensable> prey = null;
   ISensable closestPrey = null;
 
 
 
-  Track(ICanTrack _self, String _targetType) {
+  Track(ICanTrack _self, StringList _targetTypes) {
     super((Animal)_self);
-    targetType = _targetType;
+    targetTypes = _targetTypes;
     name = "Track";
     prey = new ArrayList<ISensable>();
     memoryCounter = self.getMemory();
@@ -296,70 +318,112 @@ class Track extends BaseBehavior {
     return true;
   }
 
-
-
   boolean acquire() {
+    return acquire(targetTypes);
+  }
+
+  boolean acquire(StringList _preyTypes) {
     //println("tracking..." + self.getTick());
     prey.clear();
     target = null;
     closestPrey = null;
 
     if (self.getObserved().size() > 0) {  // I see something
-
-      for (Observation obs : self.getObserved()) {   // add all sheep to list of prey
-        if (obs.parent.getObjectName() == targetType) {
-          if (!obs.parent.isDead()) {  // only consider living animals prey
-            prey.add(obs.parent);
-            if (self.isTagged()) {
-              //println("Adding prey:" + prey.size());
-            }
-          }
-        }
-      }
-
-      // compare distance to each prey and hunt closest
-      if (prey.size() == 1) {
-        if (!prey.get(0).isDead() ) {   // this should always be true because dead animals are not added to prey in code above
-          target = prey.get(0);
-          closestPrey = target;  // by definition because its the ONLY prey
-          return true;
-        } else {
-          target = null;  // should never reach this
-          return false;
-        }
-      } else if (prey.size() > 1) {  // there more than 1 in the list so choose closest
-        //println(self.getId() + "] choosing closest prey of of " + prey.size());
-        for (ISensable obs : prey) {
-          if (closestPrey == null) {
-            closestPrey = obs;
-          } else {
-            float distanceObs = self.distanceTo(obs);
-            float distancePrey = self.distanceTo(closestPrey);
-            //println(obs.getId() + ": " + distanceObs + " / " + closestPrey.getId() + ": " + distancePrey);
-            if (distanceObs < distancePrey) {
-              closestPrey = obs;
-              //println(self.getId() + "] " + closestPrey.getId() + " is the new Closest.");
-            } else {
-              //println(self.getId() + "] " + closestPrey.getId() + " remains the Closest.");
-            }
-          }
-        }
-        target = closestPrey;
-      } else if (prey.size() == 0) {  
-        //println(self.getId() + "] Only wolves in sight");
-        return false; // only wolves  in sight
-      }
+      filterPrey(_preyTypes);  // choose only prey of target type
+      return closestAnimal();  // chose the closest prey
     }
+
     return false;  // I don't see anything at all
   }
 
 
+
+  void filterPrey(StringList _preyTypes) {
+    for (Observation obs : self.getObserved()) {   // add all sheep to list of prey
+      if (_preyTypes.hasValue(obs.parent.getObjectName())) {
+        if (!obs.parent.isDead()) {  // only consider living animals prey
+          prey.add(obs.parent);
+          if (self.isTagged()) {
+            //println("Adding prey:" + prey.size());
+          }
+        }
+      }
+    }
+  }
+  void filterPrey(String _targetType) {
+    for (Observation obs : self.getObserved()) {   // add all sheep to list of prey
+      if (obs.parent.getObjectName() == _targetType) {
+        if (!obs.parent.isDead()) {  // only consider living animals prey
+          prey.add(obs.parent);
+          if (self.isTagged()) {
+            //println("Adding prey:" + prey.size());
+          }
+        }
+      }
+    }
+  }
+  boolean closestAnimal() {
+    // compare distance to each prey and hunt closest
+    if (prey.size() == 1) {
+      if (!prey.get(0).isDead() ) {   // this should always be true because dead animals are not added to prey in code above
+        target = prey.get(0);
+        closestPrey = target;  // by definition because its the ONLY prey
+        return true;
+      } else {
+        target = null;  // should never reach this
+        return false;
+      }
+    } else if (prey.size() > 1) {  // there more than 1 in the list so choose closest
+      //println(self.getId() + "] choosing closest prey of of " + prey.size());
+      for (ISensable obs : prey) {
+        if (closestPrey == null) {
+          closestPrey = obs;
+        } else {
+          float distanceObs = self.distanceTo(obs);
+          float distancePrey = self.distanceTo(closestPrey);
+          //println(obs.getId() + ": " + distanceObs + " / " + closestPrey.getId() + ": " + distancePrey);
+          if (distanceObs < distancePrey) {
+            closestPrey = obs;
+            //println(self.getId() + "] " + closestPrey.getId() + " is the new Closest.");
+          } else {
+            //println(self.getId() + "] " + closestPrey.getId() + " remains the Closest.");
+          }
+        }
+      }
+      target = closestPrey;
+      return true;
+    } else if (prey.size() == 0) {  
+      //println(self.getId() + "] Only wolves in sight");
+      return false; // only wolves  in sight
+    }
+    return true;
+  }
   void turn() {
     self.rotateTo(target);
   }
 
   float distanceToTarget() {
     return self.distanceTo(target);
+  }
+  void drawTrackLine() {
+
+    pushStyle();
+    strokeWeight(5);
+    
+    if (target != null) { 
+      
+      float x1 = 0;
+      float y1 = 0;
+      float x2 = target.getParticle().px() - self.getParticle().px();
+      float y2 = target.getParticle().py() - self.getParticle().py();
+      
+      for (int i = 0; i <= 10; i++) {
+        float x = lerp(x1, x2, i/10.0) ;
+        float y = lerp(y1, y2, i/10.0);
+        point(x, y);
+      }
+    }
+    popStyle();
   }
 
   boolean forget() {
@@ -379,7 +443,7 @@ class Track extends BaseBehavior {
 
 
   String toString() {
-    String s = self.getObjectName() + " [" + self.getId() + "] Tracking ..." + targetType; 
+    String s = self.getObjectName() + " [" + self.getId() + "] Tracking ..." + targetTypes.get(0); 
     return s;
   }
 }

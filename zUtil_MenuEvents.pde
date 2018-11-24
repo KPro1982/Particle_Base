@@ -8,7 +8,7 @@ public void Print() {
 
 public void Select() {
 
-  selected = !selected;
+  bSelected = !bSelected;
 }
 public void ToMouse() {
   bToMouse = !bToMouse;
@@ -16,6 +16,7 @@ public void ToMouse() {
 
 public void Freeze() {
   bFreeze = !bFreeze;
+  pause = bFreeze;
   
 }
 

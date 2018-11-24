@@ -72,7 +72,11 @@ interface ICarnivore extends ICanEat {
   boolean isCarnivore();
   float getMemory();
 }
-
+interface ICannibal  {
+  boolean canSeePrey();
+  
+  
+}
 interface IHerbivore extends ICanEat {
   boolean isHerbavore();
 }
@@ -96,6 +100,7 @@ interface IBehavior extends IReportable {
   int getId();
   void setId(int newId);
   String getObjectName();
+  void drawTrackLine();
 }
 
 interface IReportable {

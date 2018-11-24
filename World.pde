@@ -1,10 +1,11 @@
 class World {
 
+ 
   boolean showAxes = true;
 
   float screenWidth, screenHeight, worldWidth, worldHeight;
   ArrayList<Animal> animals;
-  Animal selected;
+  Animal selected = null;
   int nextId = 0;
   int tickCounter = 0;
   float scale = 1;
@@ -34,7 +35,7 @@ class World {
     for (Animal p : animals) {
       //p.loadSkin();
     }
-    selected = animals.get(0);
+    selected = null;
   }
 
   //void sortByDistance(Animal p) {
@@ -44,36 +45,33 @@ class World {
 
 
   float getScale() {
-     return scale; 
+    return scale;
   }
   void setScale(float _scale) {
     scale = _scale;
   }
   void addScale(float _scale) {
     scale += _scale;
-    
   }
   PVector getOffset() {
-    
-    return new PVector(xOffset,yOffset);
+
+    return new PVector(xOffset, yOffset);
   }
   void setOffset(PVector _offset) {
     xOffset = _offset.x;
     yOffset = _offset.y;
   }
-    void addOffset(PVector _offset) {
+  void addOffset(PVector _offset) {
     xOffset += _offset.x;
     yOffset += _offset.y;
   }
   float getScaleFactor() {
     if (scale < 0) 
     {
-       return 1/abs(scale);
+      return 1/abs(scale);
     } else {
       return scale;
-      
     }
-    
   }
   void print() {
     for (Animal p : animals) {
@@ -143,22 +141,24 @@ class World {
     Animal p = isMouseOver();
     if (p != null) {
       p.mouseClicked();
+      setSelected(p);
     }
   }
   void mouseReleased() {
     tick();
   }
-}
 
 
-void setSelected(Animal _p) {
 
-  //  if (selected != null) {  // reset old selected
-  //    selected.isSelected = false;
-  //  }
+  void setSelected(Animal _p) {
 
-  //  if (_p != null) {  // set new particle as slected
-  //    selected = _p;
-  //    selected.isSelected = true;
-  //  }
+    if (selected != null) {  // reset old selected
+      selected.setSelected(false);
+    }
+
+    if (_p != null) {  // set new animal as selected
+      selected = _p;
+      selected.setSelected(true);
+    }
+  }
 }

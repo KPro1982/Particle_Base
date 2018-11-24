@@ -18,16 +18,21 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   ArrayList<ICanSense> iSensedBy;
   ArrayList<Observation> iObserved;
   ArrayList<IBehavior> behaviors;
+  StringList preyTypes, predatorTypes;
+
 
   boolean showSightLine = false;
   boolean showSenseCone = false;
   boolean showAngleMarks = false;
+  boolean showTrackLine = true;
   boolean sensed;
   boolean dead = false;
   boolean tagged = false;
+  boolean iAmSelected = false;
   boolean hasSkin = false;
 
   int iconColor = 0;
+  int animalTextColor = 0;
   int children = 0;
   int lastChildTick = 0;
   int behaviorCounter = 1;
@@ -84,8 +89,24 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   void setupAnimal() {
     stomach = int(random(stomachFull/2, stomachFull));
     behaviors = new ArrayList<IBehavior>();
+    preyTypes = new StringList();
+    predatorTypes = new StringList();
   }
 
+  void setPreyTypes(StringList args) {
+    preyTypes.append(args);
+  }
+  StringList getPreyTypes() {
+
+    return preyTypes;
+  }
+  void setPredatorTypes(StringList args) {
+    predatorTypes.append(args);
+  }
+  StringList getPredatorTypes() {
+
+    return predatorTypes;
+  }
   void addBehavior(IBehavior newB) {
     int newId = getId()*1000 + behaviorCounter++;
     newB.setId(newId);
@@ -122,7 +143,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     return stomachFull;
   }
   void setStomach(float _stomach) {
-     stomach = _stomach; 
+    stomach = _stomach;
   }
   float getMateRate() {
     return mateRate;
@@ -156,7 +177,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   void setLastChildTick(int _tick) {
     lastChildTick = _tick;
   }
-  // -----------------------------------------------------------------------------
+
   float getVisibility() {
     return visibility;
   }
@@ -170,11 +191,26 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   ArrayList<Observation> getObserved() {
     return iObserved;
   }
-  void toggleTagged() {
-    tagged = !tagged;
+
+  void setSelected(boolean _flag) {
+    iAmSelected = _flag;
+    toggleTagged(_flag);
+  }
+  boolean isSelected() {
+    return iAmSelected;
+  }
+  void toggleTagged(boolean _flag) {
+    tagged = _flag;
     if (tagged) {
       showSenseCone = true;
+      animalTextColor = color(0, 0, 255);
+    } else {
+      showSenseCone = false;
+      animalTextColor = 0;
     }
+  }
+  void toggleTagged() {
+    toggleTagged(!isTagged());
   }
 
 
@@ -353,6 +389,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   }
 
 
+
   // ----------------------------------------------------------------------------------
   // main methods
   // ---------------------------------------------------------------------------------- 
@@ -434,7 +471,6 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     case "Wander":
       setColor(color(255, 255, 255));
       break;
-
     case "Mate":
       setColor(color(254, 58, 145));
       break;
@@ -449,12 +485,12 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   void move(float dist) {
 
     if (outOfBounds()) {
-      if (px()> swamp.screenWidth-10) {
+      if (px()> swamp.worldWidth-10) {
         getParticle().ex(-swamp.worldWidth/2+20);
       } else if (px() < 10) {
         getParticle().ex(swamp.worldWidth/2-20);
       }
-      if (py() > swamp.screenHeight-10) {  // bottom
+      if (py() > swamp.worldHeight-10) {  // bottom
         getParticle().ey(swamp.worldHeight/2-20);  // top
       } else if (py() < 10) { // top
         getParticle().ey(-swamp.worldHeight+20);  // bottom
@@ -534,12 +570,12 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
 
 
       drawIcon();
-      //fill(col);
+
       if (showAngleMarks) {
         line(-250, 0, 250, 0);  // center X
         line(0, -250, 0, 250);
       }
-      fill(0);
+      fill(animalTextColor);
       textAlign(CENTER, CENTER);
       textSize(30);
       text(getId(), 0, 0);
@@ -550,6 +586,9 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
       }
       if (showSightLine) {
         line(0, 0, pSize/2, 0);
+      }
+      if (showTrackLine) {
+        drawTrackLine();
       }
 
       rotate(getRotation());
@@ -578,6 +617,12 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
       iss.drawSenseCone(_col);
     }
   }
+  void drawTrackLine() {
+    for (IBehavior b : behaviors) {
+      b.drawTrackLine();
+    }
+  }
+
   void drawIcon() {
 
     pushStyle();

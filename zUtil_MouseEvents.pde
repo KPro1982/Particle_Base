@@ -1,15 +1,18 @@
-float oldX, oldY;
+float startX, startY;
 void mouseDragged() {
   if (bScale) {
-    if (oldX == 0) {
-      oldX = mouseX;
-      oldY = mouseY;
+
+    if (startX == 0) {
+      startX = mouseX;
+      startY = mouseY;
     }
-    float xOffset = oldX - mouseX;
-    float yOffset = oldY - mouseY;
+    float xOffset = startX - mouseX;
+    float yOffset = startY - mouseY;
+    println("Mouse(" + mouseX + "," + mouseY + "); Offset(" + xOffset + "," + yOffset + ")");
     swamp.addOffset(new PVector(xOffset, -yOffset));
-    oldX = mouseX;
-    oldY = mouseY;
+    startX = mouseX;
+    startY = mouseY;
+    
   } else {
 
     swamp.mouseDragged();
@@ -19,8 +22,8 @@ void mouseDragged() {
 void mouseClicked()
 {
   if (bScale) {
-    oldX = 0;
-    oldY = 0;
+    //startX = mouseX;
+    //startY = mouseY;
   } else {
     swamp.mouseClicked();
   }
