@@ -19,15 +19,15 @@ void setup() {
   Animal newAnimal;
   thisApp = this;
 
-  for (int i = 0; i < 50; i++) {
-    newAnimal = animalFactory.getAnimal("Sheep");
-    newAnimal.randomize();
-    swamp.addAnimal(newAnimal);
-  }
-  for (int i = 0; i < 10; i++) {
-    newAnimal = animalFactory.getAnimal("Wolf");
-    swamp.addAnimal(newAnimal);
-  }
+  //for (int i = 0; i < 50; i++) {
+  //  newAnimal = animalFactory.getAnimal("Sheep");
+  //  newAnimal.randomize();
+  //  swamp.addAnimal(newAnimal);
+  //}
+  //for (int i = 0; i < 10; i++) {
+  //  newAnimal = animalFactory.getAnimal("Wolf");
+  //  swamp.addAnimal(newAnimal);
+  //}
   for (int i = 0; i < 5; i++) {
     newAnimal = animalFactory.getAnimal("Bear");
     swamp.addAnimal(newAnimal);

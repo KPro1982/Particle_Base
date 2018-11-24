@@ -68,7 +68,7 @@ class Vision implements ISenseStrategy {
         float rot = self.getRotation();
         if (dist < range) {
 
-          if (bTo <= rot + field/2 && bTo >= rot -field/2) {  // within angle of vision
+          if (abs(bTo - rot) <= field/2) {  // within angle of vision
             sensed.add(sensedBody);  // it is sensed but not necessarily observed;
             if (isVisible(sensedBody)) {       // can sense it
               addObservation(sensedBody.getObservation());
@@ -86,7 +86,9 @@ class Vision implements ISenseStrategy {
     ArrayList<String> report = new ArrayList<String>();
     report.add("Distance:");
     report.add(str(dist));
-    report.add("AngleTo:");
+    report.add("my Rotation:");
+    report.add(str(degrees(self.getRotation())));
+    report.add("BearingTo:");
     report.add(str(degrees(bTo)));
     report.add("Field:");
     String ss = str(degrees(-field/2)) + "," + str(degrees(+field/2));
@@ -117,7 +119,7 @@ class Vision implements ISenseStrategy {
     stroke(210);
     if (true) {
       fill(_color);  // colored cone cone if can see
-      arc(0, 0, range*2, range*2, rot-field/2, rot+field/2);  // assumes translated to 0,0 but not rotated
+      arc(0, 0, range, range, rot-field/2, rot+field/2);  // assumes translated to 0,0 but not rotated
       stroke(color(255, 0, 0));
       line(0, 0, cos(rot)*250, sin(rot)*250);
     }

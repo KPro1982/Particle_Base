@@ -16,8 +16,8 @@ class BaseBehavior implements IBehavior, IReportable {
     return false;
   }
   void move() {
-      self.burnFood(averageFoodBurned);
-      self.move(self.getWalkRate());
+    self.burnFood(averageFoodBurned);
+    self.move(self.getWalkRate());
   }
   void setId(int newId) {
     behaviorID = newId;
@@ -96,16 +96,17 @@ class Wander extends BaseBehavior {
     name = "Wander";
   }
   boolean execute() {
+    if (!bFreeze) {
+      if (memoryCounter-- <= 0) {
+        self.setRotation(random(0, 2*PI));
+        memoryCounter = wanderRate;  // reset counter
+        wanderRate = int(random(wanderMin, wanderMax));
+      }
+      move();
 
-    if (memoryCounter-- <= 0) {
-      self.setRotation(random(0, 2*PI));
-      memoryCounter = wanderRate;  // reset counter
-      wanderRate = int(random(wanderMin, wanderMax));
+      Console(this);
+      selfReport();
     }
-    move();
-
-    Console(this);
-    selfReport();
     return true;
   }
   String toString() {
@@ -242,7 +243,9 @@ class Hunt extends Track {
       }
 
       if (distanceToTarget() < 10) {  // close enough to eat
-        target.kill();
+        self.addAnimalsMurdered(target.getId());
+        target.die();
+
         self.feed(self.stomachFull);
         target = null;
         closestPrey = null;

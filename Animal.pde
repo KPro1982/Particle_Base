@@ -12,12 +12,14 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   String iconType = "Circle";
   String activeBehavior = null;
   String skinFn;
+  String animalsMurdered = "";
   PImage skin;
 
   ArrayList<ISenseStrategy> senses;
   ArrayList<ICanSense> iSensedBy;
   ArrayList<Observation> iObserved;
   ArrayList<IBehavior> behaviors;
+
   StringList preyTypes, predatorTypes;
 
 
@@ -63,6 +65,8 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     iSensedBy = new ArrayList<ICanSense>();
     iObserved = new ArrayList<Observation>();
     behaviors = new ArrayList<IBehavior>();
+    animalsMurdered = "";
+
 
     getParticle().setId(_id);
     setupAnimal();
@@ -168,6 +172,17 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
       setTick(1000);
     }
   }
+  String getAnimalsMurdered() {
+
+    return animalsMurdered;
+  }
+  void addAnimalsMurdered(int a) {
+    if (animalsMurdered == "") {
+      animalsMurdered = str(a);
+    } else {
+    animalsMurdered += ", " + str(a);
+    }
+  }
   float getMemory() {
     return memory;
   }
@@ -241,6 +256,8 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     myData.add(str(getId()));
     myData.add("Children:");
     myData.add(str(children));
+    myData.add("Animals Murdered:");
+    myData.add(getAnimalsMurdered());
     myData.add("Stomach:");
     myData.add(str(stomach));
     myData.add("Run Rate:");
@@ -396,12 +413,11 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     getParticle().tickCounter = _tick;
   }
 
-  void kill() {
+  void die() {
     dead = true;
     if (dead == true) {
-      world.dinner((Animal) this);
+      world.addMurdered();
     }
-    Console(name + " [" + getId() + "] is dead.");
   }
   boolean isDead() {
     return dead;

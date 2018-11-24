@@ -27,7 +27,7 @@ interface IHaveParticle {
   void addTick();
 }
 interface ICanDie {
-  void kill();
+  void die();
   boolean isDead();
 }
 
@@ -49,7 +49,7 @@ interface ISensable extends IHaveParticle {
   Observation getObservation();
   String getObjectName();
   int getId();
-  void kill();
+  void die();
   boolean isDead();
 }
 

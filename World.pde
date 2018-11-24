@@ -9,9 +9,11 @@ class World {
   Animal selected = null;
   int nextId = 0;
   int tickCounter = 0;
+  int murdered = 0;
   float scale = 1;
   float xOffset = 0;
   float yOffset = 0;
+
 
 
   World(float _screenWidth, float _screenHeight, float _worldWidth, float _worldHeight) {
@@ -30,7 +32,9 @@ class World {
     _animal.setId(nextId++);
     animals.add(_animal);
   }
-
+  void addMurdered() {
+    murdered++;
+  }
   void setup() {
     animalReport = new ReportWindow(this, "TOPRIGHT", 500, 1000);
     popReport = new ReportWindow(this, "TOPLEFT", 500, 1000);
@@ -117,6 +121,11 @@ class World {
     myData.add(str(countAnimal("Wolf")) + " (" + str(countAnimal("Wolf", true)) + "/" + str(countAnimal("Wolf", false)) + ")");
     myData.add("Sheep:");
     myData.add(str(countAnimal("Sheep")) + " (" + str(countAnimal("Sheep", true)) + "/" + str(countAnimal("Sheep", false)) + ")");
+    myData.add("Murdered:");
+    myData.add(str(murdered));
+
+
+
     popReport.output(myData);
   }
   int countAnimal(String _type, boolean _adult) {
