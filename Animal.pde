@@ -174,7 +174,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     }
   }
   int getNumberChildren() {
-     return children;
+    return children;
   }
   String getAnimalsMurdered() {
 
@@ -188,7 +188,7 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     if (animalsMurdered == "") {
       animalsMurdered = str(a);
     } else {
-    animalsMurdered += ", " + str(a);
+      animalsMurdered += ", " + str(a);
     }
   }
   float getMemory() {
@@ -679,11 +679,11 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     case "Circle":
       ellipse(0, 0, pSize, pSize);
       break;
-    case "Square":
-      rect(-pSize/2, -pSize/2, pSize, pSize);
-      break;
     case "Triangle":
       triangle(0, -pSize/2, pSize/2, pSize/2, -pSize/2, pSize/2);
+      break;
+    case "Square":
+      rect(-pSize/2, -pSize/2, pSize, pSize);
       break;
     }
     popStyle();
