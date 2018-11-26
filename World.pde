@@ -36,7 +36,7 @@ class World {
     murdered++;
   }
   void setup() {
-    animalReport = new ReportWindow(this, "TOPRIGHT", 500, 600);
+    animalReport = new ReportWindow(this, "TOPRIGHT", 500, 800);
     popReport = new ReportWindow(this, "TOPLEFT", 500, 300);
     for (Animal p : animals) {
       //p.loadSkin();

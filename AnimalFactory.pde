@@ -65,7 +65,7 @@ class Bear extends Animal implements ICarnivore, ICannibal {
 // WOLF
 // -----------------------------------------------------------------------------
 
-class Wolf extends Animal implements ICarnivore, ICannibal {
+class Wolf extends Animal implements ICarnivore, ICannibal, IPackAnimal {
 
   Wolf(int _id, World _world, float _ex, float _ey, float _rot) {
     super(_id, _world, _ex, _ey, _rot);

@@ -12,26 +12,37 @@ boolean bFreeze = false;
 boolean bToMouse = false;
 boolean bScale = false;
 
+AnimalPack pack;
+
 void setup() {
   size(2500, 2000);
   swamp = new World(width, height, width*2, height*2);
   animalFactory = new AnimalFactory(swamp);
-  Animal newAnimal;
+  IPackAnimal newAnimal;
   thisApp = this;
 
-  for (int i = 0; i < 50; i++) {
-    newAnimal = animalFactory.getAnimal("Sheep");
-    newAnimal.randomize();
-    swamp.addAnimal(newAnimal);
-  }
+  //for (int i = 0; i < 50; i++) {
+  //  newAnimal = animalFactory.getAnimal("Sheep");
+  //  newAnimal.randomize();
+  //  swamp.addAnimal(newAnimal);
+  //}
+  //for (int i = 0; i < 10; i++) {
+  //  newAnimal = animalFactory.getAnimal("Wolf");
+  //  swamp.addAnimal(newAnimal);
+  //}
+  //for (int i = 0; i < 5; i++) {
+  //  newAnimal = animalFactory.getAnimal("Bear");
+  //  swamp.addAnimal(newAnimal);
+  //}
+
+  pack = new AnimalPack();
+
+
   for (int i = 0; i < 10; i++) {
-    newAnimal = animalFactory.getAnimal("Wolf");
-    swamp.addAnimal(newAnimal);
+    newAnimal = (IPackAnimal) animalFactory.getAnimal("Wolf");
+    pack.addMember(newAnimal);
   }
-  for (int i = 0; i < 5; i++) {
-    newAnimal = animalFactory.getAnimal("Bear");
-    swamp.addAnimal(newAnimal);
-  }
+  swamp.addAnimal(pack);
 
 
   myPanel = new CPanel(this);

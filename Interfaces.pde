@@ -109,3 +109,6 @@ interface IReportable {
   void toggleTagged();
   int getId();
 }
+interface IPackAnimal {
+  
+}

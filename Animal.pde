@@ -1,4 +1,4 @@
-class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable {
+class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable{
   // -----------------------------------------------------------------------------
   // Variables
   // -----------------------------------------------------------------------------
@@ -71,6 +71,14 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
 
     getParticle().setId(_id);
     setupAnimal();
+  }
+  Animal(Animal _a) {
+     setId(_a.getId());
+     world = _a.world;
+     ex(_a.ex());
+     ey(_a.ey());
+     setRotation(_a.getRotation());
+    
   }
 
   Animal(World _world) {
