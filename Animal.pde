@@ -1,4 +1,4 @@
-class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable{
+class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable {
   // -----------------------------------------------------------------------------
   // Variables
   // -----------------------------------------------------------------------------
@@ -61,6 +61,30 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   Animal(int _id, World _world, float _ex, float _ey, float _rot) {
     world = _world;
     particle = new Particle(_world, _ex, _ey, _rot);
+    getParticle().setId(_id);
+
+    setupAnimal();
+  }
+
+
+  Animal(Animal _a) {
+    world = _a.world;
+    particle = new Particle(world, _a.ex(), _a.ey(), _a.getRotation());
+    setId(_a.getId());
+    setupAnimal();
+  }
+
+  Animal(World _world) {
+    world = _world;
+    particle = new Particle(_world, 0, 0, 0);
+    setupAnimal();
+    getParticle().setId(-1);
+    randomize();
+
+  }
+  
+  void setupAnimal() {
+
 
     senses = new ArrayList<ISenseStrategy>();
     iSensedBy = new ArrayList<ICanSense>();
@@ -68,32 +92,10 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     behaviors = new ArrayList<IBehavior>();
     animalsMurdered = "";
 
-
-    getParticle().setId(_id);
-    setupAnimal();
-  }
-  Animal(Animal _a) {
-     setId(_a.getId());
-     world = _a.world;
-     ex(_a.ex());
-     ey(_a.ey());
-     setRotation(_a.getRotation());
-    
-  }
-
-  Animal(World _world) {
-    world = _world;
-    particle = new Particle(_world, 0, 0, 0);
-
-    senses = new ArrayList<ISenseStrategy>();
-    iSensedBy = new ArrayList<ICanSense>();
-    iObserved = new ArrayList<Observation>();
+    stomach = int(random(stomachFull/2, stomachFull));
     behaviors = new ArrayList<IBehavior>();
-
-    getParticle().setId(-1);
-
-    randomize();
-    setupAnimal();
+    preyTypes = new StringList();
+    predatorTypes = new StringList();
   }
 
   void randomize() {
@@ -102,12 +104,6 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     getParticle().tickCounter = int(random(0, 2000));
   }
 
-  void setupAnimal() {
-    stomach = int(random(stomachFull/2, stomachFull));
-    behaviors = new ArrayList<IBehavior>();
-    preyTypes = new StringList();
-    predatorTypes = new StringList();
-  }
 
   void setPreyTypes(StringList args) {
     preyTypes.append(args);
