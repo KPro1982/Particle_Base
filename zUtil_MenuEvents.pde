@@ -23,8 +23,8 @@ public void Scale() {
   bScale = !bScale;
 }
 void FindAnimal(int theAnimal) {
-  Animal tag = swamp.findAnimal(theAnimal);
-  if (tag != null) {
-    swamp.setSelected(tag);
-  }
+  //Animal tag = swamp.findAnimal(theAnimal);
+  //if (tag != null) {
+  //  swamp.setSelected(tag);
+  //}
 }

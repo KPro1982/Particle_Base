@@ -61,7 +61,7 @@ class Vision implements ISenseStrategy {
     }
     sensed.clear();
 
-    for (ISensable sensedBody : world.animals) {
+    for (ISensable sensedBody : world.entities) {
       if (self != sensedBody) {
         dist = self.distanceTo(sensedBody);  // within vision range
         bTo = self.bearingTo(self, sensedBody);

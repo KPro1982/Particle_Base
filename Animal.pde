@@ -1,10 +1,9 @@
-class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable, IPackAnimal {
+class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable, IPackAnimal {
   // -----------------------------------------------------------------------------
   // Variables
   // -----------------------------------------------------------------------------
 
   World world;
-  Particle particle;
   ICanMate mate;
   Animal target = null;
 
@@ -59,8 +58,8 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
   // ----------------------------------------------------------------------------------
 
   Animal(int _id, World _world, float _ex, float _ey, float _rot) {
+    super(_world, _ex, _ey, _rot);
     world = _world;
-    particle = new Particle(_world, _ex, _ey, _rot);
     getParticle().setId(_id);
 
     setupAnimal();
@@ -68,28 +67,21 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
 
 
   Animal(Animal _a) {
+    super(_a.world, _a.ex(), _a.ey(), _a.getRotation());
     world = _a.world;
-    particle = new Particle(world, _a.ex(), _a.ey(), _a.getRotation());
     setId(_a.getId());
-    setupAnimal();
-  }
-  Animal(IPackAnimal _ipa) {
-    Animal a = (Animal) _ipa;
-    world = a.world;
-    particle = new Particle(world, a.ex(), a.ey(), a.getRotation());
-    setId(a.getId());
     setupAnimal();
   }
 
   Animal(World _world) {
+    super(_world);
     world = _world;
-    particle = new Particle(_world, 0, 0, 0);
     setupAnimal();
     getParticle().setId(-1);
     randomize();
   }
   Animal() {
-    println("Default Super Constructor Called.");
+    super();
   }
 
   void setupAnimal() {
