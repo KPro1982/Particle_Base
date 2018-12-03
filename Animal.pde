@@ -1,4 +1,4 @@
-class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable {
+class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable, IPackAnimal {
   // -----------------------------------------------------------------------------
   // Variables
   // -----------------------------------------------------------------------------
@@ -73,6 +73,13 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     setId(_a.getId());
     setupAnimal();
   }
+  Animal(IPackAnimal _ipa) {
+    Animal a = (Animal) _ipa;
+    world = a.world;
+    particle = new Particle(world, a.ex(), a.ey(), a.getRotation());
+    setId(a.getId());
+    setupAnimal();
+  }
 
   Animal(World _world) {
     world = _world;
@@ -80,9 +87,11 @@ class Animal implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable,
     setupAnimal();
     getParticle().setId(-1);
     randomize();
-
   }
-  
+  Animal() {
+    println("Default Super Constructor Called.");
+  }
+
   void setupAnimal() {
 
 

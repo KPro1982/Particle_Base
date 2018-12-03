@@ -110,5 +110,5 @@ interface IReportable {
   int getId();
 }
 interface IPackAnimal {
-  
+  int getId();
 }
