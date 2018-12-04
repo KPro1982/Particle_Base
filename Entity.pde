@@ -20,5 +20,6 @@ abstract class Entity implements ISensable {
   abstract boolean isTagged();
   abstract void mouseClicked();
   abstract void setSelected(boolean _flag);
+  abstract Animal getSelf();
   
 }

@@ -1,4 +1,4 @@
-class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable, IPackAnimal {
+class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IHaveParticle, ISensable, ICanSense, IClickable, ICanDie, IReportable {
   // -----------------------------------------------------------------------------
   // Variables
   // -----------------------------------------------------------------------------
@@ -142,6 +142,10 @@ class Animal extends Entity implements ICanMove, ICanMate, ICanTrack, IHaveParti
   // ----------------------------------------------------------------------------------
   // getters and setters
   // ----------------------------------------------------------------------------------
+  Animal getSelf() {
+    return this;
+  }
+  
   float getStomach() {
     return stomach/stomachFull;
   }

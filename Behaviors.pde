@@ -169,7 +169,16 @@ class Avoid extends Track {
     return sArray;
   }
 }
-
+class PackMate extends Mate {
+  PackMate(IPackAnimal _self) {
+    super((Animal)_self);  
+    name = "PackMate";
+  }
+  void doMate(Animal _a) {
+    self.spawn();
+    getSelf().packAdd(_a.getSelf());
+  }
+}
 class Mate extends Track {
 
 
@@ -190,7 +199,7 @@ class Mate extends Track {
 
       if (targetMate.isAdult() && targetMate.isReadyToMate()) {
         if (distanceToTarget() < 10) {  // close enough to mate
-          self.spawn();
+          doMate(targetMate);
           return true;
         }
       } else {
@@ -201,6 +210,9 @@ class Mate extends Track {
       target = null;
       return false;
     }
+  }
+  void doMate(Animal _a) {
+    _a.spawn();
   }
 }
 
@@ -224,6 +236,15 @@ class Cannibalize extends Hunt {
     return false;
   }
 }
+
+class PackHunt extends Hunt {
+  PackHunt(ICarnivore _self, StringList _targetTypes) {
+    super(_self, _targetTypes);
+    name = "PackHunt";
+    averageStep = self.getRunRate();
+  }
+}
+
 
 class Hunt extends Track {
 

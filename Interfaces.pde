@@ -110,5 +110,9 @@ interface IReportable {
   int getId();
 }
 interface IPackAnimal {
-  int getId();
+  IPackAnimal getAlpha();
+  void packAdd(IPackAnimal _a);
+  void packRemove(IPackAnimal _a);
+  boolean hasPack();
+  IPackAnimal getSelf();
 }
